@@ -132,25 +132,41 @@ extension RuntimeStatusPresentation {
     _ lhs: ApplicationServiceDeviceDescription,
     _ rhs: ApplicationServiceDeviceDescription
   ) -> Bool {
-    lhs.sessionToken.rawValue == rhs.sessionToken.rawValue && lhs.name == rhs.name
-      && lhs.vendorID == rhs.vendorID && lhs.productID == rhs.productID
-      && lhs.connection == rhs.connection && lhs.discoverySource == rhs.discoverySource
-      && lhs.physicalOwnership == rhs.physicalOwnership
-      && lhs.duplicateExposureRisk == rhs.duplicateExposureRisk
-      && lhs.serialNumber == rhs.serialNumber && lhs.protocolBinding == rhs.protocolBinding
-      && lhs.parameters == rhs.parameters && lhs.inputEndpoint == rhs.inputEndpoint
-      && lhs.outputEndpoint == rhs.outputEndpoint
-      && lhs.needsSetConfiguration == rhs.needsSetConfiguration
-      && lhs.postHandshakeSettleMs == rhs.postHandshakeSettleMs
-      && lhs.preferredBackends == rhs.preferredBackends
-      && lhs.physicalOutputCapabilities == rhs.physicalOutputCapabilities
-      && lhs.inputHealth.state == rhs.inputHealth.state
-      && lhs.inputHealth.reportFormat == rhs.inputHealth.reportFormat
-      && lhs.inputHealth.lastReportAgeNanoseconds == rhs.inputHealth.lastReportAgeNanoseconds
-      && lhs.inputHealth.failureReason == rhs.inputHealth.failureReason
-      && lhs.inputHealth.recoveryCount == rhs.inputHealth.recoveryCount
-      && lhs.virtualHIDProfile == rhs.virtualHIDProfile
-      && lhs.recordServer == rhs.recordServer
+    (
+      lhs.sessionToken.rawValue, lhs.name, lhs.vendorID, lhs.productID, lhs.connection,
+      lhs.discoverySource
+    )
+      == (
+        rhs.sessionToken.rawValue, rhs.name, rhs.vendorID, rhs.productID, rhs.connection,
+        rhs.discoverySource
+      )
+      && (
+        lhs.physicalOwnership, lhs.duplicateExposureRisk, lhs.serialNumber,
+        lhs.protocolBinding, lhs.parameters, lhs.inputEndpoint
+      )
+        == (
+          rhs.physicalOwnership, rhs.duplicateExposureRisk, rhs.serialNumber,
+          rhs.protocolBinding, rhs.parameters, rhs.inputEndpoint
+        )
+      && (
+        lhs.outputEndpoint, lhs.needsSetConfiguration, lhs.postHandshakeSettleMs,
+        lhs.preferredBackends, lhs.physicalOutputCapabilities
+      )
+        == (
+          rhs.outputEndpoint, rhs.needsSetConfiguration, rhs.postHandshakeSettleMs,
+          rhs.preferredBackends, rhs.physicalOutputCapabilities
+        )
+      && (
+        lhs.inputHealth.state, lhs.inputHealth.reportFormat,
+        lhs.inputHealth.lastReportAgeNanoseconds, lhs.inputHealth.failureReason,
+        lhs.inputHealth.recoveryCount
+      )
+        == (
+          rhs.inputHealth.state, rhs.inputHealth.reportFormat,
+          rhs.inputHealth.lastReportAgeNanoseconds, rhs.inputHealth.failureReason,
+          rhs.inputHealth.recoveryCount
+        )
+      && (lhs.virtualHIDProfile, lhs.recordServer) == (rhs.virtualHIDProfile, rhs.recordServer)
   }
 
   /// Returns the readiness.
