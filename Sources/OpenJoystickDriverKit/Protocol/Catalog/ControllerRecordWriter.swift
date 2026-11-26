@@ -159,17 +159,7 @@ public enum ControllerRecordWriter {
     directory: URL,
     edit: (inout [String: Any]) throws(EditFailure) -> Void
   ) throws(Refusal<EditFailure>) -> Change {
-    let selector: ControllerPatch.Selector
-    var controllerFile: URL?
-    switch target {
-    case .model(let model):
-      selector = .identity(model)
-      controllerFile = directory.appendingPathComponent(ControllerRecordSet.fileName(for: model))
-    case .allControllers:
-      selector = .all
-    case .unit(let model, let unit):
-      selector = .unit(model, unit)
-    }
+    let (selector, controllerFile) = Self.selector(for: target, directory: directory)
     let patchFile = directory.appendingPathComponent(selector.fileName)
     let packages = ControllerRecordSet.packageRecords(
       in: ModPackageStore.directory(besides: directory)
@@ -177,57 +167,23 @@ public enum ControllerRecordWriter {
     let existingController = controllerFile.flatMap { try? Data(contentsOf: $0) }
     let existing = existingController ?? (try? Data(contentsOf: patchFile))
     let file = existingController == nil ? patchFile : controllerFile ?? patchFile
-    let document: [String: Any]?
-    if let existing {
-      let upstream: ControllerRecord? =
-        switch target {
-        case .model(let model): packages[model]
-        case .allControllers, .unit: nil
-        }
-      document = try updated(
-        existing,
-        file: file,
-        packages: packages,
-        upstreamServer: upstream?.statedServer,
-        edit: edit
-      )
-    } else {
-      switch target {
-      case .model(let model), .unit(let model, _):
-        if packages[model] == nil { throw .record(.noRecord(model)) }
-      case .allControllers: break
-      }
-      var body: [String: Any] = [:]
-      do { try edit(&body) } catch { throw .edit(error) }
-      document = ControllerPatch.document(selector: selector, body: body)
-    }
+    let document = try changedDocument(
+      existing,
+      target: target,
+      selector: selector,
+      file: file,
+      packages: packages,
+      edit: edit
+    )
     let data: Data?
-    do {
-      data = try document.map { document in
-        let encoded = try DocumentCoder.write(document)
-        _ = try ControllerRecordSet.validate(encoded, file: file, packages: packages)
-        return encoded
-      }
-    } catch {
-      throw .record(
-        .invalidResult(ControllerRecordSet.problemDescription(error, document: "record"))
-      )
+    do { data = try Self.encoded(document, file: file, packages: packages) } catch {
+      throw .record(error)
     }
-    let effective: ControllerRecord?
-    var tuning: [ControllerTuningValue]
-    var unitValues: [ControllerTuning.Key: Double] = [:]
-    switch target {
-    case .model(let model):
-      effective = records.records[model] ?? packages[model]
-      tuning = effective?.tuningValues ?? []
-    case .allControllers:
-      effective = nil
-      tuning = records.defaultTuningValues
-    case .unit(let model, let unit):
-      effective = records.records[model] ?? packages[model]
-      tuning = effective?.tuningValues ?? []
-      unitValues = records.unitCalibrations[unit]?.values ?? [:]
-    }
+    let (effective, tuning, unitValues) = Self.currentValues(
+      for: target,
+      records: records,
+      packages: packages
+    )
     return Change(
       previousServer: effective?.profile.server ?? .system,
       previousTuning: tuningKey.flatMap { key in
@@ -237,6 +193,97 @@ public enum ControllerRecordWriter {
       created: existing == nil,
       data: data
     )
+  }
+
+  /// The selector of the ControllerPatch file that `target` names, and the Controller file of a
+  /// model.
+  private static func selector(
+    for target: Target,
+    directory: URL
+  ) -> (ControllerPatch.Selector, controllerFile: URL?) {
+    switch target {
+    case .model(let model):
+      return (
+        .identity(model),
+        directory.appendingPathComponent(ControllerRecordSet.fileName(for: model))
+      )
+    case .allControllers: return (.all, nil)
+    case .unit(let model, let unit): return (.unit(model, unit), nil)
+    }
+  }
+
+  /// The document that `edit` makes from the `existing` file, or from an empty body when the file
+  /// does not exist; nil when a removal leaves a patch with no key and no `remove`.
+  private static func changedDocument<EditFailure: Error>(
+    _ existing: Data?,
+    target: Target,
+    selector: ControllerPatch.Selector,
+    file: URL,
+    packages: [ControllerModelID: ControllerRecord],
+    edit: (inout [String: Any]) throws(EditFailure) -> Void
+  ) throws(Refusal<EditFailure>) -> [String: Any]? {
+    if let existing {
+      let upstream: ControllerRecord? =
+        switch target {
+        case .model(let model): packages[model]
+        case .allControllers, .unit: nil
+        }
+      return try updated(
+        existing,
+        file: file,
+        packages: packages,
+        upstreamServer: upstream?.statedServer,
+        edit: edit
+      )
+    }
+    switch target {
+    case .model(let model), .unit(let model, _):
+      if packages[model] == nil { throw .record(.noRecord(model)) }
+    case .allControllers: break
+    }
+    var body: [String: Any] = [:]
+    do { try edit(&body) } catch { throw .edit(error) }
+    return ControllerPatch.document(selector: selector, body: body)
+  }
+
+  /// `document` encoded and validated against `packages`; nil for no document.
+  private static func encoded(
+    _ document: [String: Any]?,
+    file: URL,
+    packages: [ControllerModelID: ControllerRecord]
+  ) throws(Failure) -> Data? {
+    do {
+      return try document.map { document in
+        let encoded = try DocumentCoder.write(document)
+        _ = try ControllerRecordSet.validate(encoded, file: file, packages: packages)
+        return encoded
+      }
+    } catch {
+      throw .invalidResult(ControllerRecordSet.problemDescription(error, document: "record"))
+    }
+  }
+
+  /// The record in effect for `target`, its tuning values, and the unit calibration values.
+  private static func currentValues(
+    for target: Target,
+    records: ControllerRecordSet,
+    packages: [ControllerModelID: ControllerRecord]
+  ) -> (
+    effective: ControllerRecord?, tuning: [ControllerTuningValue],
+    unitValues: [ControllerTuning.Key: Double]
+  ) {
+    switch target {
+    case .model(let model):
+      let effective = records.records[model] ?? packages[model]
+      return (effective, effective?.tuningValues ?? [], [:])
+    case .allControllers:
+      return (nil, records.defaultTuningValues, [:])
+    case .unit(let model, let unit):
+      let effective = records.records[model] ?? packages[model]
+      return (
+        effective, effective?.tuningValues ?? [], records.unitCalibrations[unit]?.values ?? [:]
+      )
+    }
   }
 
   /// The existing user file with `edit` applied in the Controller file or in the `patch` of the
