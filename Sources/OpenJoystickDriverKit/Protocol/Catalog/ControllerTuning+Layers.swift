@@ -148,35 +148,40 @@ extension ControllerTuning {
 
   /// This tuning without the keys outside `keys`.
   func keeping(_ keys: Set<Key>) -> Self {
-    Self(
-      stickDeadzone: keys.contains(.stickDeadzone) ? stickDeadzone : nil,
-      inputLivenessTimeoutMilliseconds: keys.contains(.inputLivenessTimeoutMs)
-        ? inputLivenessTimeoutMilliseconds : nil,
-      hidStartupIntervalMilliseconds: keys.contains(.hidStartupIntervalMs)
-        ? hidStartupIntervalMilliseconds : nil,
-      minimumHIDOutputIntervalMilliseconds: keys.contains(.minimumHIDOutputIntervalMs)
-        ? minimumHIDOutputIntervalMilliseconds : nil,
-      hidStartupRecoveryIntervalMilliseconds: keys.contains(.hidStartupRecoveryIntervalMs)
-        ? hidStartupRecoveryIntervalMilliseconds : nil,
-      hidStartupRecoveryRounds: keys.contains(.hidStartupRecoveryRounds)
-        ? hidStartupRecoveryRounds : nil,
-      lizardResendTicks: keys.contains(.lizardResendTicks) ? lizardResendTicks : nil,
-      usbCommandTimeoutMilliseconds: keys.contains(.usbCommandTimeoutMs)
-        ? usbCommandTimeoutMilliseconds : nil,
-      presenceResendReports: keys.contains(.presenceResendReports) ? presenceResendReports : nil,
-      adapterDisconnectDelayMilliseconds: keys.contains(.adapterDisconnectDelayMs)
-        ? adapterDisconnectDelayMilliseconds : nil,
-      usbStartupIntervalMilliseconds: keys.contains(.usbStartupIntervalMs)
-        ? usbStartupIntervalMilliseconds : nil,
-      usbStartupRetryDelayMilliseconds: keys.contains(.usbStartupRetryDelayMs)
-        ? usbStartupRetryDelayMilliseconds : nil,
-      usbTransferTimeoutMilliseconds: keys.contains(.usbTransferTimeoutMs)
-        ? usbTransferTimeoutMilliseconds : nil,
-      irWriteIntervalMilliseconds: keys.contains(.irWriteIntervalMs)
-        ? irWriteIntervalMilliseconds : nil,
-      speakerMaxSeconds: keys.contains(.speakerMaxSeconds) ? speakerMaxSeconds : nil,
-      replyTimeoutMilliseconds: keys.contains(.replyTimeoutMs) ? replyTimeoutMilliseconds : nil,
-      frameQueueCapacity: keys.contains(.frameQueueCapacity) ? frameQueueCapacity : nil,
+    func keep<Value>(_ key: Key, _ value: Value?) -> Value? { keys.contains(key) ? value : nil }
+    return Self(
+      stickDeadzone: keep(.stickDeadzone, stickDeadzone),
+      inputLivenessTimeoutMilliseconds: keep(
+        .inputLivenessTimeoutMs,
+        inputLivenessTimeoutMilliseconds
+      ),
+      hidStartupIntervalMilliseconds: keep(.hidStartupIntervalMs, hidStartupIntervalMilliseconds),
+      minimumHIDOutputIntervalMilliseconds: keep(
+        .minimumHIDOutputIntervalMs,
+        minimumHIDOutputIntervalMilliseconds
+      ),
+      hidStartupRecoveryIntervalMilliseconds: keep(
+        .hidStartupRecoveryIntervalMs,
+        hidStartupRecoveryIntervalMilliseconds
+      ),
+      hidStartupRecoveryRounds: keep(.hidStartupRecoveryRounds, hidStartupRecoveryRounds),
+      lizardResendTicks: keep(.lizardResendTicks, lizardResendTicks),
+      usbCommandTimeoutMilliseconds: keep(.usbCommandTimeoutMs, usbCommandTimeoutMilliseconds),
+      presenceResendReports: keep(.presenceResendReports, presenceResendReports),
+      adapterDisconnectDelayMilliseconds: keep(
+        .adapterDisconnectDelayMs,
+        adapterDisconnectDelayMilliseconds
+      ),
+      usbStartupIntervalMilliseconds: keep(.usbStartupIntervalMs, usbStartupIntervalMilliseconds),
+      usbStartupRetryDelayMilliseconds: keep(
+        .usbStartupRetryDelayMs,
+        usbStartupRetryDelayMilliseconds
+      ),
+      usbTransferTimeoutMilliseconds: keep(.usbTransferTimeoutMs, usbTransferTimeoutMilliseconds),
+      irWriteIntervalMilliseconds: keep(.irWriteIntervalMs, irWriteIntervalMilliseconds),
+      speakerMaxSeconds: keep(.speakerMaxSeconds, speakerMaxSeconds),
+      replyTimeoutMilliseconds: keep(.replyTimeoutMs, replyTimeoutMilliseconds),
+      frameQueueCapacity: keep(.frameQueueCapacity, frameQueueCapacity),
       calibration: ControllerCalibration(
         values: calibration.values.filter { keys.contains($0.key) }
       )
