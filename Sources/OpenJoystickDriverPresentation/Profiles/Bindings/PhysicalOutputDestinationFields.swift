@@ -14,86 +14,12 @@
       if case .physical(let output) = destination {
         VStack(alignment: .leading, spacing: OJDSpacing.small) {
           switch output {
-          case .rumble(let motor, let intensity):
-            Picker(
-              OJDLocalized.string("ui.profiles.physical.motor"),
-              selection: rumbleMotor(motor, intensity: intensity)
-            ) {
-              ForEach(PhysicalRumbleMotor.allCases, id: \.self) {
-                Text(RuntimePresentation.upperCamelWords($0.rawValue)).tag($0)
-              }
-            }.help(OJDLocalized.string("ui.profiles.physical.motorHelp"))
-            unitSlider(
-              OJDLocalized.string("ui.profiles.physical.intensity"),
-              help: OJDLocalized.string("ui.profiles.physical.intensityHelp"),
-              value: rumbleIntensity(motor, intensity: intensity)
-            )
-          case .playerIndicator(let indicator):
-            Picker(
-              OJDLocalized.string("ui.profiles.physical.player"),
-              selection: playerIndicator(indicator)
-            ) {
-              ForEach(PhysicalPlayerIndicator.allCases, id: \.self) {
-                Text(
-                  $0 == .off
-                    ? OJDLocalized.string("status.disabled")
-                    : String($0.rawValue)
-                ).tag($0)
-              }
-            }.help(OJDLocalized.string("ui.profiles.physical.playerHelp"))
-          case .color(let color):
-            colorSlider(
-              OJDLocalized.string("ui.profiles.physical.red"),
-              help: OJDLocalized.string("ui.profiles.physical.redHelp"),
-              value: colorComponent(color, component: 0)
-            )
-            colorSlider(
-              OJDLocalized.string("ui.profiles.physical.green"),
-              help: OJDLocalized.string("ui.profiles.physical.greenHelp"),
-              value: colorComponent(color, component: 1)
-            )
-            colorSlider(
-              OJDLocalized.string("ui.profiles.physical.blue"),
-              help: OJDLocalized.string("ui.profiles.physical.blueHelp"),
-              value: colorComponent(color, component: 2)
-            )
-          case .brightness(let intensity):
-            unitSlider(
-              OJDLocalized.string("ui.profiles.physical.brightness"),
-              help: OJDLocalized.string("ui.profiles.physical.brightnessHelp"),
-              value: brightness(intensity)
-            )
+          case .rumble(let motor, let intensity): rumbleFields(motor, intensity: intensity)
+          case .playerIndicator(let indicator): playerIndicatorField(indicator)
+          case .color(let color): colorFields(color)
+          case .brightness(let intensity): brightnessField(intensity)
           case .adaptiveTrigger(let trigger, let effect):
-            Picker(
-              OJDLocalized.string("ui.profiles.physical.trigger"),
-              selection: adaptiveTrigger(trigger, effect: effect)
-            ) {
-              ForEach(PhysicalAdaptiveTrigger.allCases, id: \.self) {
-                Text(RuntimePresentation.humanized($0.rawValue)).tag($0)
-              }
-            }.help(OJDLocalized.string("ui.profiles.physical.triggerHelp"))
-            Picker(
-              OJDLocalized.string("ui.profiles.physical.effect"),
-              selection: adaptiveKind(trigger, effect: effect)
-            ) {
-              ForEach(PhysicalAdaptiveTriggerEffectKind.allCases, id: \.self) {
-                Text(RuntimePresentation.humanized($0.rawValue)).tag($0)
-              }
-            }.help(OJDLocalized.string("ui.profiles.physical.effectHelp"))
-            if effect.kind == .resistance {
-              unitSlider(
-                OJDLocalized.string(
-                  "ui.profiles.physical.startPosition"
-                ),
-                help: OJDLocalized.string("ui.profiles.physical.startPositionHelp"),
-                value: adaptiveStart(trigger, effect: effect)
-              )
-              unitSlider(
-                OJDLocalized.string("ui.profiles.physical.strength"),
-                help: OJDLocalized.string("ui.profiles.physical.strengthHelp"),
-                value: adaptiveStrength(trigger, effect: effect)
-              )
-            }
+            adaptiveTriggerFields(trigger, effect: effect)
           }
         }.padding(.leading, 8)
       } else if let field = valueField {
@@ -101,30 +27,138 @@
           .help(field.help)
           .padding(.leading, 8)
       } else if case .speak(let text, let voice) = destination {
-        VStack(alignment: .leading, spacing: OJDSpacing.small) {
-          TextField(
-            OJDLocalized.string("ui.profiles.speak.text"),
-            text: Binding(
-              get: { text },
-              set: {
-                destination = .speak(
-                  text: String(String.UnicodeScalarView($0.unicodeScalars.prefix(128))),
-                  voice: voice
-                )
-              }
-            )
-          ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.speak.text"))
-            .help(OJDLocalized.string("ui.profiles.speak.textHelp"))
-          TextField(
-            OJDLocalized.string("ui.profiles.speak.voice"),
-            text: Binding(
-              get: { voice ?? "" },
-              set: { destination = .speak(text: text, voice: $0.isEmpty ? nil : $0) }
-            ),
-            prompt: Text(OJDLocalized.string("ui.profiles.speak.voicePlaceholder"))
-          ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.speak.voice"))
-            .help(OJDLocalized.string("ui.profiles.speak.voiceHelp"))
-        }.padding(.leading, 8)
+        speakFields(text: text, voice: voice).padding(.leading, 8)
+      }
+    }
+
+    /// The motor picker and the intensity slider of a rumble output.
+    @ViewBuilder
+    private func rumbleFields(_ motor: PhysicalRumbleMotor, intensity: Double) -> some View {
+      Picker(
+        OJDLocalized.string("ui.profiles.physical.motor"),
+        selection: rumbleMotor(motor, intensity: intensity)
+      ) {
+        ForEach(PhysicalRumbleMotor.allCases, id: \.self) {
+          Text(RuntimePresentation.upperCamelWords($0.rawValue)).tag($0)
+        }
+      }.help(OJDLocalized.string("ui.profiles.physical.motorHelp"))
+      unitSlider(
+        OJDLocalized.string("ui.profiles.physical.intensity"),
+        help: OJDLocalized.string("ui.profiles.physical.intensityHelp"),
+        value: rumbleIntensity(motor, intensity: intensity)
+      )
+    }
+
+    /// The picker of the player indicator.
+    @ViewBuilder
+    private func playerIndicatorField(_ indicator: PhysicalPlayerIndicator) -> some View {
+      Picker(
+        OJDLocalized.string("ui.profiles.physical.player"),
+        selection: playerIndicator(indicator)
+      ) {
+        ForEach(PhysicalPlayerIndicator.allCases, id: \.self) {
+          Text(
+            $0 == .off
+              ? OJDLocalized.string("status.disabled")
+              : String($0.rawValue)
+          ).tag($0)
+        }
+      }.help(OJDLocalized.string("ui.profiles.physical.playerHelp"))
+    }
+
+    /// The red, green and blue sliders of a color output.
+    @ViewBuilder
+    private func colorFields(_ color: ControllerColor) -> some View {
+      colorSlider(
+        OJDLocalized.string("ui.profiles.physical.red"),
+        help: OJDLocalized.string("ui.profiles.physical.redHelp"),
+        value: colorComponent(color, component: 0)
+      )
+      colorSlider(
+        OJDLocalized.string("ui.profiles.physical.green"),
+        help: OJDLocalized.string("ui.profiles.physical.greenHelp"),
+        value: colorComponent(color, component: 1)
+      )
+      colorSlider(
+        OJDLocalized.string("ui.profiles.physical.blue"),
+        help: OJDLocalized.string("ui.profiles.physical.blueHelp"),
+        value: colorComponent(color, component: 2)
+      )
+    }
+
+    /// The brightness slider.
+    @ViewBuilder
+    private func brightnessField(_ intensity: Double) -> some View {
+      unitSlider(
+        OJDLocalized.string("ui.profiles.physical.brightness"),
+        help: OJDLocalized.string("ui.profiles.physical.brightnessHelp"),
+        value: brightness(intensity)
+      )
+    }
+
+    /// The trigger and effect pickers, with the resistance sliders while the effect is resistance.
+    @ViewBuilder
+    private func adaptiveTriggerFields(
+      _ trigger: PhysicalAdaptiveTrigger,
+      effect: PhysicalAdaptiveTriggerEffect
+    ) -> some View {
+      Picker(
+        OJDLocalized.string("ui.profiles.physical.trigger"),
+        selection: adaptiveTrigger(trigger, effect: effect)
+      ) {
+        ForEach(PhysicalAdaptiveTrigger.allCases, id: \.self) {
+          Text(RuntimePresentation.humanized($0.rawValue)).tag($0)
+        }
+      }.help(OJDLocalized.string("ui.profiles.physical.triggerHelp"))
+      Picker(
+        OJDLocalized.string("ui.profiles.physical.effect"),
+        selection: adaptiveKind(trigger, effect: effect)
+      ) {
+        ForEach(PhysicalAdaptiveTriggerEffectKind.allCases, id: \.self) {
+          Text(RuntimePresentation.humanized($0.rawValue)).tag($0)
+        }
+      }.help(OJDLocalized.string("ui.profiles.physical.effectHelp"))
+      if effect.kind == .resistance {
+        unitSlider(
+          OJDLocalized.string(
+            "ui.profiles.physical.startPosition"
+          ),
+          help: OJDLocalized.string("ui.profiles.physical.startPositionHelp"),
+          value: adaptiveStart(trigger, effect: effect)
+        )
+        unitSlider(
+          OJDLocalized.string("ui.profiles.physical.strength"),
+          help: OJDLocalized.string("ui.profiles.physical.strengthHelp"),
+          value: adaptiveStrength(trigger, effect: effect)
+        )
+      }
+    }
+
+    /// The text and voice fields of a `Speak` destination.
+    private func speakFields(text: String, voice: String?) -> some View {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
+        TextField(
+          OJDLocalized.string("ui.profiles.speak.text"),
+          text: Binding(
+            get: { text },
+            set: {
+              destination = .speak(
+                text: String(String.UnicodeScalarView($0.unicodeScalars.prefix(128))),
+                voice: voice
+              )
+            }
+          )
+        ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.speak.text"))
+          .help(OJDLocalized.string("ui.profiles.speak.textHelp"))
+        TextField(
+          OJDLocalized.string("ui.profiles.speak.voice"),
+          text: Binding(
+            get: { voice ?? "" },
+            set: { destination = .speak(text: text, voice: $0.isEmpty ? nil : $0) }
+          ),
+          prompt: Text(OJDLocalized.string("ui.profiles.speak.voicePlaceholder"))
+        ).ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.speak.voice"))
+          .help(OJDLocalized.string("ui.profiles.speak.voiceHelp"))
       }
     }
 
