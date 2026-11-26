@@ -447,42 +447,7 @@ extension RemappingEventEngine {
     }
     for action in actions {
       do {
-        switch action {
-        case .system(let systemAction):
-          let scaled = systemAction.scalingPointer(by: pointerScale)
-          try sink.send(scaled)
-          Self.accountForDelivered(scaled, in: &potentiallyHeld)
-        case .gamepad(let gamepadState, let identifier):
-          guard let gamepadSink else { throw RemappingEventEngineError.sinkUnavailable }
-          heldGamepadDevices.insert(identifier)
-          try await gamepadSink.send(gamepadState, for: identifier)
-          if gamepadState == .neutral { heldGamepadDevices.remove(identifier) }
-        case .profileSwitch(let target, let current, let identifier):
-          // The switch re-enters the engine, so it runs after this operation releases the lock.
-          if let profileSwitcher {
-            Task { await profileSwitcher.switchProfile(target, from: current, for: identifier) }
-          }
-        case .systemAction(let request): await perform(request)
-        case .speak(let text, let voice, let identifier):
-          await speechOutput?.speak(text, voice: voice, for: identifier)
-        case .stopSpeech(let identifier):
-          await speechOutput?.stopSpeech(for: identifier)
-        case .midi(let message):
-          guard let midiOutput else { throw RemappingEventEngineError.sinkUnavailable }
-          try midiOutput.send(message)
-          accountForDelivered(message)
-        case .physical(let output, let active, let owner, let identifier):
-          guard let physicalOutputSink else { throw RemappingEventEngineError.sinkUnavailable }
-          try await physicalOutputSink.set(output, active: active, owner: owner, for: identifier)
-          if active {
-            heldPhysicalOwners[identifier, default: []].insert(owner)
-          } else {
-            heldPhysicalOwners[identifier]?.remove(owner)
-            if heldPhysicalOwners[identifier]?.isEmpty == true {
-              heldPhysicalOwners.removeValue(forKey: identifier)
-            }
-          }
-        }
+        try await deliver(action, pointerScale: pointerScale, potentiallyHeld: &potentiallyHeld)
       } catch {
         if case .system(let systemAction) = action {
           Self.accountForUncertain(systemAction, in: &potentiallyHeld)
@@ -496,6 +461,60 @@ extension RemappingEventEngine {
     }
     state = candidate
     if midiIsOpen, !candidate.usesMIDIOutput { closeMIDI() }
+  }
+
+  /// Sends one action to its sink and records what it holds.
+  /// - Throws: ``RemappingEventEngineError/sinkUnavailable`` or the sink's own error.
+  private func deliver(
+    _ action: RemappingEngineAction,
+    pointerScale: Double,
+    potentiallyHeld: inout Set<RemappingHeldOutput>
+  ) async throws {
+    switch action {
+    case .system(let systemAction):
+      let scaled = systemAction.scalingPointer(by: pointerScale)
+      try sink.send(scaled)
+      Self.accountForDelivered(scaled, in: &potentiallyHeld)
+    case .gamepad(let gamepadState, let identifier):
+      guard let gamepadSink else { throw RemappingEventEngineError.sinkUnavailable }
+      heldGamepadDevices.insert(identifier)
+      try await gamepadSink.send(gamepadState, for: identifier)
+      if gamepadState == .neutral { heldGamepadDevices.remove(identifier) }
+    case .profileSwitch(let target, let current, let identifier):
+      // The switch re-enters the engine, so it runs after this operation releases the lock.
+      if let profileSwitcher {
+        Task { await profileSwitcher.switchProfile(target, from: current, for: identifier) }
+      }
+    case .systemAction(let request): await perform(request)
+    case .speak(let text, let voice, let identifier):
+      await speechOutput?.speak(text, voice: voice, for: identifier)
+    case .stopSpeech(let identifier):
+      await speechOutput?.stopSpeech(for: identifier)
+    case .midi(let message):
+      guard let midiOutput else { throw RemappingEventEngineError.sinkUnavailable }
+      try midiOutput.send(message)
+      accountForDelivered(message)
+    case .physical(let output, let active, let owner, let identifier):
+      guard let physicalOutputSink else { throw RemappingEventEngineError.sinkUnavailable }
+      try await physicalOutputSink.set(output, active: active, owner: owner, for: identifier)
+      recordPhysicalOutput(active: active, owner: owner, for: identifier)
+    }
+  }
+
+  /// Tracks which owners hold a physical output on a device.
+  private func recordPhysicalOutput(
+    active: Bool,
+    owner: UUID,
+    for identifier: LogicalControllerID
+  ) {
+    if active {
+      heldPhysicalOwners[identifier, default: []].insert(owner)
+    } else {
+      heldPhysicalOwners[identifier]?.remove(owner)
+      if heldPhysicalOwners[identifier]?.isEmpty == true {
+        heldPhysicalOwners.removeValue(forKey: identifier)
+      }
+    }
   }
 
   /// Performs a system action; a failure is reported and leaves the engine running.
