@@ -172,12 +172,53 @@ extension VirtualDevice {
     source: Source,
     requiresMatch: Bool
   ) throws -> Self {
+    let document = try decodeDocument(data, source: source)
+    let persona = try persona(of: document)
+    if requiresMatch, document.match == nil {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.virtualDevice.matchRequired",
+        "the file must hold match"
+      )
+    }
+    let match = try document.match.map(Self.match)
+    let layout = try document.layout.map(Self.layout)
+    if let transport = document.transport, !["USB", "Bluetooth"].contains(transport) {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.virtualDevice.transport",
+        "transport must be USB or Bluetooth"
+      )
+    }
+    let labels = try document.labels.map(Self.labels)
+    let identity = try document.identity.map(Self.identity)
+    try requireShape(
+      document,
+      hasMatch: match != nil,
+      layout: layout,
+      labels: labels,
+      identity: identity
+    )
+    return Self(
+      persona: persona,
+      match: match,
+      layout: layout,
+      transport: document.transport,
+      labels: labels,
+      worksWithDefaultSDLHints: document.worksWithDefaultSDLHints,
+      identity: identity
+    )
+  }
+
+  /// Decodes the header and then the document body.
+  ///
+  /// - Throws: ``DocumentHeaderProblem`` or ``ControllerRecordProblem``.
+  private static func decodeDocument(_ data: Data, source: Source) throws -> Document {
     let file =
       switch source {
       case .file(let name): name
       case .unnamed: "virtual device"
       }
-    let document: Document
     do {
       let header = try DocumentCoder.decode(Header.self, from: data, file: file)
       if let problem = OpenJoystickDriverAPI.headerProblem(
@@ -192,7 +233,7 @@ extension VirtualDevice {
         }
         throw DocumentHeaderProblem(code: .unsupportedAPIVersion, located)
       }
-      document = try DocumentCoder.decode(Document.self, from: data, file: file)
+      return try DocumentCoder.decode(Document.self, from: data, file: file)
     } catch let error as DocumentCoderError {
       throw ControllerRecordProblem(code: error.code, error.description)
     } catch let error as DecodingError {
@@ -201,6 +242,10 @@ extension VirtualDevice {
         ControllerRecordSet.problemDescription(error, document: "virtualDevice")
       )
     }
+  }
+
+  /// The persona that a document names.
+  private static func persona(of document: Document) throws -> VirtualHIDProfileID {
     guard let persona = document.persona.flatMap(VirtualHIDProfileID.init)
     else {
       throw ControllerRecordProblem(
@@ -211,45 +256,44 @@ extension VirtualDevice {
           + VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")
       )
     }
-    if requiresMatch, document.match == nil {
+    return persona
+  }
+
+  /// The layout that a document's `layout` value names.
+  private static func layout(_ value: String) throws -> VirtualDeviceLayout {
+    guard let layout = VirtualDeviceLayout(rawValue: value) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
-        key: "error.E5007.virtualDevice.matchRequired",
-        "the file must hold match"
+        key: "error.E5007.virtualDevice.layout",
+        arguments: [VirtualDeviceLayout.allCases.map(\.rawValue).joined(separator: ", ")],
+        "layout must be one of "
+          + VirtualDeviceLayout.allCases.map(\.rawValue).joined(separator: ", ")
       )
     }
-    let match = try document.match.map(Self.match)
-    let layout = try document.layout.map { value in
-      guard let layout = VirtualDeviceLayout(rawValue: value) else {
-        throw ControllerRecordProblem(
-          code: .invalidControllerRecord,
-          key: "error.E5007.virtualDevice.layout",
-          arguments: [VirtualDeviceLayout.allCases.map(\.rawValue).joined(separator: ", ")],
-          "layout must be one of "
-            + VirtualDeviceLayout.allCases.map(\.rawValue).joined(separator: ", ")
-        )
-      }
-      return layout
-    }
-    if let transport = document.transport, !["USB", "Bluetooth"].contains(transport) {
+    return layout
+  }
+
+  /// The glyph family that a document's `labels` value names.
+  private static func labels(_ value: String) throws -> VirtualIdentityGlyphFamily {
+    guard let labels = VirtualIdentityGlyphFamily(rawValue: value) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
-        key: "error.E5007.virtualDevice.transport",
-        "transport must be USB or Bluetooth"
+        key: "error.E5007.virtualDevice.labels",
+        "labels must be Xbox, PlayStation or Generic"
       )
     }
-    let labels = try document.labels.map { value in
-      guard let labels = VirtualIdentityGlyphFamily(rawValue: value) else {
-        throw ControllerRecordProblem(
-          code: .invalidControllerRecord,
-          key: "error.E5007.virtualDevice.labels",
-          "labels must be Xbox, PlayStation or Generic"
-        )
-      }
-      return labels
-    }
-    let identity = try document.identity.map(Self.identity)
-    if match != nil {
+    return labels
+  }
+
+  /// Checks that a file with `match` holds no definition fields and a file without it holds all.
+  private static func requireShape(
+    _ document: Document,
+    hasMatch: Bool,
+    layout: VirtualDeviceLayout?,
+    labels: VirtualIdentityGlyphFamily?,
+    identity: Identity?
+  ) throws {
+    if hasMatch {
       guard layout == nil, document.transport == nil, document.worksWithDefaultSDLHints == nil
       else {
         throw ControllerRecordProblem(
@@ -271,15 +315,6 @@ extension VirtualDevice {
         )
       }
     }
-    return Self(
-      persona: persona,
-      match: match,
-      layout: layout,
-      transport: document.transport,
-      labels: labels,
-      worksWithDefaultSDLHints: document.worksWithDefaultSDLHints,
-      identity: identity
-    )
   }
 
   /// The model, and optionally the unit, that a document's `match` names.
