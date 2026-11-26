@@ -60,73 +60,110 @@ enum RecordSyntax {
   /// - Throws: ``RecordSyntaxError`` for a tag that is not closed, a closing tag that does not
   ///   match the open one, text outside a value, or an element left open.
   static func tokens(in text: String) throws(RecordSyntaxError) -> [RecordSyntaxToken] {
-    let scalars = Array(text.unicodeScalars)
+    var lexer = Lexer(scalars: Array(text.unicodeScalars))
+    while lexer.position < lexer.scalars.count {
+      if lexer.scalars[lexer.position] == "<" {
+        try lexer.readTag()
+      } else {
+        try lexer.readText()
+      }
+    }
+    return try lexer.finish()
+  }
+
+  /// The reading position, the open elements and the tokens read so far.
+  private struct Lexer {
+    /// The text being read.
+    let scalars: [Unicode.Scalar]
+    /// The runs read so far.
     var tokens: [RecordSyntaxToken] = []
+    /// The names of the open elements, innermost last.
     var open: [String] = []
+    /// How many dictionaries and arrays are open.
     var containers = 0
+    /// The index of the next scalar to read.
     var position = 0
 
+    /// The text between `start` and `end`.
     func string(_ start: Int, _ end: Int) -> String {
       var view = String.UnicodeScalarView()
       view.append(contentsOf: scalars[start..<end])
       return String(view)
     }
 
-    while position < scalars.count {
+    /// Reads the tag at the position as one token and updates the open elements.
+    mutating func readTag() throws(RecordSyntaxError) {
       let start = position
-      if scalars[position] == "<" {
-        guard let close = scalars[position...].firstIndex(of: ">") else {
-          throw RecordSyntaxError(offset: start, reason: "a tag is not closed")
-        }
-        position = close + 1
-        let tag = string(start, position)
-        let body = tag.dropFirst().dropLast()
-        var kind = RecordSyntaxKind.punctuation
-        var depth = containers
-        if body.hasPrefix("?") || body.hasPrefix("!") {
-          // The declaration and the document type open nothing.
-        } else if body.hasPrefix("/") {
-          let name = String(body.dropFirst())
-          guard open.last == name else {
-            throw RecordSyntaxError(
-              offset: start,
-              reason: "\(tag) does not close \(open.last.map { "<\($0)>" } ?? "an open tag")"
-            )
-          }
-          open.removeLast()
-          if name == "dict" || name == "array" {
-            containers -= 1
-            depth = containers
-          }
-        } else {
-          let selfClosing = body.hasSuffix("/")
-          let name = String(
-            (selfClosing ? body.dropLast() : body).prefix { !$0.isWhitespace }
-          )
-          if selfClosing {
-            if name == "true" || name == "false" { kind = .literal }
-          } else {
-            open.append(name)
-            if name == "dict" || name == "array" { containers += 1 }
-          }
-        }
-        tokens.append(RecordSyntaxToken(kind: kind, text: tag, depth: depth))
+      guard let close = scalars[position...].firstIndex(of: ">") else {
+        throw RecordSyntaxError(offset: start, reason: "a tag is not closed")
+      }
+      position = close + 1
+      let tag = string(start, position)
+      let body = tag.dropFirst().dropLast()
+      var kind = RecordSyntaxKind.punctuation
+      var depth = containers
+      if body.hasPrefix("?") || body.hasPrefix("!") {
+        // The declaration and the document type open nothing.
+      } else if body.hasPrefix("/") {
+        try closeElement(named: String(body.dropFirst()), tag: tag, offset: start)
+        depth = containers
       } else {
-        while position < scalars.count, scalars[position] != "<" { position += 1 }
-        let run = string(start, position)
-        if let name = open.last, let kind = valueKinds[name] {
-          tokens.append(RecordSyntaxToken(kind: kind, text: run, depth: containers))
-        } else if run.allSatisfy(\.isWhitespace) {
-          tokens.append(RecordSyntaxToken(kind: .space, text: run, depth: containers))
-        } else {
-          throw RecordSyntaxError(offset: start, reason: "text outside a value")
-        }
+        kind = openElement(body)
+      }
+      tokens.append(RecordSyntaxToken(kind: kind, text: tag, depth: depth))
+    }
+
+    /// Closes the innermost element, which must be `name`.
+    private mutating func closeElement(
+      named name: String,
+      tag: String,
+      offset: Int
+    ) throws(RecordSyntaxError) {
+      guard open.last == name else {
+        throw RecordSyntaxError(
+          offset: offset,
+          reason: "\(tag) does not close \(open.last.map { "<\($0)>" } ?? "an open tag")"
+        )
+      }
+      open.removeLast()
+      if name == "dict" || name == "array" { containers -= 1 }
+    }
+
+    /// Opens the element of a start or self-closing tag `body` and returns the kind of the tag.
+    private mutating func openElement(_ body: Substring) -> RecordSyntaxKind {
+      let selfClosing = body.hasSuffix("/")
+      let name = String(
+        (selfClosing ? body.dropLast() : body).prefix { !$0.isWhitespace }
+      )
+      if selfClosing {
+        return name == "true" || name == "false" ? .literal : .punctuation
+      }
+      open.append(name)
+      if name == "dict" || name == "array" { containers += 1 }
+      return .punctuation
+    }
+
+    /// Reads the text up to the next tag as one token.
+    mutating func readText() throws(RecordSyntaxError) {
+      let start = position
+      while position < scalars.count, scalars[position] != "<" { position += 1 }
+      let run = string(start, position)
+      if let name = open.last, let kind = RecordSyntax.valueKinds[name] {
+        tokens.append(RecordSyntaxToken(kind: kind, text: run, depth: containers))
+      } else if run.allSatisfy(\.isWhitespace) {
+        tokens.append(RecordSyntaxToken(kind: .space, text: run, depth: containers))
+      } else {
+        throw RecordSyntaxError(offset: start, reason: "text outside a value")
       }
     }
-    if let name = open.last {
-      throw RecordSyntaxError(offset: position, reason: "<\(name)> is not closed")
+
+    /// Returns the tokens once every element is closed and at least one token was read.
+    func finish() throws(RecordSyntaxError) -> [RecordSyntaxToken] {
+      if let name = open.last {
+        throw RecordSyntaxError(offset: position, reason: "<\(name)> is not closed")
+      }
+      guard !tokens.isEmpty else { throw RecordSyntaxError(offset: 0, reason: "the text is empty") }
+      return tokens
     }
-    guard !tokens.isEmpty else { throw RecordSyntaxError(offset: 0, reason: "the text is empty") }
-    return tokens
   }
 }
