@@ -120,28 +120,7 @@ struct VirtualFeedCommand: AsyncParsableCommand {
     var wake: AsyncStream<Void>.Continuation?
     let wakes = AsyncStream<Void>(bufferingPolicy: .bufferingNewest(1)) { wake = $0 }
     let signal = wake
-    let reader = Task {
-      defer { signal?.yield() }
-      var number = 0
-      for await line in lines {
-        number += 1
-        let text = line.trimmingCharacters(in: .whitespaces)
-        guard !text.isEmpty else { continue }
-        guard let frame = try? JSONDecoder().decode(VirtualFeedFrame.self, from: Data(text.utf8))
-        else {
-          input.withLock { $0.invalidLine = number }
-          return
-        }
-        while input.withLock({ $0.pending.count >= VirtualFeedExchangeResult.maximumQueuedFrames })
-        {
-          try? await Task.sleep(nanoseconds: 4_000_000)
-          if Task.isCancelled { return }
-        }
-        input.withLock { $0.pending.append(frame) }
-        signal?.yield()
-      }
-      input.withLock { $0.finished = true }
-    }
+    let reader = Task { await readFrames(lines, into: input, wake: signal) }
     let ticker = Task {
       while !Task.isCancelled {
         try? await Task.sleep(nanoseconds: 16_000_000)
@@ -149,27 +128,7 @@ struct VirtualFeedCommand: AsyncParsableCommand {
       }
     }
     let watcher = Task {
-      let heartbeat = UInt64(VirtualFeedExchangeResult.heartbeatSeconds * 1_000_000_000)
-      while !Task.isCancelled {
-        let started = DispatchTime.now().uptimeNanoseconds
-        let ready = try? await client.waitForVirtualFeedFeedback(
-          token: token,
-          timeoutMilliseconds: Int(VirtualFeedExchangeResult.heartbeatSeconds * 1000)
-        )
-        guard ready == true else {
-          // A wait that failed or ended early, such as on a service without the request, waits out
-          // the heartbeat so the watcher does not spin; the heartbeat exchange still collects.
-          let elapsed = DispatchTime.now().uptimeNanoseconds - started
-          if elapsed < heartbeat { try? await Task.sleep(nanoseconds: heartbeat - elapsed) }
-          continue
-        }
-        input.withLock { $0.feedbackWaiting = true }
-        signal?.yield()
-        // The next wait would return at once until the loop has collected the commands.
-        while input.withLock({ $0.feedbackWaiting }), !Task.isCancelled {
-          try? await Task.sleep(nanoseconds: 2_000_000)
-        }
-      }
+      await watchFeedback(client, token: token, input: input, wake: signal)
     }
     defer {
       reader.cancel()
@@ -196,24 +155,13 @@ struct VirtualFeedCommand: AsyncParsableCommand {
         || now - lastExchange >= VirtualFeedExchangeResult.heartbeatSeconds
       {
         lastExchange = now
-        input.withLock { $0.feedbackWaiting = false }
-        let frames = next.pending
-        let result = try await ServiceConnection.withDeadline(seconds: timeout) {
-          try await client.exchangeVirtualFeed(token: token, frames: frames)
-        }
-        input.withLock { $0.pending.removeFirst(min(result.accepted, frames.count)) }
-        queued = result.queued
-        for line in result.feedback.compactMap(RumbleCommandLine.init) {
-          try CLIOutput.jsonLine(line)
-        }
-        if result.closed {
-          throw CLIFailure(
-            .serviceRequestFailed,
-            CLILocalized.text(
-              "cli.virtual.feed.errorClosed"
-            )
-          )
-        }
+        queued = try await exchange(
+          client,
+          token: token,
+          timeout: timeout,
+          input: input,
+          frames: next.pending
+        )
       }
       if next.finished, queued == 0,
         input.withLock({ $0.pending.isEmpty && !$0.feedbackWaiting })
@@ -222,6 +170,94 @@ struct VirtualFeedCommand: AsyncParsableCommand {
       }
       guard await woken.next() != nil else { throw CancellationError() }
     }
+  }
+
+  /// Decodes each input line as a frame and queues it; records the number of the first line that
+  /// is not a frame, and marks the input finished when the lines end.
+  private static func readFrames(
+    _ lines: AsyncStream<String>,
+    into input: Locked<Input>,
+    wake signal: AsyncStream<Void>.Continuation?
+  ) async {
+    defer { signal?.yield() }
+    var number = 0
+    for await line in lines {
+      number += 1
+      let text = line.trimmingCharacters(in: .whitespaces)
+      guard !text.isEmpty else { continue }
+      guard let frame = try? JSONDecoder().decode(VirtualFeedFrame.self, from: Data(text.utf8))
+      else {
+        input.withLock { $0.invalidLine = number }
+        return
+      }
+      while input.withLock({ $0.pending.count >= VirtualFeedExchangeResult.maximumQueuedFrames }) {
+        try? await Task.sleep(nanoseconds: 4_000_000)
+        if Task.isCancelled { return }
+      }
+      input.withLock { $0.pending.append(frame) }
+      signal?.yield()
+    }
+    input.withLock { $0.finished = true }
+  }
+
+  /// Holds a feedback wait on the service and wakes the loop when the host has sent commands.
+  private static func watchFeedback(
+    _ client: ApplicationServiceClient,
+    token: UUID,
+    input: Locked<Input>,
+    wake signal: AsyncStream<Void>.Continuation?
+  ) async {
+    let heartbeat = UInt64(VirtualFeedExchangeResult.heartbeatSeconds * 1_000_000_000)
+    while !Task.isCancelled {
+      let started = DispatchTime.now().uptimeNanoseconds
+      let ready = try? await client.waitForVirtualFeedFeedback(
+        token: token,
+        timeoutMilliseconds: Int(VirtualFeedExchangeResult.heartbeatSeconds * 1000)
+      )
+      guard ready == true else {
+        // A wait that failed or ended early, such as on a service without the request, waits out
+        // the heartbeat so the watcher does not spin; the heartbeat exchange still collects.
+        let elapsed = DispatchTime.now().uptimeNanoseconds - started
+        if elapsed < heartbeat { try? await Task.sleep(nanoseconds: heartbeat - elapsed) }
+        continue
+      }
+      input.withLock { $0.feedbackWaiting = true }
+      signal?.yield()
+      // The next wait would return at once until the loop has collected the commands.
+      while input.withLock({ $0.feedbackWaiting }), !Task.isCancelled {
+        try? await Task.sleep(nanoseconds: 2_000_000)
+      }
+    }
+  }
+
+  /// Sends the frames and prints the host commands that come back.
+  ///
+  /// - Returns: The number of frames the service still holds.
+  /// - Throws: A failure when the service closed the feed.
+  private static func exchange(
+    _ client: ApplicationServiceClient,
+    token: UUID,
+    timeout: Double,
+    input: Locked<Input>,
+    frames: [VirtualFeedFrame]
+  ) async throws -> Int {
+    input.withLock { $0.feedbackWaiting = false }
+    let result = try await ServiceConnection.withDeadline(seconds: timeout) {
+      try await client.exchangeVirtualFeed(token: token, frames: frames)
+    }
+    input.withLock { $0.pending.removeFirst(min(result.accepted, frames.count)) }
+    for line in result.feedback.compactMap(RumbleCommandLine.init) {
+      try CLIOutput.jsonLine(line)
+    }
+    if result.closed {
+      throw CLIFailure(
+        .serviceRequestFailed,
+        CLILocalized.text(
+          "cli.virtual.feed.errorClosed"
+        )
+      )
+    }
+    return result.queued
   }
 
   /// What the input reader has seen and the feed has not accepted yet.
