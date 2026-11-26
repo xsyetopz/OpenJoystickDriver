@@ -382,152 +382,18 @@ struct ProtocolDescription: Sendable {
     _ data: Data,
     fileName: String
   ) throws(ProtocolDescriptionProblem) -> Self {
-    let document: Document
-    do {
-      document = try DocumentCoder.decode(
-        Document.self,
-        from: data,
-        file: fileName,
-        userInfo: [.startupConditionsAllowed: true]
-      )
-    } catch {
-      throw ProtocolDescriptionProblem(
-        .invalidProtocolDescription,
-        "\(fileName): "
-          + ControllerRecordSet.problemDescription(
-            error,
-            includingCode: false,
-            document: "description"
-          )
-      )
-    }
-    if let problem = OpenJoystickDriverAPI.headerProblem(
-      apiVersion: document.apiVersion,
-      kind: document.kind,
-      expected: kind
-    ) {
-      throw ProtocolDescriptionProblem(
-        problem.code ?? .invalidProtocolDescription,
-        "\(fileName): \(problem.message)"
-      )
-    }
-    guard
-      document.family.range(of: "\\A[A-Z][A-Za-z0-9]*\\z", options: .regularExpression) != nil
-    else {
-      throw ProtocolDescriptionProblem(
-        .invalidProtocolDescription,
-        "\(fileName): \(document.family) is not an UpperCamelCase family name"
-      )
-    }
+    let document = try decodedDocument(data, fileName: fileName)
+    try requireValidHeader(document, fileName: fileName)
     let famID =
       PhysicalProtocolID.allCases.first { $0.rawValue == document.family }
       ?? PhysicalProtocolID(documented: document.family)
-    var seenSignatures: Set<String> = []
-    for signature in document.interfaceSignatures {
-      let identity = [
-        signature.variant, "\(signature.interfaceClass)", "\(signature.interfaceSubclass)",
-        "\(signature.interfaceProtocol)", signature.interfaceNumber.map(String.init) ?? "",
-      ].joined(separator: "/")
-      guard seenSignatures.insert(identity).inserted else {
-        throw ProtocolDescriptionProblem(
-          .invalidProtocolDescription,
-          "\(fileName): interfaceSignatures names \(identity) twice"
-        )
-      }
-    }
-    let unreadParameters = Set(document.parameters.keys).subtracting(famID.readParameters)
-    guard unreadParameters.isEmpty else {
-      throw ProtocolDescriptionProblem(
-        .invalidProtocolDescription,
-        "\(fileName): \(famID.rawValue) reads no parameter(s) "
-          + unreadParameters.sorted().joined(separator: ", ")
-      )
-    }
-    // The file name is checked after the document's own rules.
-    let stem = URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
-    if !famID.isDocumented, stem == famID.rawValue {
-      throw ProtocolDescriptionProblem(
-        .invalidProtocolDescription,
-        "\(fileName): \(famID.rawValue) is a built-in family; a documented one needs its own name"
-      )
-    }
-    guard stem == famID.descriptionFileStem else {
-      throw ProtocolDescriptionProblem(
-        .protocolDescriptionFamilyMismatch,
-        "\(fileName): file name must be \(famID.descriptionFileStem).plist"
-      )
-    }
-    if famID.isDocumented {
-      guard document.displayName != nil else {
-        throw ProtocolDescriptionProblem(
-          .invalidProtocolDescription,
-          "\(fileName): a documented family sets displayName"
-        )
-      }
-      guard document.defaults?.input?.layouts != nil else {
-        throw ProtocolDescriptionProblem(
-          .invalidProtocolDescription,
-          "\(fileName): a documented family sets defaults.input.layouts"
-        )
-      }
-    } else if document.displayName != nil {
-      throw ProtocolDescriptionProblem(
-        .invalidProtocolDescription,
-        "\(fileName): displayName applies only to a documented family"
-      )
-    }
-    let protocolID = famID
-    var signatures: [ProtocolInterfaceSignature] = []
-    for signature in document.interfaceSignatures {
-      guard let variant = PhysicalProtocolVariantID(rawValue: signature.variant),
-        document.variants.contains(variant)
-      else {
-        throw ProtocolDescriptionProblem(
-          .unknownProtocolVariant,
-          "\(fileName): \(protocolID.rawValue) has no variant \(signature.variant)"
-        )
-      }
-      signatures.append(
-        ProtocolInterfaceSignature(
-          protocolID: protocolID,
-          variant: variant,
-          interfaceClass: signature.interfaceClass,
-          interfaceSubclass: signature.interfaceSubclass,
-          interfaceProtocol: signature.interfaceProtocol,
-          requiredInterfaceNumber: signature.interfaceNumber
-        )
-      )
-    }
-    var rawUSBChoice = RawUSB.never
-    switch document.rawUSB {
-    case .none: break
-    case .always: rawUSBChoice = .always
-    case .variants(let names):
-      var chosen: Set<PhysicalProtocolVariantID> = []
-      for name in names {
-        guard let variant = PhysicalProtocolVariantID(rawValue: name),
-          document.variants.contains(variant)
-        else {
-          throw ProtocolDescriptionProblem(
-            .unknownProtocolVariant,
-            "\(fileName): \(protocolID.rawValue) has no variant \(name)"
-          )
-        }
-        chosen.insert(variant)
-      }
-      rawUSBChoice = .variants(chosen)
-    }
+    try requireDistinctSignaturesAndReadParameters(document, family: famID, fileName: fileName)
+    try requireFileNameAndDocumentedFields(document, family: famID, fileName: fileName)
+    let signatures = try resolvedSignatures(of: document, family: famID, fileName: fileName)
+    let rawUSBChoice = try resolvedRawUSB(of: document, family: famID, fileName: fileName)
     func variant(named name: String) throws(ProtocolDescriptionProblem) -> PhysicalProtocolVariantID
     {
-      guard let resolved = PhysicalProtocolVariantID(rawValue: name),
-        document.variants.contains(resolved)
-      else {
-        throw ProtocolDescriptionProblem(
-          .unknownProtocolVariant,
-          "\(fileName): \(protocolID.rawValue) has no variant \(name)"
-        )
-      }
-      return resolved
+      try resolvedVariant(named: name, in: document, family: famID, fileName: fileName)
     }
     var tuningByVariant: [PhysicalProtocolVariantID: ControllerTuning] = [:]
     for (name, perVariant) in document.defaults?.variantTuning ?? [:] {
@@ -549,7 +415,7 @@ struct ProtocolDescription: Sendable {
       fileName: fileName
     )
     let description = Self(
-      family: protocolID,
+      family: famID,
       displayName: document.displayName,
       variants: document.variants,
       storesVariant: document.storesVariant,
@@ -589,22 +455,7 @@ struct ProtocolDescription: Sendable {
       variantTuning: tuningByVariant,
       variantRumble: rumbleByVariant
     )
-    for condition in description.startupWrites.map(\.condition)
-      + description.usbStartupWrites.map(\.condition)
-      + (description.receiverPowerOff.map { [$0.condition] } ?? [])
-      + (description.keepAlive?.writes.map(\.payload.condition) ?? [])
-    {
-      if let problem = description.conditionProblem(condition, fileName: fileName) {
-        throw problem
-      }
-    }
-    if let problem = description.ruleProblem(fileName: fileName) { throw problem }
-    if let violation = description.scopeViolation {
-      throw ProtocolDescriptionProblem(
-        .invalidProtocolDescription,
-        "\(fileName): \(violation.description)"
-      )
-    }
+    try description.requireSoundRules(fileName: fileName)
     return description
   }
 
