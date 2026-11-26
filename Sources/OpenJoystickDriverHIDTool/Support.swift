@@ -68,14 +68,48 @@ enum HIDToolArgumentError: Error, CustomStringConvertible {
 func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   if arguments == ["-h"] || arguments == ["--help"] { return nil }
 
-  let valueOptions = Set([
-    "--vid", "--pid", "--endpoint", "--length", "--seconds", "--send", "--out-endpoint",
-  ])
-  let booleanOptions = Set(["--service-open", "--set-report", "--validate-only"])
-  let knownOptions = valueOptions.union(booleanOptions).union(HIDToolMode.allCases.map(\.rawValue))
+  let scan = try scanHIDToolOptions(arguments)
+  guard scan.modes.count == 1, let mode = scan.modes.first else {
+    let message = scan.modes.isEmpty ? "missing mode selector" : "multiple mode selectors"
+    throw HIDToolArgumentError.message(message)
+  }
+
+  let suppliedOptions = Set(scan.values.keys).union(scan.flags).subtracting([mode.rawValue])
+  if let option = suppliedOptions.subtracting(ownedHIDToolOptions(of: mode)).min() {
+    throw HIDToolArgumentError.message("option '\(option)' is not valid with '\(mode.rawValue)'")
+  }
+  try validateHIDToolValues(of: mode, scan.values)
+
+  return HIDToolArguments(mode: mode, values: scan.values, flags: scan.flags)
+}
+
+/// The options that take a value.
+private let hidToolValueOptions: Set<String> = [
+  "--vid", "--pid", "--endpoint", "--length", "--seconds", "--send", "--out-endpoint",
+]
+
+/// The options that stand alone.
+private let hidToolBooleanOptions: Set<String> = [
+  "--service-open", "--set-report", "--validate-only",
+]
+
+/// What one pass over the command line found.
+private struct HIDToolScan {
+  /// The options that carry a value, by option name.
   var values: [String: String] = [:]
+  /// The options that carry no value, mode selectors included.
   var flags = Set<String>()
+  /// The mode selectors, in the order given.
   var modes: [HIDToolMode] = []
+}
+
+/// Splits the command line into value options, flags, and mode selectors.
+///
+/// `--record-probe` is a mode selector that also takes the record path as its value.
+private func scanHIDToolOptions(_ arguments: [String]) throws -> HIDToolScan {
+  let knownOptions = hidToolValueOptions.union(hidToolBooleanOptions)
+    .union(HIDToolMode.allCases.map(\.rawValue))
+  var scan = HIDToolScan()
   var index = 0
 
   while index < arguments.count {
@@ -83,96 +117,91 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
     guard knownOptions.contains(argument) else {
       throw HIDToolArgumentError.message("unknown option '\(argument)'")
     }
-    guard !flags.contains(argument), values[argument] == nil else {
+    guard !scan.flags.contains(argument), scan.values[argument] == nil else {
       throw HIDToolArgumentError.message("duplicate option '\(argument)'")
     }
-    if let mode = HIDToolMode(rawValue: argument) {
-      modes.append(mode)
-      if mode == .recordProbe {
-        guard index + 1 < arguments.count, !knownOptions.contains(arguments[index + 1]) else {
-          throw HIDToolArgumentError.message("missing value for '--record-probe'")
-        }
-        values[argument] = arguments[index + 1]
-        index += 2
-        continue
-      }
-      flags.insert(argument)
+    let mode = HIDToolMode(rawValue: argument)
+    if let mode { scan.modes.append(mode) }
+    let takesValue = mode == .recordProbe || (mode == nil && hidToolValueOptions.contains(argument))
+    guard takesValue else {
+      scan.flags.insert(argument)
       index += 1
       continue
     }
-    if valueOptions.contains(argument) {
-      guard index + 1 < arguments.count, !arguments[index + 1].hasPrefix("-") else {
-        throw HIDToolArgumentError.message("missing value for '\(argument)'")
-      }
-      values[argument] = arguments[index + 1]
-      index += 2
-    } else {
-      flags.insert(argument)
-      index += 1
+    let valueIndex = index + 1
+    // A record path may start with `-`; it only must not be another option.
+    let valid =
+      valueIndex < arguments.count
+      && (mode == .recordProbe
+        ? !knownOptions.contains(arguments[valueIndex]) : !arguments[valueIndex].hasPrefix("-"))
+    guard valid else {
+      throw HIDToolArgumentError.message("missing value for '\(argument)'")
     }
+    scan.values[argument] = arguments[valueIndex]
+    index += 2
   }
+  return scan
+}
 
-  guard modes.count == 1, let mode = modes.first else {
-    let message = modes.isEmpty ? "missing mode selector" : "multiple mode selectors"
-    throw HIDToolArgumentError.message(message)
-  }
-
-  let owned: Set<String>
+/// The options, besides the selector itself, that `mode` uses.
+private func ownedHIDToolOptions(of mode: HIDToolMode) -> Set<String> {
   switch mode {
-  case .list: owned = []
-  case .dump, .dumpElements: owned = ["--vid", "--pid"]
-  case .open: owned = ["--vid", "--pid", "--service-open", "--set-report"]
-  case .monitor: owned = ["--vid", "--pid", "--seconds"]
-  case .usbMonitor:
-    owned = [
-      "--vid", "--pid", "--endpoint", "--length", "--seconds", "--send", "--out-endpoint",
-    ]
-  case .recordProbe: owned = ["--seconds", "--validate-only"]
-  case .usbPassive: owned = ["--vid", "--pid"]
+  case .list: []
+  case .dump, .dumpElements, .usbPassive: ["--vid", "--pid"]
+  case .open: ["--vid", "--pid", "--service-open", "--set-report"]
+  case .monitor: ["--vid", "--pid", "--seconds"]
+  case .usbMonitor: hidToolValueOptions
+  case .recordProbe: ["--seconds", "--validate-only"]
   }
-  let suppliedOptions = Set(values.keys).union(flags).subtracting([mode.rawValue])
-  if let option = suppliedOptions.subtracting(owned).min() {
-    throw HIDToolArgumentError.message("option '\(option)' is not valid with '\(mode.rawValue)'")
-  }
+}
 
-  func validate(_ name: String, range: ClosedRange<Int>) throws {
-    guard let raw = values[name] else { return }
-    guard let value = parseInt(raw) else {
-      throw HIDToolArgumentError.message("malformed value '\(raw)' for '\(name)'")
-    }
-    guard range.contains(value) else {
-      let bounds = "\(range.lowerBound)...\(range.upperBound)"
-      throw HIDToolArgumentError.message("value for '\(name)' is out of range \(bounds)")
-    }
+/// Checks that the option `name`, when given, is a number inside `range`.
+private func validateHIDToolValue(
+  _ name: String,
+  in values: [String: String],
+  range: ClosedRange<Int>
+) throws {
+  guard let raw = values[name] else { return }
+  guard let value = parseInt(raw) else {
+    throw HIDToolArgumentError.message("malformed value '\(raw)' for '\(name)'")
   }
+  guard range.contains(value) else {
+    let bounds = "\(range.lowerBound)...\(range.upperBound)"
+    throw HIDToolArgumentError.message("value for '\(name)' is out of range \(bounds)")
+  }
+}
 
-  try validate("--vid", range: 0...0xFFFF)
-  try validate("--pid", range: 0...0xFFFF)
-  if mode == .monitor { try validate("--seconds", range: 1...60) }
-  if mode == .usbMonitor || mode == .recordProbe { try validate("--seconds", range: 1...300) }
-  if mode == .usbMonitor, values["--vid"] == nil {
-    throw HIDToolArgumentError.message("'\(mode.rawValue)' requires '--vid'")
+/// Checks the ranges of the values that `mode` takes and the options that it requires.
+private func validateHIDToolValues(of mode: HIDToolMode, _ values: [String: String]) throws {
+  try validateHIDToolValue("--vid", in: values, range: 0...0xFFFF)
+  try validateHIDToolValue("--pid", in: values, range: 0...0xFFFF)
+  if mode == .monitor { try validateHIDToolValue("--seconds", in: values, range: 1...60) }
+  if mode == .usbMonitor || mode == .recordProbe {
+    try validateHIDToolValue("--seconds", in: values, range: 1...300)
   }
-  if mode == .usbMonitor {
-    try validate("--endpoint", range: 0...255)
-    try validate("--length", range: 1...1024)
-    try validate("--out-endpoint", range: 0x01...0x0F)
-    if let packets = values["--send"] {
-      guard parseUSBPackets(packets) != nil else {
-        throw HIDToolArgumentError.message("malformed value '\(packets)' for '--send'")
-      }
-      guard values["--out-endpoint"] != nil else {
-        throw HIDToolArgumentError.message("'--send' requires '--out-endpoint'")
-      }
-    }
-  }
+  if mode == .usbMonitor { try validateUSBMonitorValues(mode, values) }
   if mode == .dump || mode == .dumpElements || mode == .usbPassive || mode == .open {
     for required in ["--vid", "--pid"] where values[required] == nil {
       throw HIDToolArgumentError.message("'\(mode.rawValue)' requires '\(required)'")
     }
   }
+}
 
-  return HIDToolArguments(mode: mode, values: values, flags: flags)
+/// Checks the endpoint, length, and packet options of `--usb-monitor`.
+private func validateUSBMonitorValues(_ mode: HIDToolMode, _ values: [String: String]) throws {
+  if values["--vid"] == nil {
+    throw HIDToolArgumentError.message("'\(mode.rawValue)' requires '--vid'")
+  }
+  try validateHIDToolValue("--endpoint", in: values, range: 0...255)
+  try validateHIDToolValue("--length", in: values, range: 1...1024)
+  try validateHIDToolValue("--out-endpoint", in: values, range: 0x01...0x0F)
+  guard let packets = values["--send"] else { return }
+  guard parseUSBPackets(packets) != nil else {
+    throw HIDToolArgumentError.message("malformed value '\(packets)' for '--send'")
+  }
+  guard values["--out-endpoint"] != nil else {
+    throw HIDToolArgumentError.message("'--send' requires '--out-endpoint'")
+  }
 }
 
 /// The packets of `text`: each one 1 to 64 hex pairs, separated from the next by `;`, such as
