@@ -23,53 +23,19 @@ public enum PassiveUSBRegistryFactParser {
     let ambiguous = blobs.map(\.bytes).contains { $0 != blob?.bytes }
     let speedObservation = observeSpeed(root)
     let negotiatedSpeed = speedObservation.state == .observed ? speedObservation.speed : nil
-    let parsed: Result<PassiveUSBConfigurationDescriptor, PassiveUSBDescriptorBlobError>?
-    if ambiguous {
-      parsed = .failure(.ambiguousDescriptorProperties)
-    } else if let blob {
-      do {
-        parsed = .success(
-          try PassiveUSBConfigurationDescriptorParser.parse(
-            blob.bytes,
-            negotiatedSpeed: negotiatedSpeed
-          )
-        )
-      } catch let error as PassiveUSBDescriptorBlobError { parsed = .failure(error) } catch {
-        parsed = .failure(.truncated)
-      }
-    } else {
-      parsed = nil
-    }
-    let parsedDescriptor: PassiveUSBConfigurationDescriptor?
-    let parseError: PassiveUSBDescriptorBlobError?
-    switch parsed {
-    case .success(let value):
-      parsedDescriptor = value
-      parseError = nil
-    case .failure(let error):
-      parsedDescriptor = nil
-      parseError = error
-    case nil:
-      parsedDescriptor = nil
-      parseError = nil
-    }
+    let (parsedDescriptor, parseError) = parseBlob(
+      blob,
+      ambiguous: ambiguous,
+      negotiatedSpeed: negotiatedSpeed
+    )
+    let sources = blobs.map(\.source)
     let deviceClass = uint8(root, "bDeviceClass")
     let deviceSubclass = uint8(root, "bDeviceSubClass")
     let deviceProtocol = uint8(root, "bDeviceProtocol")
     let predicates =
       deviceClass == 0xFF && deviceSubclass == 0xFF && deviceProtocol == 0xFF
       ? ["P-DEV-255-255-255"] : []
-    let blobSource =
-      ambiguous
-      ? nil
-      : blob.map {
-        PassiveUSBDescriptorBlobSource(
-          propertyKey: $0.key,
-          serviceClass: $0.node.serviceClass,
-          registryPath: $0.node.registryPath,
-          byteCount: $0.bytes.count
-        )
-      }
+    let blobSource = ambiguous ? nil : blob?.source
     let observed = PassiveUSBObservedUSBFacts(
       tuple: tuple,
       name: string(root, "USB Product Name") ?? string(root, "Product Name"),
@@ -86,14 +52,7 @@ public enum PassiveUSBRegistryFactParser {
       serviceBindingsState: .unverified,
       serviceClasses: [root.serviceClass],
       descriptorBlobSource: blobSource,
-      descriptorBlobSources: blobs.map {
-        PassiveUSBDescriptorBlobSource(
-          propertyKey: $0.key,
-          serviceClass: $0.node.serviceClass,
-          registryPath: $0.node.registryPath,
-          byteCount: $0.bytes.count
-        )
-      },
+      descriptorBlobSources: sources,
       descriptorBlobAvailability: PassiveUSBDescriptorBlobAvailability(
         state: parsedDescriptor == nil ? .unverified : .observed,
         reason: blobs.isEmpty
@@ -114,14 +73,7 @@ public enum PassiveUSBRegistryFactParser {
       parsedDescriptorFacts: PassiveUSBParsedDescriptorFacts(
         state: parsedState,
         configuration: parsedDescriptor,
-        sources: blobs.map {
-          PassiveUSBDescriptorBlobSource(
-            propertyKey: $0.key,
-            serviceClass: $0.node.serviceClass,
-            registryPath: $0.node.registryPath,
-            byteCount: $0.bytes.count
-          )
-        },
+        sources: sources,
         error: parseError.map { String(describing: $0) }
       ),
       specificationInference: PassiveUSBSpecificationInference(
@@ -146,6 +98,41 @@ public enum PassiveUSBRegistryFactParser {
     let bytes: [UInt8]
     /// The node that holds the property.
     let node: PassiveUSBRegistryNode
+
+    /// The registry location of the blob as the probe result reports it.
+    var source: PassiveUSBDescriptorBlobSource {
+      PassiveUSBDescriptorBlobSource(
+        propertyKey: key,
+        serviceClass: node.serviceClass,
+        registryPath: node.registryPath,
+        byteCount: bytes.count
+      )
+    }
+  }
+
+  /// Parses `blob`, or reports why the registry tree yields no single configuration descriptor.
+  ///
+  /// Both values are nil when the tree holds no blob.
+  private static func parseBlob(
+    _ blob: Blob?,
+    ambiguous: Bool,
+    negotiatedSpeed: PassiveUSBNegotiatedSpeed?
+  ) -> (PassiveUSBConfigurationDescriptor?, PassiveUSBDescriptorBlobError?) {
+    if ambiguous { return (nil, .ambiguousDescriptorProperties) }
+    guard let blob else { return (nil, nil) }
+    do {
+      return (
+        try PassiveUSBConfigurationDescriptorParser.parse(
+          blob.bytes,
+          negotiatedSpeed: negotiatedSpeed
+        ),
+        nil
+      )
+    } catch let error as PassiveUSBDescriptorBlobError {
+      return (nil, error)
+    } catch {
+      return (nil, .truncated)
+    }
   }
 
   /// The registry property keys that can hold a configuration descriptor blob.
