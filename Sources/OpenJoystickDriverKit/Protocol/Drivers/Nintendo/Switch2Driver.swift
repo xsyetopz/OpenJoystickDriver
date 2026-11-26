@@ -165,22 +165,9 @@ public final class Switch2Driver: PhysicalProtocolDriver {
   public var capabilities: ControllerCapabilities {
     let controls: Set<Control>
     switch layout {
-    case .pro:
-      controls = Control.xboxLayout.subtracting([.leftTrigger, .rightTrigger]).union([
-        .leftTrigger, .rightTrigger, .guide, .capture, .auxiliary1, .leftPaddle1,
-        .rightPaddle1,
-      ])
-    case .leftJoyCon:
-      controls = [
-        .dpadUp, .dpadDown, .dpadLeft, .dpadRight, .leftStickX, .leftStickY, .leftStickClick,
-        .leftShoulder, .leftTrigger, .back,
-        .capture, .auxiliary3, .auxiliary4,
-      ]
-    case .rightJoyCon:
-      controls = [
-        .south, .east, .west, .north, .rightStickX, .rightStickY, .rightStickClick,
-        .rightShoulder, .rightTrigger, .start, .guide, .auxiliary1, .auxiliary5, .auxiliary6,
-      ]
+    case .pro: controls = switchProControls.union([.auxiliary1, .leftPaddle1, .rightPaddle1])
+    case .leftJoyCon: controls = switchLeftJoyConControls
+    case .rightJoyCon: controls = switchRightJoyConControls.union([.auxiliary1])
     case .gameCube:
       controls = Control.xboxLayout.subtracting([.back, .leftStickClick, .rightStickClick]).union(
         [.leftTrigger, .rightTrigger, .guide, .capture, .auxiliary1])

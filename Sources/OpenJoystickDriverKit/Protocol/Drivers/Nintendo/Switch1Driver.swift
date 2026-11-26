@@ -9,6 +9,20 @@ private let switchProStickCenter: UInt16 = 2048
 /// The largest distance of a raw stick axis from its center.
 private let switchProStickMax: Float = 2047
 
+/// The controls of a Pro Controller: the Xbox layout with digital triggers, Home and Capture.
+let switchProControls: Set<Control> = Control.xboxLayout.subtracting([.leftTrigger, .rightTrigger])
+  .union([.leftTrigger, .rightTrigger, .guide, .capture])
+/// The controls of a left Joy-Con on its own.
+let switchLeftJoyConControls: Set<Control> = [
+  .dpadUp, .dpadDown, .dpadLeft, .dpadRight, .leftStickX, .leftStickY, .leftStickClick,
+  .leftShoulder, .leftTrigger, .back, .capture, .auxiliary3, .auxiliary4,
+]
+/// The controls of a right Joy-Con on its own.
+let switchRightJoyConControls: Set<Control> = [
+  .south, .east, .west, .north, .rightStickX, .rightStickY, .rightStickClick,
+  .rightShoulder, .rightTrigger, .start, .guide, .auxiliary5, .auxiliary6,
+]
+
 /// The shape of the controller that the driver decodes.
 public enum NintendoControllerLayout: Sendable {
   /// A Pro Controller.
@@ -142,21 +156,9 @@ public final class Switch1Driver: PhysicalProtocolDriver {
   public var capabilities: ControllerCapabilities {
     let controls: Set<Control>
     switch layout {
-    case .pro:
-      controls = Control.xboxLayout.subtracting([.leftTrigger, .rightTrigger]).union([
-        .leftTrigger, .rightTrigger, .guide, .capture,
-      ])
-    case .leftJoyCon:
-      controls = [
-        .dpadUp, .dpadDown, .dpadLeft, .dpadRight, .leftStickX, .leftStickY, .leftStickClick,
-        .leftShoulder, .leftTrigger, .back,
-        .capture, .auxiliary3, .auxiliary4,
-      ]
-    case .rightJoyCon:
-      controls = [
-        .south, .east, .west, .north, .rightStickX, .rightStickY, .rightStickClick,
-        .rightShoulder, .rightTrigger, .start, .guide, .auxiliary5, .auxiliary6,
-      ]
+    case .pro: controls = switchProControls
+    case .leftJoyCon: controls = switchLeftJoyConControls
+    case .rightJoyCon: controls = switchRightJoyConControls
     }
     return ControllerCapabilities(
       controls: controls,
@@ -220,8 +222,8 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     case .rightJoyCon: buttonMask = 0x0000_16FF
     }
     let buttons = readUInt24LE(bytes, offset: ReportOffset.buttons) & buttonMask
-    let left = readStick(bytes, offset: ReportOffset.leftStick)
-    let right = readStick(bytes, offset: ReportOffset.rightStick)
+    let left = Switch2Driver.twelveBitPair(bytes, at: ReportOffset.leftStick)
+    let right = Switch2Driver.twelveBitPair(bytes, at: ReportOffset.rightStick)
 
     var next = state
     for (mask, control) in buttonTable { next.set(control, pressed: buttons & mask != 0) }
@@ -354,13 +356,6 @@ public final class Switch1Driver: PhysicalProtocolDriver {
   /// Reads three bytes of `bytes` at `offset` as a little-endian number.
   private func readUInt24LE(_ bytes: [UInt8], offset: Int) -> UInt32 {
     UInt32(bytes[offset]) | (UInt32(bytes[offset + 1]) << 8) | (UInt32(bytes[offset + 2]) << 16)
-  }
-
-  /// Reads the two packed 12-bit stick values at `offset`.
-  private func readStick(_ bytes: [UInt8], offset: Int) -> (x: UInt16, y: UInt16) {
-    let x = UInt16(bytes[offset]) | (UInt16(bytes[offset + 1] & 0x0F) << 8)
-    let y = (UInt16(bytes[offset + 1]) >> 4) | (UInt16(bytes[offset + 2]) << 4)
-    return (x, y)
   }
 
   /// Maps a raw 12-bit stick value to -1...1 around the center, clamped.
