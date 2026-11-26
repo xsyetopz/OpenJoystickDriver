@@ -13,124 +13,14 @@
     var body: some View {
       Form {
         Section { controllerHeader }
-        HiddenChangeNotice(content: .changed(hiddenChangeCount))
-        Section {
-          ControllerReadinessCard(
-            readiness: readiness,
-            isActionEnabled: readiness.action != .openInputTest
-              || device.sessionState != .suspended,
-            showsAction: !viewModel.mainWindowProblems.contains {
-              $0.offersFix(of: readiness.action)
-            },
-            perform: perform
-          )
-        }
-        if showsSessionState {
-          Section {
-            if device.holdsExclusively {
-              OJDLabeledRow(OJDLocalized.string("ui.controllers.exclusiveOwner")) {
-                HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
-                  Text(OJDLocalized.string("term.app.name")).foregroundColor(
-                    Color(NSColor.secondaryLabelColor)
-                  )
-                  Button(OJDLocalized.string("ui.menu.controller.suspend")) {
-                    Task { @MainActor in await viewModel.suspendController(device) }
-                  }.help(OJDLocalized.string("ui.help.suspend"))
-                }
-              }
-            }
-            if device.sessionState == .suspended {
-              OJDLabeledRow(OJDLocalized.string("ui.controllers.suspended")) {
-                Button(OJDLocalized.string("ui.menu.controller.resume")) {
-                  Task { @MainActor in await viewModel.resumeController(device) }
-                }.help(OJDLocalized.string("ui.help.resume"))
-              }
-            }
-            if let failure = viewModel.controllerActionFailures[device.sessionToken.rawValue] {
-              controllerActionFailure(failure)
-            }
-          }
-        }
-        Section {
-          activeProfileRow
-          ForEach(
-            ControllerDetailFacts.general(for: device, appName: ProfileAppChoices.appName)
-          ) { fact in
-            switch fact.kind {
-            case .serialNumber:
-              SerialNumberRow(label: fact.label, serial: fact.value, visibility: $serialVisibility)
-                .ojdInterfaceRow(ControllerDetailRow.serialNumber)
-            case .publication, .serving:
-              OJDLabeledValue(fact.label, fact.value).ojdInterfaceRow(
-                ControllerDetailRow.servingFacts
-              )
-            default:
-              OJDLabeledValue(fact.label, fact.value)
-            }
-          }
-        }
-        if let validations = record?.validations, !validations.isEmpty {
-          Section {
-            ForEach(validations, id: \.issue) { validation in
-              OJDLabeledRow(OJDLocalized.string("ui.controllers.communityVerified")) {
-                Link(
-                  OJDLocalized.formatted(
-                    "ui.controllers.communityVerifiedMode",
-                    validation.modeID,
-                    "#\(validation.issue)"
-                  ),
-                  destination: validation.issueURL
-                ).help(OJDLocalized.string("ui.help.communityLink"))
-              }
-            }
-          }
-        }
-        if device.isHeldByAppleDriver {
-          Section {
-            ControllerClaimButton(viewModel: viewModel)
-          }.ojdInterfaceRow(ControllerDetailRow.appleDriverHold)
-        }
-        if ControllerServerPicker.isShown(for: device) {
-          Section {
-            ControllerServerPicker(
-              viewModel: viewModel,
-              device: device,
-              hasRecord: record != nil || !hasLoadedRecord
-            )
-            if let record {
-              OJDLabeledValue(
-                OJDLocalized.string("ui.controllers.server.source"),
-                ControllerDetailFacts.serverSourceText(record)
-              )
-            }
-          }.ojdInterfaceRow(ControllerDetailRow.servedBy)
-        }
-        if device.physicalOwnership != .systemGamepad {
-          // A per-controller identity resets the picker state on a different selection.
-          Section {
-            VirtualHIDProfileOverrideView(viewModel: viewModel, device: device).id(
-              device.sessionToken.rawValue
-            )
-          }
-          Section {
-            VirtualGamepadActionsView(
-              device: device,
-              connectedDevices: connectedDevices,
-              viewModel: viewModel,
-              actions: actions
-            ).ojdInterfaceRow(ControllerDetailRow.mappingActions)
-          }
-        }
-        if let record {
-          Section {
-            ControllerCalibrationSection(
-              viewModel: viewModel,
-              device: device,
-              setting: StickDeadzoneSetting(record: record)
-            ) { await loadRecord() }.ojdInterfaceRow(ControllerDetailRow.stickDeadzone)
-            tuningDisclosure(for: record).ojdInterfaceRow(ControllerDetailRow.tuning)
-          }.ojdInterfaceRow(ControllerDetailRow.tuning)
-        }
+        readinessSection
+        sessionStateSection
+        factsSection
+        validationsSection
+        appleDriverSection
+        serverSection
+        virtualGamepadSections
+        tuningSection
         Section { advancedDisclosure }.ojdInterfaceRow(ControllerDetailRow.identifiers)
       }.task(id: recordLoadID) { await loadRecord() }.sheet(item: $actions.timedKind) { kind in
         ControllerTimedActionSheet(
@@ -144,6 +34,163 @@
         ControllerFilePanels.save(request) { actions.finishSave(to: $0) }
       }.ojdGroupedForm().accessibilityElement(children: .contain)
         .ojdAccessibilityLabel(device.name)
+    }
+
+    /// The readiness card with its one action.
+    @ViewBuilder
+    private var readinessSection: some View {
+      Section {
+        ControllerReadinessCard(
+          readiness: readiness,
+          isActionEnabled: readiness.action != .openInputTest
+            || device.sessionState != .suspended,
+          showsAction: !viewModel.mainWindowProblems.contains {
+            $0.offersFix(of: readiness.action)
+          },
+          perform: perform
+        )
+      }
+    }
+
+    /// The exclusive hold, the suspended session and the latest action failure.
+    @ViewBuilder
+    private var sessionStateSection: some View {
+      if showsSessionState {
+        Section {
+          if device.holdsExclusively {
+            OJDLabeledRow(OJDLocalized.string("ui.controllers.exclusiveOwner")) {
+              HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
+                Text(OJDLocalized.string("term.app.name")).foregroundColor(
+                  Color(NSColor.secondaryLabelColor)
+                )
+                Button(OJDLocalized.string("ui.menu.controller.suspend")) {
+                  Task { @MainActor in await viewModel.suspendController(device) }
+                }.help(OJDLocalized.string("ui.help.suspend"))
+              }
+            }
+          }
+          if device.sessionState == .suspended {
+            OJDLabeledRow(OJDLocalized.string("ui.controllers.suspended")) {
+              Button(OJDLocalized.string("ui.menu.controller.resume")) {
+                Task { @MainActor in await viewModel.resumeController(device) }
+              }.help(OJDLocalized.string("ui.help.resume"))
+            }
+          }
+          if let failure = viewModel.controllerActionFailures[device.sessionToken.rawValue] {
+            controllerActionFailure(failure)
+          }
+        }
+      }
+    }
+
+    /// The active profile row and the general facts.
+    @ViewBuilder
+    private var factsSection: some View {
+      Section {
+        activeProfileRow
+        ForEach(
+          ControllerDetailFacts.general(for: device, appName: ProfileAppChoices.appName)
+        ) { fact in
+          switch fact.kind {
+          case .serialNumber:
+            SerialNumberRow(label: fact.label, serial: fact.value, visibility: $serialVisibility)
+              .ojdInterfaceRow(ControllerDetailRow.serialNumber)
+          case .publication, .serving:
+            OJDLabeledValue(fact.label, fact.value).ojdInterfaceRow(
+              ControllerDetailRow.servingFacts
+            )
+          default:
+            OJDLabeledValue(fact.label, fact.value)
+          }
+        }
+      }
+    }
+
+    /// The community validations of the record.
+    @ViewBuilder
+    private var validationsSection: some View {
+      if let validations = record?.validations, !validations.isEmpty {
+        Section {
+          ForEach(validations, id: \.issue) { validation in
+            OJDLabeledRow(OJDLocalized.string("ui.controllers.communityVerified")) {
+              Link(
+                OJDLocalized.formatted(
+                  "ui.controllers.communityVerifiedMode",
+                  validation.modeID,
+                  "#\(validation.issue)"
+                ),
+                destination: validation.issueURL
+              ).help(OJDLocalized.string("ui.help.communityLink"))
+            }
+          }
+        }
+      }
+    }
+
+    /// The button that claims a controller held by the Apple driver.
+    @ViewBuilder
+    private var appleDriverSection: some View {
+      if device.isHeldByAppleDriver {
+        Section {
+          ControllerClaimButton(viewModel: viewModel)
+        }.ojdInterfaceRow(ControllerDetailRow.appleDriverHold)
+      }
+    }
+
+    /// The server picker and the source of its choice.
+    @ViewBuilder
+    private var serverSection: some View {
+      if ControllerServerPicker.isShown(for: device) {
+        Section {
+          ControllerServerPicker(
+            viewModel: viewModel,
+            device: device,
+            hasRecord: record != nil || !hasLoadedRecord
+          )
+          if let record {
+            OJDLabeledValue(
+              OJDLocalized.string("ui.controllers.server.source"),
+              ControllerDetailFacts.serverSourceText(record)
+            )
+          }
+        }.ojdInterfaceRow(ControllerDetailRow.servedBy)
+      }
+    }
+
+    /// The virtual gamepad profile and its actions.
+    @ViewBuilder
+    private var virtualGamepadSections: some View {
+      if device.physicalOwnership != .systemGamepad {
+        // A per-controller identity resets the picker state on a different selection.
+        Section {
+          VirtualHIDProfileOverrideView(viewModel: viewModel, device: device).id(
+            device.sessionToken.rawValue
+          )
+        }
+        Section {
+          VirtualGamepadActionsView(
+            device: device,
+            connectedDevices: connectedDevices,
+            viewModel: viewModel,
+            actions: actions
+          ).ojdInterfaceRow(ControllerDetailRow.mappingActions)
+        }
+      }
+    }
+
+    /// The calibration and the tuning disclosure.
+    @ViewBuilder
+    private var tuningSection: some View {
+      if let record {
+        Section {
+          ControllerCalibrationSection(
+            viewModel: viewModel,
+            device: device,
+            setting: StickDeadzoneSetting(record: record)
+          ) { await loadRecord() }.ojdInterfaceRow(ControllerDetailRow.stickDeadzone)
+          tuningDisclosure(for: record).ojdInterfaceRow(ControllerDetailRow.tuning)
+        }.ojdInterfaceRow(ControllerDetailRow.tuning)
+      }
     }
 
     /// How many hidden rows hold a value other than their default.
