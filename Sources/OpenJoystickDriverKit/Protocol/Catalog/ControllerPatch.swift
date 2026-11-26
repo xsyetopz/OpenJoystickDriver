@@ -142,6 +142,20 @@ public struct ControllerPatch: Equatable, Sendable {
       expected: kind,
       file: file
     )
+    let selectorValue = try requireFields(of: document, members: members)
+    let parsed = try parseSelector(selectorValue)
+    let patchMembers = try document["patch"].map(parsePatchMembers) ?? []
+    try requireScope(of: parsed, patchMembers: patchMembers, document: document)
+    let removed = try document["remove"].map { try parseRemove($0, selector: parsed) } ?? []
+    return Self(selector: parsed, body: .object(patchMembers), remove: removed)
+  }
+
+  /// The `selector` value of a document whose top-level keys are `apiVersion`, `kind`,
+  /// `selector`, and `patch` or `remove`.
+  private static func requireFields(
+    of document: OrderedJSON,
+    members: [OrderedJSON.Member]
+  ) throws -> OrderedJSON {
     let keys = Set(members.map(\.key))
     guard keys.isSuperset(of: ["apiVersion", "kind", "selector"]),
       keys.isSubset(of: ["apiVersion", "kind", "selector", "patch", "remove"]),
@@ -154,53 +168,60 @@ public struct ControllerPatch: Equatable, Sendable {
         "the file must hold apiVersion, kind, selector, and patch or remove"
       )
     }
-    let parsed = try parseSelector(selectorValue)
-    var patchMembers: [OrderedJSON.Member] = []
-    if let patch = document["patch"] {
-      guard case .object(let members) = patch, !members.isEmpty,
-        Set(members.map(\.key)).isSubset(of: sections)
-      else {
-        throw ControllerRecordProblem(
-          code: .invalidControllerRecord,
-          key: "error.E5007.patch.patchSections",
-          "patch must hold modes, name, placeholderSerial, usb, bluetoothLE, capabilities, "
-            + "server, route, heldByAppleDriver, input, or tuning; the selector names the identity"
-        )
-      }
-      if case .array(let modes)? = patch["modes"],
-        !modes.allSatisfy({ isPatchMode($0) })
-      {
-        throw ControllerRecordProblem(
-          code: .invalidControllerRecord,
-          key: "error.E5007.patch.patchModeEntries",
-          "patch.modes entries must hold an id and only id, protocol, match, interface, session,"
-            + " idle, server, or input"
-        )
-      }
-      patchMembers = members
+    return selectorValue
+  }
+
+  /// The members of a `patch` object: nonempty, only known sections, and valid `modes` entries.
+  private static func parsePatchMembers(_ patch: OrderedJSON) throws -> [OrderedJSON.Member] {
+    guard case .object(let members) = patch, !members.isEmpty,
+      Set(members.map(\.key)).isSubset(of: sections)
+    else {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.patch.patchSections",
+        "patch must hold modes, name, placeholderSerial, usb, bluetoothLE, capabilities, "
+          + "server, route, heldByAppleDriver, input, or tuning; the selector names the identity"
+      )
     }
-    if parsed == .all, !patchMembers.isEmpty, Set(patchMembers.map(\.key)) != ["tuning"] {
+    if case .array(let modes)? = patch["modes"],
+      !modes.allSatisfy({ isPatchMode($0) })
+    {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.patch.patchModeEntries",
+        "patch.modes entries must hold an id and only id, protocol, match, interface, session,"
+          + " idle, server, or input"
+      )
+    }
+    return members
+  }
+
+  /// Checks what the selector kind lets a patch set: an `all` patch only `tuning`, a `unit`
+  /// patch only calibration keys under `tuning` and no `remove`.
+  private static func requireScope(
+    of selector: Selector,
+    patchMembers: [OrderedJSON.Member],
+    document: OrderedJSON
+  ) throws {
+    if selector == .all, !patchMembers.isEmpty, Set(patchMembers.map(\.key)) != ["tuning"] {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
         key: "error.E5007.patch.patchAllOnlyTuning",
         "an all patch may set only tuning"
       )
     }
-    if case .unit = parsed {
-      let calibration = Set(ControllerCalibration.keys.map(\.rawValue))
-      guard document["remove"] == nil, Set(patchMembers.map(\.key)) == ["tuning"],
-        let tuning = document["patch"]?["tuning"]?.members, !tuning.isEmpty,
-        tuning.allSatisfy({ calibration.contains($0.key) })
-      else {
-        throw ControllerRecordProblem(
-          code: .invalidControllerRecord,
-          key: "error.E5007.patch.patchUnitOnlyCalibration",
-          "a unit patch may set only calibration keys under tuning, and may not remove keys"
-        )
-      }
+    guard case .unit = selector else { return }
+    let calibration = Set(ControllerCalibration.keys.map(\.rawValue))
+    guard document["remove"] == nil, Set(patchMembers.map(\.key)) == ["tuning"],
+      let tuning = document["patch"]?["tuning"]?.members, !tuning.isEmpty,
+      tuning.allSatisfy({ calibration.contains($0.key) })
+    else {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.patch.patchUnitOnlyCalibration",
+        "a unit patch may set only calibration keys under tuning, and may not remove keys"
+      )
     }
-    let removed = try document["remove"].map { try parseRemove($0, selector: parsed) } ?? []
-    return Self(selector: parsed, body: .object(patchMembers), remove: removed)
   }
 
   /// Reads `remove`: a nonempty list of distinct dotted key paths that name a property of the
@@ -229,10 +250,7 @@ public struct ControllerPatch: Equatable, Sendable {
         )
       }
       let path = text.split(separator: ".", omittingEmptySubsequences: false).map(String.init)
-      guard !path.contains(where: \.isEmpty), sections.contains(path[0]),
-        path[0] != "tuning" || path.count == 1 || ControllerTuning.Key(rawValue: path[1]) != nil,
-        path[0] != "modes" || path.count == 1 || (path.count == 2 && isModeID(path[1]))
-      else {
+      guard isRecordPath(path) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
           key: "error.E5007.patch.removePathUnknown",
@@ -259,6 +277,14 @@ public struct ControllerPatch: Equatable, Sendable {
       paths.append(path)
     }
     return paths
+  }
+
+  /// Whether `path` names a record property: a top-level section, below `tuning` a tuning key,
+  /// and `modes.<id>` one mode.
+  private static func isRecordPath(_ path: [String]) -> Bool {
+    !path.contains(where: \.isEmpty) && sections.contains(path[0])
+      && (path[0] != "tuning" || path.count == 1 || ControllerTuning.Key(rawValue: path[1]) != nil)
+      && (path[0] != "modes" || path.count == 1 || (path.count == 2 && isModeID(path[1])))
   }
 
   /// Reads a patch selector: `all`, a vendor ID with a product ID and an optional unit, or a model
