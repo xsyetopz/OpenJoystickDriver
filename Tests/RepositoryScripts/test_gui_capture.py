@@ -849,7 +849,10 @@ class GuiCaptureTests(unittest.TestCase):
 
     def test_menu_identifiers_are_the_ones_the_swift_menu_model_sets(self) -> None:
         sources = capture.PROJECT_DIR / "Sources" / "OpenJoystickDriverPresentation"
-        main_menu = (sources / "MainMenu" / "MainMenuModel.swift").read_text()
+        main_menu = "\n".join(
+            path.read_text()
+            for path in sorted((sources / "MainMenu").glob("MainMenuModel*.swift"))
+        )
         renderer = (sources / "MainMenu" / "MainMenuRenderer.swift").read_text()
         (sources / "MenuBar" / "StatusItemModel.swift").read_text()
         status_menu = (
