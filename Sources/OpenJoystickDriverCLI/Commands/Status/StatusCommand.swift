@@ -100,6 +100,16 @@ struct StatusCommand: AsyncParsableCommand {
         report.commandLineTool.path,
       ],
     ]
+    appendListenerRows(of: report, to: &rows)
+    appendPermissionAndVirtualRows(of: report, to: &rows)
+    appendControllerRows(of: report, to: &rows)
+    appendDeviceRows(of: report, to: &rows)
+    appendSkippedRows(of: report, to: &rows)
+    return rows
+  }
+
+  /// Appends the listener failure rows of `report`.
+  private static func appendListenerRows(of report: StatusReport, to rows: inout [[String]]) {
     if let failure = report.service.listenerFailure {
       rows.append([
         "listener-failure", failure.code, String(failure.errorNumber), failure.time,
@@ -109,6 +119,13 @@ struct StatusCommand: AsyncParsableCommand {
     if let problem = report.service.listenerFailureProblem {
       rows.append(["listener-failure-problem", problem])
     }
+  }
+
+  /// Appends the permission and virtual device rows of `report`.
+  private static func appendPermissionAndVirtualRows(
+    of report: StatusReport,
+    to rows: inout [[String]]
+  ) {
     if let permissions = report.permissions {
       rows.append([
         "permission", "input-read", CommandLineName.kebab(permissions.inputRead.rawValue),
@@ -123,6 +140,10 @@ struct StatusCommand: AsyncParsableCommand {
         virtual.status ?? "",
       ])
     }
+  }
+
+  /// Appends the rows of each connected controller of `report`.
+  private static func appendControllerRows(of report: StatusReport, to rows: inout [[String]]) {
     for controller in report.controllers ?? [] {
       rows.append([
         "controller", controller.id,
@@ -134,22 +155,20 @@ struct StatusCommand: AsyncParsableCommand {
         rows.append(["input-mapping", controller.id] + mapping.plainFields)
       }
     }
+  }
+
+  /// Appends the rows of the unbound and pass-through devices of `report`.
+  private static func appendDeviceRows(of report: StatusReport, to rows: inout [[String]]) {
     for device in report.unboundDevices ?? [] {
+      let identity = deviceIdentity(vendorID: device.vendorID, productID: device.productID)
       rows.append([
-        "unbound", deviceIdentity(vendorID: device.vendorID, productID: device.productID),
-        device.connection, device.reason.map(CommandLineName.kebab) ?? "",
+        "unbound", identity, device.connection, device.reason.map(CommandLineName.kebab) ?? "",
       ])
       if let owner = device.owner {
-        rows.append([
-          "owner", deviceIdentity(vendorID: device.vendorID, productID: device.productID),
-          owner.processID.map { "\($0)" } ?? "", owner.name,
-        ])
+        rows.append(["owner", identity, owner.processID.map { "\($0)" } ?? "", owner.name])
       }
       if let mapping = device.inputMapping {
-        rows.append(
-          ["input-mapping", deviceIdentity(vendorID: device.vendorID, productID: device.productID)]
-            + mapping.plainFields
-        )
+        rows.append(["input-mapping", identity] + mapping.plainFields)
       }
     }
     for device in report.passThroughDevices ?? [] {
@@ -158,6 +177,10 @@ struct StatusCommand: AsyncParsableCommand {
         device.connection,
       ])
     }
+  }
+
+  /// Appends the rows of the records and defaults that were skipped.
+  private static func appendSkippedRows(of report: StatusReport, to rows: inout [[String]]) {
     for skipped in report.skippedRecords {
       rows.append(["skipped-record", skipped.file, skipped.problem])
     }
@@ -167,7 +190,6 @@ struct StatusCommand: AsyncParsableCommand {
     for skipped in report.skippedVirtualDevices {
       rows.append(["skipped-virtual-device", skipped.file, skipped.problem])
     }
-    return rows
   }
 
   /// Summarizes the virtual gamepad for the text output: off, the backend's error, or the names of
@@ -264,60 +286,81 @@ struct StatusCommand: AsyncParsableCommand {
 
   /// Prints the connected controllers and the devices that have no binding or that pass through.
   private static func printDevices(_ report: StatusReport) {
-    if let controllers = report.controllers {
-      CLIOutput.stdout("")
-      CLIOutput.stdout(
-        CLILocalized.format("cli.status.group.labelControllers", controllers.count)
+    printControllers(report.controllers)
+    printUnboundDevices(report.unboundDevices)
+    printPassThroughDevices(report.passThroughDevices)
+    printSkippedRecords(report)
+  }
+
+  /// Prints the connected controllers.
+  private static func printControllers(_ controllers: [StatusReport.Controller]?) {
+    guard let controllers else { return }
+    CLIOutput.stdout("")
+    CLIOutput.stdout(
+      CLILocalized.format("cli.status.group.labelControllers", controllers.count)
+    )
+    for controller in controllers {
+      let identity = deviceIdentity(
+        vendorID: controller.vendorID,
+        productID: controller.productID
       )
-      for controller in controllers {
-        let identity = deviceIdentity(
-          vendorID: controller.vendorID,
-          productID: controller.productID
-        )
-        CLIOutput.stdout(
-          "  \(identity)  \(controller.name)  \(controller.connection)  \(controller.id)"
-        )
-        if controller.paused {
-          CLIOutput.stdout("    " + CLILocalized.text("ui.controllers.paused.value"))
-        }
-        printMapping(controller.inputMapping)
-      }
-    }
-    if let unbound = report.unboundDevices, !unbound.isEmpty {
-      CLIOutput.stdout("")
       CLIOutput.stdout(
-        CLILocalized.format("cli.status.group.labelUnbound", unbound.count)
+        "  \(identity)  \(controller.name)  \(controller.connection)  \(controller.id)"
       )
-      for device in unbound {
-        let identity = deviceIdentity(vendorID: device.vendorID, productID: device.productID)
-        CLIOutput.stdout(
-          "  \(identity)  \(device.connection)  \(device.reason.map(CommandLineName.kebab) ?? "")"
-        )
-        if let reason = device.reason.flatMap(ProtocolBindingReason.init(rawValue:)) {
-          let held =
-            reason == .deviceInUse
-            ? device.owner.map {
-              USBExclusiveOwner.heldMessage(for: $0, localize: CLILocalized.text)
-            } : nil
-          CLIOutput.stdout("    \(held ?? CLILocalized.text(reason.explanationKey))")
-          CLIOutput.stdout("    \(CLILocalized.text(reason.nextStepKey))")
-        }
-        printMapping(device.inputMapping)
+      if controller.paused {
+        CLIOutput.stdout("    " + CLILocalized.text("ui.controllers.paused.value"))
       }
+      printMapping(controller.inputMapping)
     }
-    if let passThrough = report.passThroughDevices, !passThrough.isEmpty {
-      CLIOutput.stdout("")
+  }
+
+  /// Prints the devices that have no binding, with why and what to do next.
+  private static func printUnboundDevices(_ unbound: [StatusReport.Device]?) {
+    guard let unbound, !unbound.isEmpty else { return }
+    CLIOutput.stdout("")
+    CLIOutput.stdout(
+      CLILocalized.format("cli.status.group.labelUnbound", unbound.count)
+    )
+    for device in unbound {
+      let identity = deviceIdentity(vendorID: device.vendorID, productID: device.productID)
       CLIOutput.stdout(
-        CLILocalized.format(
-          "platform.macos.cli.status.group.labelPassThrough",
-          passThrough.count
-        )
+        "  \(identity)  \(device.connection)  \(device.reason.map(CommandLineName.kebab) ?? "")"
       )
-      for device in passThrough {
-        let identity = deviceIdentity(vendorID: device.vendorID, productID: device.productID)
-        CLIOutput.stdout("  \(identity)  \(device.connection)")
-      }
+      printBindingReason(of: device)
+      printMapping(device.inputMapping)
     }
+  }
+
+  /// Prints the explanation and next step of why `device` has no binding.
+  private static func printBindingReason(of device: StatusReport.Device) {
+    guard let reason = device.reason.flatMap(ProtocolBindingReason.init(rawValue:)) else { return }
+    let held =
+      reason == .deviceInUse
+      ? device.owner.map {
+        USBExclusiveOwner.heldMessage(for: $0, localize: CLILocalized.text)
+      } : nil
+    CLIOutput.stdout("    \(held ?? CLILocalized.text(reason.explanationKey))")
+    CLIOutput.stdout("    \(CLILocalized.text(reason.nextStepKey))")
+  }
+
+  /// Prints the devices the service passes through.
+  private static func printPassThroughDevices(_ passThrough: [StatusReport.Device]?) {
+    guard let passThrough, !passThrough.isEmpty else { return }
+    CLIOutput.stdout("")
+    CLIOutput.stdout(
+      CLILocalized.format(
+        "platform.macos.cli.status.group.labelPassThrough",
+        passThrough.count
+      )
+    )
+    for device in passThrough {
+      let identity = deviceIdentity(vendorID: device.vendorID, productID: device.productID)
+      CLIOutput.stdout("  \(identity)  \(device.connection)")
+    }
+  }
+
+  /// Prints the records, defaults and virtual devices that were skipped.
+  private static func printSkippedRecords(_ report: StatusReport) {
     if !report.skippedRecords.isEmpty {
       CLIOutput.stdout("")
       CLIOutput.stdout(
