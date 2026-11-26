@@ -12,40 +12,58 @@ extension AutomaticDispatcherCoordinator {
     suppressed = currentValue()
     suppressionRevision &+= 1
     if suppressed {
-      let identifiers = Array(entries.keys)
-      var slots: [(LogicalControllerID, AutomaticBackendSlot)] = []
-      for identifier in identifiers {
-        guard let entry = entries[identifier] else { continue }
-        entries[identifier]?.publicationGeneration &+= 1
-        for pending in entry.tasks.values { pending.task.cancel() }
-        entries[identifier]?.pending = nil
-        guard let installed = entry.installed else { continue }
-        entries[identifier]?.installed = nil
-        entries[identifier]?.installedToken = nil
-        entries[identifier]?.target = nil
-        entries[identifier]?.retiring = installed
-        slots.append((identifier, installed))
+      await retireAllBackends(detaching: detachInstalledBackends())
+      return
+    }
+    guard wasSuppressed else { return }
+    await republishSuppressedControllers()
+  }
+
+  /// Cancels the pending work of every entry and moves each installed backend to retiring.
+  private func detachInstalledBackends() -> [(LogicalControllerID, AutomaticBackendSlot)] {
+    let identifiers = Array(entries.keys)
+    var slots: [(LogicalControllerID, AutomaticBackendSlot)] = []
+    for identifier in identifiers {
+      guard let entry = entries[identifier] else { continue }
+      entries[identifier]?.publicationGeneration &+= 1
+      for pending in entry.tasks.values { pending.task.cancel() }
+      entries[identifier]?.pending = nil
+      guard let installed = entry.installed else { continue }
+      entries[identifier]?.installed = nil
+      entries[identifier]?.installedToken = nil
+      entries[identifier]?.target = nil
+      entries[identifier]?.retiring = installed
+      slots.append((identifier, installed))
+    }
+    return slots
+  }
+
+  /// Retires each slot concurrently; a retirement that times out finishes once its close does.
+  private func retireAllBackends(
+    detaching slots: [(LogicalControllerID, AutomaticBackendSlot)]
+  )
+    async
+  {
+    await withTaskGroup(of: (LogicalControllerID, Bool).self) { group in
+      for (identifier, slot) in slots {
+        group.addTask { (identifier, await slot.retireAndWait()) }
       }
-      await withTaskGroup(of: (LogicalControllerID, Bool).self) { group in
-        for (identifier, slot) in slots {
-          group.addTask { (identifier, await slot.retireAndWait()) }
-        }
-        for await (identifier, retired) in group {
-          guard let slot = slots.first(where: { $0.0 == identifier })?.1 else { continue }
-          if retired {
-            await retirementFinished(identifier: identifier, slot: slot)
-          } else {
-            Task { [weak self] in
-              await slot.waitForCloseCompletion()
-              await self?.retirementFinished(identifier: identifier, slot: slot)
-            }
+      for await (identifier, retired) in group {
+        guard let slot = slots.first(where: { $0.0 == identifier })?.1 else { continue }
+        if retired {
+          await retirementFinished(identifier: identifier, slot: slot)
+        } else {
+          Task { [weak self] in
+            await slot.waitForCloseCompletion()
+            await self?.retirementFinished(identifier: identifier, slot: slot)
           }
         }
       }
-      return
     }
+  }
 
-    guard wasSuppressed else { return }
+  /// Publishes again for each controller that has a session and a context but no backend.
+  private func republishSuppressedControllers() async {
     let contexts = entries.compactMap {
       identifier,
       entry -> (LogicalControllerID, PublicationContext)? in
