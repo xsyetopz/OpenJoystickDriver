@@ -1,3 +1,4 @@
+import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingOutputRouter {
@@ -48,14 +49,7 @@ extension RemappingRoutingCore {
     guard connectedIdentifiers.contains(identifier)
     else { throw RemappingMotionCalibrationError.controllerUnavailable }
     let pair = pairSession(for: identifier)
-    if let pair {
-      switch pair.profile.joyConPair?.gyroSelection {
-      case .left where identifier != pair.left, .right where identifier != pair.right, .disabled,
-        .none:
-        throw RemappingMotionCalibrationRefusal.gyroNotSelected
-      case .left, .right: break
-      }
-    }
+    if let pair { try requireGyroSelected(by: pair, identifier: identifier) }
     let engineIdentifier = pair?.left ?? identifier
     let sessionID = await engine.motionSessionIdentifier(for: engineIdentifier)
     try await reconcileEligibility(for: identifier, requiring: permit)
@@ -78,6 +72,36 @@ extension RemappingRoutingCore {
         expectedSessionID: sessionID
       )
     }
+    return try await readMotionCalibrationStatus(
+      for: identifier,
+      engineIdentifier: engineIdentifier,
+      sessionID: sessionID,
+      profile: profile,
+      requiring: permit
+    )
+  }
+
+  /// Throws when the gyro of a paired Joy-Con is not the one of `identifier`.
+  private func requireGyroSelected(
+    by pair: RemappingJoyConPairSession,
+    identifier: LogicalControllerID
+  ) throws {
+    switch pair.profile.joyConPair?.gyroSelection {
+    case .left where identifier != pair.left, .right where identifier != pair.right, .disabled,
+      .none:
+      throw RemappingMotionCalibrationRefusal.gyroNotSelected
+    case .left, .right: break
+    }
+  }
+
+  /// Reads the status, then checks that the permit, the motion session and the route still hold.
+  private func readMotionCalibrationStatus(
+    for identifier: LogicalControllerID,
+    engineIdentifier: LogicalControllerID,
+    sessionID: UUID,
+    profile: RemappingProfile,
+    requiring permit: RemappingEmissionPermit
+  ) async throws -> RemappingMotionCalibrationStatus {
     guard let status = await engine.motionCalibrationStatus(for: engineIdentifier) else {
       throw RemappingMotionCalibrationError.motionUnavailable
     }
