@@ -14,7 +14,7 @@ let localSwifterKitPath = packageDirectory.appendingPathComponent("../SwifterKit
 let swifterKitDependency: Package.Dependency =
   useLocalSwifterKit && FileManager.default.fileExists(atPath: localSwifterKitPath)
   ? .package(path: localSwifterKitPath)
-  : .package(url: "https://github.com/xsyetopz/SwifterKit.git", from: "0.4.1")
+  : .package(url: "https://github.com/xsyetopz/SwifterKit.git", from: "0.5.1")
 
 /// The OpenJoystickDriver package.
 let package = Package(
