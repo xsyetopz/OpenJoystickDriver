@@ -236,19 +236,7 @@ struct RuntimeProfileDraft: Sendable, Equatable {
     layerID: UUID? = nil
   ) throws -> Self {
     let transform: (RemappingBinding) -> RemappingBinding = { binding in
-      RemappingBinding(
-        id: binding.id,
-        source: binding.source,
-        destination: binding.destination,
-        behavior: binding.behavior,
-        pulseDurationMs: binding.pulseDurationMs,
-        axisTuning: binding.axisTuning,
-        turbo: binding.turbo,
-        longHold: binding.longHold,
-        multiTap: binding.multiTap,
-        additionalActions: actions,
-        remark: binding.remark
-      )
+      binding.replacing(additionalActions: actions)
     }
     if let layerID {
       return try replacingLayerBinding(layerID: layerID, bindingID: bindingID, transform: transform)
@@ -263,19 +251,7 @@ struct RuntimeProfileDraft: Sendable, Equatable {
   ///   breaks a profile rule.
   func settingRemark(_ remark: String?, for bindingID: UUID, layerID: UUID? = nil) throws -> Self {
     let transform: (RemappingBinding) -> RemappingBinding = { binding in
-      RemappingBinding(
-        id: binding.id,
-        source: binding.source,
-        destination: binding.destination,
-        behavior: binding.behavior,
-        pulseDurationMs: binding.pulseDurationMs,
-        axisTuning: binding.axisTuning,
-        turbo: binding.turbo,
-        longHold: binding.longHold,
-        multiTap: binding.multiTap,
-        additionalActions: binding.additionalActions,
-        remark: remark
-      )
+      binding.replacing(remark: .some(remark))
     }
     if let layerID {
       return try replacingLayerBinding(layerID: layerID, bindingID: bindingID, transform: transform)
@@ -315,4 +291,58 @@ struct RuntimeProfileDraft: Sendable, Equatable {
   /// Returns the draft with the name set.
   func settingName(_ name: String) -> Self { Self(profile: profile.replacing(name: name)) }
 
+}
+
+extension RemappingBinding {
+  /// Returns the binding with each given part replaced and the rest kept.
+  ///
+  /// A part of optional type is cleared by passing `.some(nil)`.
+  func replacing(
+    source: RemappingSource? = nil,
+    destination: RemappingDestination? = nil,
+    behavior: RemappingBindingBehavior? = nil,
+    pulseDurationMs: Double? = nil,
+    axisTuning: RemappingAxisTuning?? = nil,
+    turbo: RemappingTurbo?? = nil,
+    longHold: RemappingLongHold?? = nil,
+    multiTap: [RemappingMultiTap]? = nil,
+    additionalActions: [RemappingAction]? = nil,
+    remark: String?? = nil
+  ) -> RemappingBinding {
+    RemappingBinding(
+      id: id,
+      source: source ?? self.source,
+      destination: destination ?? self.destination,
+      behavior: behavior ?? self.behavior,
+      pulseDurationMs: pulseDurationMs ?? self.pulseDurationMs,
+      axisTuning: axisTuning ?? self.axisTuning,
+      turbo: turbo ?? self.turbo,
+      longHold: longHold ?? self.longHold,
+      multiTap: multiTap ?? self.multiTap,
+      additionalActions: additionalActions ?? self.additionalActions,
+      remark: remark ?? self.remark
+    )
+  }
+
+  /// Returns the binding with its behaviors set.
+  ///
+  /// A nil `behavior` or `pulseDurationMs` keeps the current one, and the pulse duration applies
+  /// only to the pulse behavior; any other behavior takes the default duration.
+  func settingBehaviors(
+    behavior: RemappingBindingBehavior?,
+    pulseDurationMs: Double?,
+    turbo: RemappingTurbo?,
+    longHold: RemappingLongHold?,
+    multiTap: [RemappingMultiTap]
+  ) -> RemappingBinding {
+    let resolved = behavior ?? self.behavior
+    return replacing(
+      behavior: resolved,
+      pulseDurationMs: resolved == .pulse
+        ? pulseDurationMs ?? self.pulseDurationMs : Self.defaultPulseDurationMs,
+      turbo: .some(turbo),
+      longHold: .some(longHold),
+      multiTap: multiTap
+    )
+  }
 }

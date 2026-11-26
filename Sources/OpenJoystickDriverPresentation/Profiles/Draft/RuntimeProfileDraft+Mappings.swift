@@ -54,19 +54,7 @@ extension RuntimeProfileDraft {
   ///   profile rule.
   func settingDestination(_ destination: RemappingDestination, for bindingID: UUID) throws -> Self {
     try replacingBinding(bindingID) { binding in
-      RemappingBinding(
-        id: binding.id,
-        source: binding.source,
-        destination: destination,
-        behavior: binding.behavior,
-        pulseDurationMs: binding.pulseDurationMs,
-        axisTuning: binding.axisTuning,
-        turbo: binding.turbo,
-        longHold: binding.longHold,
-        multiTap: binding.multiTap,
-        additionalActions: binding.additionalActions,
-        remark: binding.remark
-      )
+      binding.replacing(destination: destination)
     }
   }
 
@@ -87,18 +75,10 @@ extension RuntimeProfileDraft {
         tuning = nil
       }
       let destination = Self.destination(for: source, preserving: binding.destination)
-      return RemappingBinding(
-        id: binding.id,
+      return binding.replacing(
         source: source,
         destination: destination,
-        behavior: binding.behavior,
-        pulseDurationMs: binding.pulseDurationMs,
-        axisTuning: tuning,
-        turbo: binding.turbo,
-        longHold: binding.longHold,
-        multiTap: binding.multiTap,
-        additionalActions: binding.additionalActions,
-        remark: binding.remark
+        axisTuning: .some(tuning)
       )
     }
   }
@@ -122,19 +102,7 @@ extension RuntimeProfileDraft {
   ///   profile rule.
   func settingAxisTuning(_ axisTuning: RemappingAxisTuning?, for bindingID: UUID) throws -> Self {
     try replacingBinding(bindingID) { binding in
-      RemappingBinding(
-        id: binding.id,
-        source: binding.source,
-        destination: binding.destination,
-        behavior: binding.behavior,
-        pulseDurationMs: binding.pulseDurationMs,
-        axisTuning: axisTuning,
-        turbo: binding.turbo,
-        longHold: binding.longHold,
-        multiTap: binding.multiTap,
-        additionalActions: binding.additionalActions,
-        remark: binding.remark
-      )
+      binding.replacing(axisTuning: .some(axisTuning))
     }
   }
 
@@ -153,19 +121,12 @@ extension RuntimeProfileDraft {
     for bindingID: UUID
   ) throws -> Self {
     try replacingBinding(bindingID) { binding in
-      RemappingBinding(
-        id: binding.id,
-        source: binding.source,
-        destination: binding.destination,
-        behavior: behavior ?? binding.behavior,
-        pulseDurationMs: (behavior ?? binding.behavior) == .pulse
-          ? pulseDurationMs ?? binding.pulseDurationMs : RemappingBinding.defaultPulseDurationMs,
-        axisTuning: binding.axisTuning,
+      binding.settingBehaviors(
+        behavior: behavior,
+        pulseDurationMs: pulseDurationMs,
         turbo: turbo,
         longHold: longHold,
-        multiTap: multiTap,
-        additionalActions: binding.additionalActions,
-        remark: binding.remark
+        multiTap: multiTap
       )
     }
   }

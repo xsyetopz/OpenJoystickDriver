@@ -104,19 +104,7 @@ extension RuntimeProfileDraft {
     axisTuning: RemappingAxisTuning
   ) throws -> Self {
     try replacingLayerBinding(layerID: layerID, bindingID: bindingID) { binding in
-      RemappingBinding(
-        id: binding.id,
-        source: binding.source,
-        destination: binding.destination,
-        behavior: binding.behavior,
-        pulseDurationMs: binding.pulseDurationMs,
-        axisTuning: axisTuning,
-        turbo: binding.turbo,
-        longHold: binding.longHold,
-        multiTap: binding.multiTap,
-        additionalActions: binding.additionalActions,
-        remark: binding.remark
-      )
+      binding.replacing(axisTuning: .some(axisTuning))
     }
   }
 
@@ -135,19 +123,12 @@ extension RuntimeProfileDraft {
     multiTap: [RemappingMultiTap]
   ) throws -> Self {
     try replacingLayerBinding(layerID: layerID, bindingID: bindingID) { binding in
-      RemappingBinding(
-        id: binding.id,
-        source: binding.source,
-        destination: binding.destination,
-        behavior: behavior ?? binding.behavior,
-        pulseDurationMs: (behavior ?? binding.behavior) == .pulse
-          ? pulseDurationMs ?? binding.pulseDurationMs : RemappingBinding.defaultPulseDurationMs,
-        axisTuning: binding.axisTuning,
+      binding.settingBehaviors(
+        behavior: behavior,
+        pulseDurationMs: pulseDurationMs,
         turbo: turbo,
         longHold: longHold,
-        multiTap: multiTap,
-        additionalActions: binding.additionalActions,
-        remark: binding.remark
+        multiTap: multiTap
       )
     }
   }
