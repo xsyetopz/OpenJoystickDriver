@@ -273,46 +273,23 @@ public enum ControllerModeSelector {
     guard !profile.modes.isEmpty else { return .noModes }
     let fallback = profile.hasDefaultMode ? "the default mode is used" : "the device is unsupported"
     let receiverRecord = profile.isReceiverRecord
-    // Two pads of one model differ in the log only by their location.
-    let name =
-      unsafe String(format: "%04X:%04X", model.vendorID, model.productID)
-      + (device.physicalLocationIdentifier.map { unsafe String(format: " at location 0x%08X", $0) }
-        ?? "")
+    let name = Self.deviceName(model: model, device: device)
     // One read per report serves every probe of that report.
     var replies: [Int: PhysicalHIDReportResult<Data>] = [:]
     for mode in profile.modes where mode.match.holds(for: device, receiverRecord: receiverRecord) {
-      var held = true
-      for probe in mode.probes {
-        guard backend == .hid else {
-          log(
-            "[DeviceManager] Mode probes of \(name) read HID feature reports; the"
-              + " \(backend.rawValue) route has none, so \(fallback)"
-          )
-          return .noProbeRoute
-        }
-        let key = Int(probe.reportID) * 65_536 + probe.length
-        let reply: PhysicalHIDReportResult<Data>
-        if let cached = replies[key] {
-          reply = cached
-        } else {
-          reply = await reader.readFeatureReport(probe.request)
-          replies[key] = reply
-        }
-        switch probe.verdict(for: reply) {
-        case .satisfied: continue
-        case .unsatisfied: held = false
-        case .inconclusive:
-          log(
-            "[DeviceManager] Mode probe of \(name) got no reply for report=\(probe.reportID)"
-              + " (mode \(mode.id)); \(fallback)"
-          )
-          return .probeInconclusive(reportID: probe.reportID)
-        }
-        if !held { break }
-      }
-      if held {
+      switch await probes(
+        of: mode,
+        backend: backend,
+        reader: reader,
+        replies: &replies,
+        context: (name: name, fallback: fallback),
+        log: log
+      ) {
+      case .held:
         log("[DeviceManager] Mode keys of \(name) selected mode \(mode.id)")
         return .matched(mode.id)
+      case .unsatisfied: continue
+      case .ended(let selection): return selection
       }
     }
     let seen = (device.interfaces ?? []).compactMap { interface -> String? in
@@ -326,5 +303,64 @@ public enum ControllerModeSelector {
         + " (interface classes seen: \(seen.isEmpty ? "none" : seen.joined(separator: " ")))"
     )
     return .noModeMatched
+  }
+
+  /// How the probes of one mode ended.
+  private enum ProbeOutcome {
+    /// Every probe was satisfied.
+    case held
+    /// A probe was unsatisfied.
+    case unsatisfied
+    /// A probe could not run or got no usable reply, which ends the selection.
+    case ended(ControllerModeSelection)
+  }
+
+  /// The model and, when known, the location of the pad, so two pads of one model differ in the
+  /// log.
+  private static func deviceName(model: ControllerModelID, device: PhysicalDevice) -> String {
+    unsafe String(format: "%04X:%04X", model.vendorID, model.productID)
+      + (device.physicalLocationIdentifier.map { unsafe String(format: " at location 0x%08X", $0) }
+        ?? "")
+  }
+
+  /// Runs the probes of `mode` in order and stops at the first that is not satisfied.
+  ///
+  /// A reply is read once for each report ID and length and kept in `replies`.
+  private static func probes(
+    of mode: ControllerMode,
+    backend: DeviceAccessBackend,
+    reader: any ControllerModeProbeReader,
+    replies: inout [Int: PhysicalHIDReportResult<Data>],
+    context: (name: String, fallback: String),
+    log: @Sendable (String) -> Void
+  ) async -> ProbeOutcome {
+    for probe in mode.probes {
+      guard backend == .hid else {
+        log(
+          "[DeviceManager] Mode probes of \(context.name) read HID feature reports; the"
+            + " \(backend.rawValue) route has none, so \(context.fallback)"
+        )
+        return .ended(.noProbeRoute)
+      }
+      let key = Int(probe.reportID) * 65_536 + probe.length
+      let reply: PhysicalHIDReportResult<Data>
+      if let cached = replies[key] {
+        reply = cached
+      } else {
+        reply = await reader.readFeatureReport(probe.request)
+        replies[key] = reply
+      }
+      switch probe.verdict(for: reply) {
+      case .satisfied: continue
+      case .unsatisfied: return .unsatisfied
+      case .inconclusive:
+        log(
+          "[DeviceManager] Mode probe of \(context.name) got no reply for report=\(probe.reportID)"
+            + " (mode \(mode.id)); \(context.fallback)"
+        )
+        return .ended(.probeInconclusive(reportID: probe.reportID))
+      }
+    }
+    return .held
   }
 }
