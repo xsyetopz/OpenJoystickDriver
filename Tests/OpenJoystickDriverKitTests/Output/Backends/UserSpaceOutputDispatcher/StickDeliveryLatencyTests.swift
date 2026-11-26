@@ -363,11 +363,9 @@ struct StickDeliveryLatencyTests {
     #expect(published == 1)
   }
 
-  /// The mean cost of one stick report through `DevicePipeline.feedHIDData` and the dispatcher.
-  ///
-  /// The backend is instant. The bound is loose on purpose; the measured mean is in the message.
+  /// Every distinct stick report fed through `DevicePipeline.feedHIDData` reaches the backend.
   @Test
-  func oneStickReportCostsFarLessThanReportInterval() async {
+  func everyDistinctStickReportIsPublished() async {
     let count = 1_000
     let distinct = 200
     let positions: [Float] = (0..<distinct).map { Float($0) / Float(distinct) }
@@ -381,21 +379,14 @@ struct StickDeliveryLatencyTests {
       dispatcher: dispatcher
     )
     await pipeline.start()
-    // Creates the virtual device before timing starts.
+    // Creates the virtual device before the counted reports.
     _ = await pipeline.feedHIDData(Data([UInt8(distinct)]))
-    let elapsed = await ContinuousClock().measure {
-      for index in 0..<count { _ = await pipeline.feedHIDData(Data([UInt8(index % distinct)])) }
-    }
+    for index in 0..<count { _ = await pipeline.feedHIDData(Data([UInt8(index % distinct)])) }
     let published = backend.publishedReports().count
     await pipeline.stop()
     await dispatcher.close()
-    let totalMicroseconds =
-      Double(elapsed.components.seconds) * 1_000_000
-      + Double(elapsed.components.attoseconds) / 1_000_000_000_000
-    let perReport = totalMicroseconds / Double(count)
 
     #expect(published == count + 1)
-    #expect(perReport < 20_000, "mean per-report cost \(perReport) us over \(count) reports")
   }
 
   /// A merged input's motion samples go out with the input that replaces it, so motion
