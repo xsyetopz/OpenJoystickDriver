@@ -106,14 +106,7 @@ enum SDLMappingConverter {
 
   /// Reads `b#`, `a#`, `+a#`, `-a#` (each with an optional `~`) and `h#.#`.
   private static func parse(_ text: String, field: String) throws(SDLMappingRejection) -> Source {
-    var body = Substring(text)
-    let inverted = body.last == "~"
-    if inverted { body = body.dropLast() }
-    var half: HIDUsageMap.Half?
-    if let sign = body.first, sign == "+" || sign == "-" {
-      half = sign == "+" ? .positive : .negative
-      body = body.dropFirst()
-    }
+    let (body, inverted, half) = affixes(of: text)
     let unreadable = SDLMappingRejection(reason: "the field \"\(field)\" has an unreadable binding")
     guard let kind = body.first else { throw unreadable }
     let number = body.dropFirst()
@@ -125,13 +118,36 @@ enum SDLMappingConverter {
       guard let index = Int(number) else { throw unreadable }
       return .axis(index, half: half, inverted: inverted)
     case "h" where half == nil && !inverted:
-      let parts = number.split(separator: ".", omittingEmptySubsequences: false)
-      guard parts.count == 2, let index = Int(parts[0]), let bit = Int(parts[1]),
-        [1, 2, 4, 8].contains(bit)
-      else { throw unreadable }
-      return .hat(index, bit: bit)
+      return try hat(number, unreadable: unreadable)
     default: throw unreadable
     }
+  }
+
+  /// `text` without its trailing `~` and leading `+` or `-`, and what they said.
+  private static func affixes(
+    of text: String
+  ) -> (body: Substring, inverted: Bool, half: HIDUsageMap.Half?) {
+    var body = Substring(text)
+    let inverted = body.last == "~"
+    if inverted { body = body.dropLast() }
+    var half: HIDUsageMap.Half?
+    if let sign = body.first, sign == "+" || sign == "-" {
+      half = sign == "+" ? .positive : .negative
+      body = body.dropFirst()
+    }
+    return (body, inverted, half)
+  }
+
+  /// The hat of `number`, written `index.bit` with a bit of 1, 2, 4 or 8.
+  private static func hat(
+    _ number: Substring,
+    unreadable: SDLMappingRejection
+  ) throws(SDLMappingRejection) -> Source {
+    let parts = number.split(separator: ".", omittingEmptySubsequences: false)
+    guard parts.count == 2, let index = Int(parts[0]), let bit = Int(parts[1]),
+      [1, 2, 4, 8].contains(bit)
+    else { throw unreadable }
+    return .hat(index, bit: bit)
   }
 
   /// The element `source` indexes.
@@ -168,40 +184,55 @@ enum SDLMappingConverter {
     case .hat(_, let bit):
       return hatBits[control] == bit ? .hat(HIDUsageMap.Hat(range: nil)) : nil
     case .button:
-      if isTrigger { return .buttonTrigger(control) }
-      if Control.dpad.contains(control) {
-        return .axisDpad(
-          HIDUsageMap.HalfThreshold(
-            half: .positive,
-            control: control,
-            threshold: sdlAxisButtonThreshold
-          )
-        )
-      }
-      return Control.stickAxes.contains(control) ? nil : .button(control)
+      return buttonBinding(for: control, isTrigger: isTrigger)
     case .axis(_, let half, let inverted):
-      if Control.stickAxes.contains(control) {
-        guard half == nil else { return nil }
-        return .axis(
-          HIDUsageMap.Axis(control: control, isInverted: inverted, range: nil, deadZone: nil)
-        )
-      }
-      if isTrigger, half == nil {
-        return .axis(
-          HIDUsageMap.Axis(control: control, isInverted: inverted, range: nil, deadZone: nil)
-        )
-      }
-      let base: HIDUsageMap.Half = half ?? .positive
-      let side: HIDUsageMap.Half = inverted ? (base == .positive ? .negative : .positive) : base
-      if isTrigger {
-        return .halfAxis(HIDUsageMap.HalfAxis(half: side, control: control, isInverted: false))
-      }
-      let threshold = HIDUsageMap.HalfThreshold(
-        half: side,
-        control: control,
-        threshold: sdlAxisButtonThreshold
-      )
-      return Control.dpad.contains(control) ? .axisDpad(threshold) : .axisButton(threshold)
+      return axisBinding(for: control, isTrigger: isTrigger, half: half, inverted: inverted)
     }
+  }
+
+  /// The binding of `control` to a button, or nil for a stick axis.
+  private static func buttonBinding(for control: Control, isTrigger: Bool) -> HIDUsageMap.Binding? {
+    if isTrigger { return .buttonTrigger(control) }
+    if Control.dpad.contains(control) {
+      return .axisDpad(
+        HIDUsageMap.HalfThreshold(
+          half: .positive,
+          control: control,
+          threshold: sdlAxisButtonThreshold
+        )
+      )
+    }
+    return Control.stickAxes.contains(control) ? nil : .button(control)
+  }
+
+  /// The binding of `control` to an axis, or nil when a half of a stick axis is named.
+  private static func axisBinding(
+    for control: Control,
+    isTrigger: Bool,
+    half: HIDUsageMap.Half?,
+    inverted: Bool
+  ) -> HIDUsageMap.Binding? {
+    if Control.stickAxes.contains(control) {
+      guard half == nil else { return nil }
+      return .axis(
+        HIDUsageMap.Axis(control: control, isInverted: inverted, range: nil, deadZone: nil)
+      )
+    }
+    if isTrigger, half == nil {
+      return .axis(
+        HIDUsageMap.Axis(control: control, isInverted: inverted, range: nil, deadZone: nil)
+      )
+    }
+    let base: HIDUsageMap.Half = half ?? .positive
+    let side: HIDUsageMap.Half = inverted ? (base == .positive ? .negative : .positive) : base
+    if isTrigger {
+      return .halfAxis(HIDUsageMap.HalfAxis(half: side, control: control, isInverted: false))
+    }
+    let threshold = HIDUsageMap.HalfThreshold(
+      half: side,
+      control: control,
+      threshold: sdlAxisButtonThreshold
+    )
+    return Control.dpad.contains(control) ? .axisDpad(threshold) : .axisButton(threshold)
   }
 }
