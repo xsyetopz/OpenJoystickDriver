@@ -168,32 +168,24 @@
   }
 
   /// Maps key events to the keys and modifiers of keyboard destinations.
-  private enum KeyboardDestinationKeyMapper {
+  enum KeyboardDestinationKeyMapper {
     /// Returns the key of the event: by its key code, else by its character; nil when it has none.
     static func key(for event: NSEvent) -> RemappingKeyboardKey? {
-      if let key = keyCodeMap(event.keyCode) { return key }
-      if let character = event.charactersIgnoringModifiers?.lowercased().first {
+      key(keyCode: event.keyCode, character: event.charactersIgnoringModifiers?.lowercased().first)
+    }
+
+    /// Returns the key of a hardware key code, else of a lowercased character; nil when neither
+    /// names a key.
+    static func key(keyCode: UInt16, character: Character?) -> RemappingKeyboardKey? {
+      if let key = keysByCode[keyCode] { return key }
+      if let character {
         if ("a"..."z").contains(character) {
           return RemappingKeyboardKey(rawValue: "Key" + String(character).uppercased())
         }
         if ("0"..."9").contains(character) {
           return RemappingKeyboardKey(rawValue: "Digit" + String(character))
         }
-        switch character {
-        case " ": return .space
-        case "-": return .minus
-        case "=": return .equal
-        case "[": return .leftBracket
-        case "]": return .rightBracket
-        case "\\": return .backslash
-        case ";": return .semicolon
-        case "'": return .quote
-        case ",": return .comma
-        case ".": return .period
-        case "/": return .slash
-        case "`": return .grave
-        default: break
-        }
+        return keysByCharacter[character]
       }
       return nil
     }
@@ -208,68 +200,81 @@
       return modifiers
     }
 
-    /// Returns the key of a hardware key code, or nil for a code without a key.
-    private static func keyCodeMap(_ keyCode: UInt16) -> RemappingKeyboardKey? {
-      switch keyCode {
-      case 36: return .returnKey
-      case 48: return .tab
-      case 49: return .space
-      case 51: return .deleteBackward
-      case 53: return .escape
-      case 57: return .capsLock
-      case 10: return .section
-      case 110: return .insert
-      case 114: return .help
-      case 117: return .deleteForward
-      case 115: return .home
-      case 119: return .end
-      case 116: return .pageUp
-      case 121: return .pageDown
-      case 123: return .arrowLeft
-      case 124: return .arrowRight
-      case 125: return .arrowDown
-      case 126: return .arrowUp
-      case 122: return .f1
-      case 120: return .f2
-      case 99: return .f3
-      case 118: return .f4
-      case 96: return .f5
-      case 97: return .f6
-      case 98: return .f7
-      case 100: return .f8
-      case 101: return .f9
-      case 109: return .f10
-      case 103: return .f11
-      case 111: return .f12
-      case 105: return .f13
-      case 107: return .f14
-      case 113: return .f15
-      case 106: return .f16
-      case 64: return .f17
-      case 79: return .f18
-      case 80: return .f19
-      case 90: return .f20
-      case 82: return .keypad0
-      case 83: return .keypad1
-      case 84: return .keypad2
-      case 85: return .keypad3
-      case 86: return .keypad4
-      case 87: return .keypad5
-      case 88: return .keypad6
-      case 89: return .keypad7
-      case 91: return .keypad8
-      case 92: return .keypad9
-      case 65: return .keypadDecimal
-      case 67: return .keypadMultiply
-      case 69: return .keypadPlus
-      case 71: return .keypadClear
-      case 75: return .keypadDivide
-      case 76: return .keypadEnter
-      case 78: return .keypadMinus
-      case 81: return .keypadEqual
-      default: return nil
-      }
-    }
+    /// The key of each hardware key code that has one.
+    private static let keysByCode: [UInt16: RemappingKeyboardKey] = [
+      36: .returnKey,
+      48: .tab,
+      49: .space,
+      51: .deleteBackward,
+      53: .escape,
+      57: .capsLock,
+      10: .section,
+      110: .insert,
+      114: .help,
+      117: .deleteForward,
+      115: .home,
+      119: .end,
+      116: .pageUp,
+      121: .pageDown,
+      123: .arrowLeft,
+      124: .arrowRight,
+      125: .arrowDown,
+      126: .arrowUp,
+      122: .f1,
+      120: .f2,
+      99: .f3,
+      118: .f4,
+      96: .f5,
+      97: .f6,
+      98: .f7,
+      100: .f8,
+      101: .f9,
+      109: .f10,
+      103: .f11,
+      111: .f12,
+      105: .f13,
+      107: .f14,
+      113: .f15,
+      106: .f16,
+      64: .f17,
+      79: .f18,
+      80: .f19,
+      90: .f20,
+      82: .keypad0,
+      83: .keypad1,
+      84: .keypad2,
+      85: .keypad3,
+      86: .keypad4,
+      87: .keypad5,
+      88: .keypad6,
+      89: .keypad7,
+      91: .keypad8,
+      92: .keypad9,
+      65: .keypadDecimal,
+      67: .keypadMultiply,
+      69: .keypadPlus,
+      71: .keypadClear,
+      75: .keypadDivide,
+      76: .keypadEnter,
+      78: .keypadMinus,
+      81: .keypadEqual,
+    ]
+
+    /// The key of each punctuation or space character.
+    private static let keysByCharacter: [Character: RemappingKeyboardKey] = [
+      " ": .space,
+      "-": .minus,
+      "=": .equal,
+      "[": .leftBracket,
+      "]": .rightBracket,
+      "\\": .backslash,
+      ";": .semicolon,
+      "'": .quote,
+      ",": .comma,
+      ".": .period,
+      "/": .slash,
+      "`": .grave,
+    ]
   }
 
   /// Calls `onEscape` when Escape is pressed, unless a key capture runs and handles Escape itself.
