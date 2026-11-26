@@ -118,6 +118,20 @@ struct LocalRPCBridgeTests {
   }
 
   @Test
+  func remappingArgumentsOverServiceLimitFailAsArgumentTooLarge() async throws {
+    try await withServer { server in
+      let oversized = Data(
+        repeating: 0x20,
+        count: ApplicationServiceRemappingRPC.maximumArgumentBytes + 1
+      )
+      let response = await handle(server, method: "getRemappingSnapshot", arguments: oversized)
+
+      #expect(response.result == nil)
+      #expect(response.remappingError?.code == .argumentTooLarge)
+    }
+  }
+
+  @Test
   func remappingFailureArrivesAtClientAsTypedError() async throws {
     try await withServer { server in
       let socketPath = unregisteredSocketPath()
