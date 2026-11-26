@@ -37,24 +37,10 @@ extension RuntimeStatusPresentation {
 
   /// Returns the presentation with `permissions` and the readiness worked out again.
   func applyingPermissions(_ permissions: RuntimePermissionSummary) -> Self {
-
-    carryingUnservedDevices(
-      to: Self(
-        permissions: permissions,
-        devices: devices,
-        virtualHIDProfileOverrideError: virtualHIDProfileOverrideError,
-        outputState: outputState,
-        outputDetail: outputDetail,
-        postEventAccess: postEventAccess,
-        requiresPostEventAccess: requiresPostEventAccess,
-        readiness: Self.readiness(
-          permissions: permissions,
-          outputState: outputState,
-          postEventAccess: postEventAccess,
-          requiresPostEventAccess: requiresPostEventAccess,
-          devices: devices
-        )
-      )
+    recomputingReadiness(
+      permissions: permissions,
+      postEventAccess: postEventAccess,
+      requiresPostEventAccess: requiresPostEventAccess
     )
   }
 
@@ -64,8 +50,21 @@ extension RuntimeStatusPresentation {
     _ snapshot: ApplicationServiceRemappingSnapshotPayload,
     postEventAccess: RemappingPostEventAccessState?
   ) -> Self {
-    let requiresPostEventAccess = snapshot.requiresPostEventAccess
-    return carryingUnservedDevices(
+    recomputingReadiness(
+      permissions: permissions,
+      postEventAccess: postEventAccess,
+      requiresPostEventAccess: snapshot.requiresPostEventAccess
+    )
+  }
+
+  /// Returns the presentation with the given permissions and Post Event access, and with the
+  /// readiness worked out again.
+  private func recomputingReadiness(
+    permissions: RuntimePermissionSummary,
+    postEventAccess: RemappingPostEventAccessState?,
+    requiresPostEventAccess: Bool?
+  ) -> Self {
+    carryingUnservedDevices(
       to: Self(
         permissions: permissions,
         devices: devices,
