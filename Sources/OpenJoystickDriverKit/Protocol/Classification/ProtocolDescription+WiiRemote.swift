@@ -271,113 +271,167 @@ extension ProtocolDescription {
       let led = try root.object("led", allowed: ["report", "firstBit"])
       ledReport = UInt8(try led.number("report", 0x10...0x1A))
       ledFirstBit = try led.number("firstBit", 0...4)
-      let buttons = try root.list("coreButtons", 1...16, allowed: ["control", "byte", "mask"]) {
-        let name = try $0.string("control")
-        guard let control = Control(rawValue: name) else {
-          throw $0.fail("control", "\(name) is not a control")
-        }
-        return Button(control: control, field: try $0.bitField(bytes: 0...1))
-      }
-      guard Set(buttons.map(\.control)).count == buttons.count else {
-        throw root.fail("coreButtons", "a control appears at most once")
-      }
-      coreButtons = buttons
-      let low = try root.object("accelerometerLowBits", allowed: ["x", "y", "z"])
-      accelerometerLowBits = AccelerometerLowBits(
-        x: try low.object("x", allowed: ["byte", "mask"]).bitField(bytes: 0...1),
-        y: try low.object("y", allowed: ["byte", "mask"]).bitField(bytes: 0...1),
-        z: try low.object("z", allowed: ["byte", "mask"]).bitField(bytes: 0...1)
-      )
-      let modes = try root.list("reportModes", 1...16, allowed: ["id", "blocks"]) {
-        try ReportMode(reader: $0)
-      }
-      guard Set(modes.map(\.id)).count == modes.count else {
-        throw root.fail("reportModes", "a report mode id appears at most once")
-      }
+      coreButtons = try Self.coreButtons(root)
+      accelerometerLowBits = try Self.accelerometerLowBits(root)
+      let modes = try Self.reportModes(root)
       reportModes = modes
-      let choices = try root.list("modeChoices", 1...32, allowed: ["features", "mode"]) {
-        let names = try $0.strings("features")
-        let features = Set(names.compactMap(BlockKind.init(rawValue:)))
-        guard features.count == names.count, !features.contains(.buttons) else {
-          throw $0.fail("features", "features are unique blocks other than Buttons")
-        }
-        let mode = UInt8(
-          try $0.number(
-            "mode",
-            Int(ReportMode.idRange.lowerBound)...Int(ReportMode.idRange.upperBound)
-          )
+      modeChoices = try Self.modeChoices(root, carriedBy: modes)
+      extensions = try Self.extensionIDs(root)
+      let ir = try Self.irSensitivity(root)
+      irSensitivityLevels = ir.levels
+      defaultIRSensitivityLevel = ir.defaultLevel
+      irModeBytes = try Self.irModeBytes(root)
+      motionPlusModeBytes = try Self.motionPlusModeBytes(root)
+      scripts = try Self.scripts(root)
+    }
+  }
+}
+
+extension ProtocolDescription.WiiRemote {
+  /// The core buttons, each control once.
+  fileprivate static func coreButtons(_ root: WiiReader) throws -> [Button] {
+    let buttons = try root.list("coreButtons", 1...16, allowed: ["control", "byte", "mask"]) {
+      let name = try $0.string("control")
+      guard let control = Control(rawValue: name) else {
+        throw $0.fail("control", "\(name) is not a control")
+      }
+      return Button(control: control, field: try $0.bitField(bytes: 0...1))
+    }
+    guard Set(buttons.map(\.control)).count == buttons.count else {
+      throw root.fail("coreButtons", "a control appears at most once")
+    }
+    return buttons
+  }
+
+  /// The low accelerometer bits of the three axes.
+  fileprivate static func accelerometerLowBits(_ root: WiiReader) throws -> AccelerometerLowBits {
+    let low = try root.object("accelerometerLowBits", allowed: ["x", "y", "z"])
+    return AccelerometerLowBits(
+      x: try low.object("x", allowed: ["byte", "mask"]).bitField(bytes: 0...1),
+      y: try low.object("y", allowed: ["byte", "mask"]).bitField(bytes: 0...1),
+      z: try low.object("z", allowed: ["byte", "mask"]).bitField(bytes: 0...1)
+    )
+  }
+
+  /// The input report modes, each id once.
+  fileprivate static func reportModes(_ root: WiiReader) throws -> [ReportMode] {
+    let modes = try root.list("reportModes", 1...16, allowed: ["id", "blocks"]) {
+      try ReportMode(reader: $0)
+    }
+    guard Set(modes.map(\.id)).count == modes.count else {
+      throw root.fail("reportModes", "a report mode id appears at most once")
+    }
+    return modes
+  }
+
+  /// The report-mode choices, each naming a mode of `modes` that carries its features.
+  fileprivate static func modeChoices(
+    _ root: WiiReader,
+    carriedBy modes: [ReportMode]
+  ) throws -> [ModeChoice] {
+    let choices = try root.list("modeChoices", 1...32, allowed: ["features", "mode"]) {
+      let names = try $0.strings("features")
+      let features = Set(names.compactMap(BlockKind.init(rawValue:)))
+      guard features.count == names.count, !features.contains(.buttons) else {
+        throw $0.fail("features", "features are unique blocks other than Buttons")
+      }
+      let mode = UInt8(
+        try $0.number(
+          "mode",
+          Int(ReportMode.idRange.lowerBound)...Int(ReportMode.idRange.upperBound)
         )
-        return ModeChoice(features: features, mode: mode)
-      }
-      for choice in choices {
-        let carried = modes.first { $0.id == choice.mode }.map { Set($0.blocks.map(\.kind)) }
-        guard let carried, choice.features.isSubset(of: carried) else {
-          throw root.fail("modeChoices", "a choice names a mode that carries its features")
-        }
-      }
-      guard Set(choices.map(\.features)).count == choices.count else {
-        throw root.fail("modeChoices", "a feature set appears at most once")
-      }
-      modeChoices = choices
-      let kinds = try root.list("extensions", 1...16, allowed: ["kind", "id", "layout"]) {
-        ExtensionID(
-          kind: try $0.string("kind"),
-          id: try $0.bytes("id", 6...6),
-          layout: try $0.keys.contains("layout")
-            ? ExtensionLayout(reader: $0.object("layout", allowed: ExtensionLayout.keys)) : nil
-        )
-      }
-      guard Set(kinds.map(\.kind)).count == kinds.count,
-        Set(kinds.map(\.id)).count == kinds.count
-      else {
-        throw root.fail("extensions", "each kind and each id appears at most once")
-      }
-      extensions = kinds
-      let ir = try root.object("irSensitivity", allowed: ["default", "levels"])
-      let levels = try ir.list("levels", 1...9, allowed: ["level", "block1", "block2"]) {
-        IRSensitivityLevel(
-          level: try $0.number("level", 1...9),
-          block1: try $0.bytes("block1", 9...9),
-          block2: try $0.bytes("block2", 2...2)
-        )
-      }
-      let defaultLevel = try ir.number("default", 1...9)
-      guard levels.map(\.level) == Array(1...levels.count), defaultLevel <= levels.count else {
-        throw root.fail("irSensitivity", "levels count up from 1 and include the default")
-      }
-      irSensitivityLevels = levels
-      defaultIRSensitivityLevel = defaultLevel
-      let formats: [(key: String, kind: BlockKind)] = [
-        ("basic", .irBasic), ("extended", .irExtended), ("full", .irFull),
-      ]
-      let modeObject = try root.object("irModeBytes", allowed: Set(formats.map(\.key)))
-      irModeBytes = Dictionary(
-        uniqueKeysWithValues: try formats.map {
-          ($0.kind, UInt8(try modeObject.number($0.key, 0...255)))
-        }
       )
-      let plusKeys = ["standalone", "nunchuk", "classic"]
-      let plusObject = try root.object("motionPlusModeBytes", allowed: Set(plusKeys))
-      motionPlusModeBytes = Dictionary(
-        uniqueKeysWithValues: try plusKeys.map { ($0, UInt8(try plusObject.number($0, 0...255))) }
-      )
-      let scriptObject = try root.object(
-        "scripts",
-        allowed: [
-          "handshake", "accelerometerCalibration", "motionPlus", "ir", "irStop", "speaker",
-          "speakerStop",
-        ]
-      )
-      scripts = Scripts(
-        handshake: try Step.list(scriptObject, "handshake"),
-        accelerometerCalibration: try Step.list(scriptObject, "accelerometerCalibration"),
-        motionPlus: try Step.list(scriptObject, "motionPlus"),
-        ir: try Step.list(scriptObject, "ir"),
-        irStop: try Step.list(scriptObject, "irStop"),
-        speaker: try Step.list(scriptObject, "speaker"),
-        speakerStop: try Step.list(scriptObject, "speakerStop")
+      return ModeChoice(features: features, mode: mode)
+    }
+    for choice in choices {
+      let carried = modes.first { $0.id == choice.mode }.map { Set($0.blocks.map(\.kind)) }
+      guard let carried, choice.features.isSubset(of: carried) else {
+        throw root.fail("modeChoices", "a choice names a mode that carries its features")
+      }
+    }
+    guard Set(choices.map(\.features)).count == choices.count else {
+      throw root.fail("modeChoices", "a feature set appears at most once")
+    }
+    return choices
+  }
+
+  /// The extension ids, each kind and each id once.
+  fileprivate static func extensionIDs(_ root: WiiReader) throws -> [ExtensionID] {
+    let kinds = try root.list("extensions", 1...16, allowed: ["kind", "id", "layout"]) {
+      ExtensionID(
+        kind: try $0.string("kind"),
+        id: try $0.bytes("id", 6...6),
+        layout: try $0.keys.contains("layout")
+          ? ExtensionLayout(reader: $0.object("layout", allowed: ExtensionLayout.keys)) : nil
       )
     }
+    guard Set(kinds.map(\.kind)).count == kinds.count,
+      Set(kinds.map(\.id)).count == kinds.count
+    else {
+      throw root.fail("extensions", "each kind and each id appears at most once")
+    }
+    return kinds
+  }
+
+  /// The IR sensitivity levels and the default level.
+  fileprivate static func irSensitivity(
+    _ root: WiiReader
+  ) throws -> (levels: [IRSensitivityLevel], defaultLevel: Int) {
+    let ir = try root.object("irSensitivity", allowed: ["default", "levels"])
+    let levels = try ir.list("levels", 1...9, allowed: ["level", "block1", "block2"]) {
+      IRSensitivityLevel(
+        level: try $0.number("level", 1...9),
+        block1: try $0.bytes("block1", 9...9),
+        block2: try $0.bytes("block2", 2...2)
+      )
+    }
+    let defaultLevel = try ir.number("default", 1...9)
+    guard levels.map(\.level) == Array(1...levels.count), defaultLevel <= levels.count else {
+      throw root.fail("irSensitivity", "levels count up from 1 and include the default")
+    }
+    return (levels, defaultLevel)
+  }
+
+  /// The byte of each IR mode, by format.
+  fileprivate static func irModeBytes(_ root: WiiReader) throws -> [BlockKind: UInt8] {
+    let formats: [(key: String, kind: BlockKind)] = [
+      ("basic", .irBasic), ("extended", .irExtended), ("full", .irFull),
+    ]
+    let modeObject = try root.object("irModeBytes", allowed: Set(formats.map(\.key)))
+    return Dictionary(
+      uniqueKeysWithValues: try formats.map {
+        ($0.kind, UInt8(try modeObject.number($0.key, 0...255)))
+      }
+    )
+  }
+
+  /// The Motion Plus mode byte for no extension, a Nunchuk and a Classic Controller.
+  fileprivate static func motionPlusModeBytes(_ root: WiiReader) throws -> [String: UInt8] {
+    let plusKeys = ["standalone", "nunchuk", "classic"]
+    let plusObject = try root.object("motionPlusModeBytes", allowed: Set(plusKeys))
+    return Dictionary(
+      uniqueKeysWithValues: try plusKeys.map { ($0, UInt8(try plusObject.number($0, 0...255))) }
+    )
+  }
+
+  /// The register scripts.
+  fileprivate static func scripts(_ root: WiiReader) throws -> Scripts {
+    let scriptObject = try root.object(
+      "scripts",
+      allowed: [
+        "handshake", "accelerometerCalibration", "motionPlus", "ir", "irStop", "speaker",
+        "speakerStop",
+      ]
+    )
+    return Scripts(
+      handshake: try Step.list(scriptObject, "handshake"),
+      accelerometerCalibration: try Step.list(scriptObject, "accelerometerCalibration"),
+      motionPlus: try Step.list(scriptObject, "motionPlus"),
+      ir: try Step.list(scriptObject, "ir"),
+      irStop: try Step.list(scriptObject, "irStop"),
+      speaker: try Step.list(scriptObject, "speaker"),
+      speakerStop: try Step.list(scriptObject, "speakerStop")
+    )
   }
 }
 
@@ -559,113 +613,5 @@ extension ProtocolDescription.WiiRemote.Step {
     guard reader.keys == used else {
       throw reader.fail("kind", "a \(kind) step sets exactly \(used.sorted())")
     }
-  }
-}
-
-/// Strict reads of one JSON object for the Wii Remote field: every failure names the key.
-private struct WiiReader {
-  /// The object being read.
-  let container: KeyedDecodingContainer<DocumentKey>
-
-  /// The keys the object sets.
-  var keys: Set<String> { Set(container.allKeys.map(\.stringValue)) }
-
-  /// Reads `container`, rejecting any key outside `allowed`.
-  init(_ container: KeyedDecodingContainer<DocumentKey>, allowed: Set<String>) throws {
-    try container.rejectUnknown(allowed: allowed)
-    self.container = container
-  }
-
-  /// A decoding error at `key`.
-  func fail(_ key: String, _ text: String) -> DecodingError {
-    .dataCorrupted(
-      .init(codingPath: container.codingPath + [DocumentKey(key)], debugDescription: text)
-    )
-  }
-
-  /// The integer at `key`, inside `range`.
-  func number(_ key: String, _ range: ClosedRange<Int>) throws -> Int {
-    let value = try container.decode(Int.self, for: key)
-    guard range.contains(value) else {
-      throw fail(key, "\(key) must be in \(range.lowerBound)...\(range.upperBound)")
-    }
-    return value
-  }
-
-  /// The string at `key`.
-  func string(_ key: String) throws -> String { try container.decode(String.self, for: key) }
-
-  /// The string array at `key`.
-  func strings(_ key: String) throws -> [String] { try container.decode([String].self, for: key) }
-
-  /// The hex bytes at `key`, `count` bytes long.
-  func bytes(_ key: String, _ count: ClosedRange<Int>) throws -> [UInt8] {
-    guard let bytes = HexBytes.parse(try string(key)), count.contains(bytes.count) else {
-      throw fail(key, "\(key) is \(count.lowerBound)...\(count.upperBound) \(HexBytes.message)")
-    }
-    return bytes
-  }
-
-  /// The 24-bit register address of the `address` key, six uppercase hex digits.
-  func address() throws -> UInt32 {
-    let text = try string("address")
-    guard text.count == 6, text.allSatisfy({ "0123456789ABCDEF".contains($0) }),
-      let value = UInt32(text, radix: 16)
-    else { throw fail("address", "address is six uppercase hex digits") }
-    return value
-  }
-
-  /// The `byte` and `mask` of a bit field whose byte lies in `bytes`.
-  func bitField(bytes: ClosedRange<Int>) throws -> ProtocolDescription.WiiRemote.BitField {
-    .init(byte: try number("byte", bytes), mask: UInt8(try number("mask", 1...255)))
-  }
-
-  /// The control named by the `control` key.
-  func control() throws -> Control {
-    let name = try string("control")
-    guard let control = Control(rawValue: name) else {
-      throw fail("control", "\(name) is not a control")
-    }
-    return control
-  }
-
-  /// The one to three contiguous runs of bits at `key`, most significant first.
-  func field(_ key: String) throws -> ProtocolDescription.WiiRemote.ExtensionField {
-    let parts = try list(key, 1...3, allowed: ["byte", "mask"]) { try $0.bitField(bytes: 0...5) }
-    for part in parts {
-      let run = part.mask >> part.mask.trailingZeroBitCount
-      guard run & (run &+ 1) == 0 else { throw fail(key, "a mask is one run of set bits") }
-    }
-    return .init(parts: parts)
-  }
-
-  /// The nested object at `key`, limited to the `allowed` keys.
-  func object(_ key: String, allowed: Set<String>) throws -> Self {
-    try Self(
-      try container.nestedContainer(keyedBy: DocumentKey.self, forKey: DocumentKey(key)),
-      allowed: allowed
-    )
-  }
-
-  /// The array at `key` of `count` entries, each read with `read`.
-  func list<Value>(
-    _ key: String,
-    _ count: ClosedRange<Int>,
-    allowed: Set<String>,
-    _ read: (Self) throws -> Value
-  ) throws -> [Value] {
-    var unkeyed = try container.nestedUnkeyedContainer(forKey: DocumentKey(key))
-    var values: [Value] = []
-    while !unkeyed.isAtEnd {
-      let item = try Self(
-        try unkeyed.nestedContainer(keyedBy: DocumentKey.self),
-        allowed: allowed
-      )
-      values.append(try read(item))
-    }
-    guard count.contains(values.count) else {
-      throw fail(key, "\(key) names \(count.lowerBound)...\(count.upperBound) entries")
-    }
-    return values
   }
 }
