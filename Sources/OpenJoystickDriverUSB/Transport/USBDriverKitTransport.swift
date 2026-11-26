@@ -328,18 +328,25 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     case .serviceUnavailable, .sessionClosed: return .disconnected
     case .invalidServiceClass, .bufferTooLarge: return .notSupported
     case .ioReturn(let code):
-      switch code {
-      // A pipe abort, such as the halt recovery's, ends the pending transfer like a timeout, as
-      // on the IOUSBHost route.
-      case kIOReturnTimeout, kIOReturnAborted: return .timeout
-      case kIOReturnNoDevice, kIOReturnNotAttached, kIOReturnNotOpen: return .disconnected
-      case kIOReturnExclusiveAccess: return .ownedByAnotherClient(owner: nil)
-      case kIOReturnNotPermitted, kIOReturnNotPrivileged: return .accessDenied
-      case kIOReturnNotFound: return .notFound
-      case kIOReturnUnsupported: return .notSupported
-      case kIOReturnIOError: return .inputOutput
-      default: return .platform(code: code, message: driverKitError.description)
-      }
+      return transportError(ioReturn: code, description: driverKitError.description)
+    }
+  }
+
+  /// Maps an I/O Kit return `code` of a driver call to a transport error; `description` names
+  /// the failure for a code without a transport meaning.
+  private static func transportError(ioReturn code: Int32, description: String) -> USBTransportError
+  {
+    switch code {
+    // A pipe abort, such as the halt recovery's, ends the pending transfer like a timeout, as
+    // on the IOUSBHost route.
+    case kIOReturnTimeout, kIOReturnAborted: return .timeout
+    case kIOReturnNoDevice, kIOReturnNotAttached, kIOReturnNotOpen: return .disconnected
+    case kIOReturnExclusiveAccess: return .ownedByAnotherClient(owner: nil)
+    case kIOReturnNotPermitted, kIOReturnNotPrivileged: return .accessDenied
+    case kIOReturnNotFound: return .notFound
+    case kIOReturnUnsupported: return .notSupported
+    case kIOReturnIOError: return .inputOutput
+    default: return .platform(code: code, message: description)
     }
   }
 }
