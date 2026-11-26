@@ -232,15 +232,25 @@ extension PassiveUSBConfigurationDescriptorParser {
       let perInterval =
         UInt32(chunk[4]) | (UInt32(chunk[5]) << 8) | (UInt32(chunk[6]) << 16)
         | (UInt32(chunk[7]) << 24)
-      guard let maximum = superSpeedPlusContext.maximumBytesPerInterval, perInterval > 49_152,
-        perInterval < maximum
-      else { throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor }
+      guard Self.fitsSuperSpeedPlus(perInterval, within: superSpeedPlusContext) else {
+        throw PassiveUSBDescriptorBlobError.invalidCompanionDescriptor
+      }
       value.endpoints[value.endpoints.count - 1] = endpoint.withCompanions(
         superSpeed: endpoint.superSpeedCompanion,
         superSpeedPlus: PassiveUSBSuperSpeedPlusCompanion(bytesPerInterval: perInterval)
       )
       current = value
       sspCompanionRequired = false
+    }
+
+    /// Whether `perInterval` bytes need the SuperSpeedPlus companion, above the 49,152 a
+    /// SuperSpeed companion carries, and stay below the maximum the context allows.
+    private static func fitsSuperSpeedPlus(
+      _ perInterval: UInt32,
+      within context: PassiveUSBSuperSpeedPlusValidationContext
+    ) -> Bool {
+      guard let maximum = context.maximumBytesPerInterval else { return false }
+      return perInterval > 49_152 && perInterval < maximum
     }
 
     /// Closes the last interface and checks the counts the configuration descriptor declared.
@@ -281,14 +291,7 @@ extension PassiveUSBConfigurationDescriptorParser {
       interval: UInt8,
       speed: PassiveUSBNegotiatedSpeed?
     ) throws {
-      let invalidAttributes: Bool =
-        switch transfer {
-        case 0, 2: attributes & 0xFC != 0
-        case 1: attributes & 0xC0 != 0 || attributes & 0x30 == 0x30
-        case 3: attributes & 0xC0 != 0 || attributes & 0x30 > 0x10
-        default: true
-        }
-      guard !invalidAttributes else {
+      guard hasValidReservedAttributeBits(transfer: transfer, attributes: attributes) else {
         throw PassiveUSBDescriptorBlobError.invalidTransferAttributes
       }
       let isPeriodic = transfer == 1 || transfer == 3
@@ -307,6 +310,18 @@ extension PassiveUSBConfigurationDescriptorParser {
       let isMicroframeSpeed = speed == .high || speed == .superSpeed || speed == .superSpeedPlus
       if isMicroframeSpeed, isPeriodic, interval > 16 {
         throw PassiveUSBDescriptorBlobError.invalidInterval
+      }
+    }
+
+    /// Whether `attributes` leaves clear the bits that `transfer` reserves: every bit above the
+    /// type for control and bulk, the high two bits and usage `0b11` for isochronous, and the high
+    /// two bits and any usage above `0b01` for interrupt.
+    private static func hasValidReservedAttributeBits(transfer: UInt8, attributes: UInt8) -> Bool {
+      switch transfer {
+      case 0, 2: attributes & 0xFC == 0
+      case 1: attributes & 0xC0 == 0 && attributes & 0x30 != 0x30
+      case 3: attributes & 0xC0 == 0 && attributes & 0x30 <= 0x10
+      default: false
       }
     }
 

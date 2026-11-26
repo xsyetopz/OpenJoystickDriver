@@ -167,11 +167,8 @@ enum HIDReportDescriptorParser {
       if prefix == 0, state.collectionDepth == 0, descriptor[i...].allSatisfy({ $0 == 0 }) { break }
 
       if prefix == 0xFE {
-        // Long item: [0xFE][size][tag][data...]
-        guard i + 2 <= descriptor.count else { return nil }
-        let size = Int(descriptor[i])
-        guard i + 2 + size <= descriptor.count else { return nil }
-        i += 2 + size
+        guard let next = longItemEnd(in: descriptor, after: i) else { return nil }
+        i = next
         state.containsUnsupportedItem = true
         continue
       }
@@ -194,6 +191,14 @@ enum HIDReportDescriptorParser {
     }
     guard state.collectionDepth == 0 else { return nil }
     return state.descriptor
+  }
+
+  /// The index after the long item whose `[size][tag][data...]` starts at `start`, or nil when it
+  /// runs past the end of `descriptor`.
+  private static func longItemEnd(in descriptor: [UInt8], after start: Int) -> Int? {
+    guard start + 2 <= descriptor.count else { return nil }
+    let end = start + 2 + Int(descriptor[start])
+    return end <= descriptor.count ? end : nil
   }
 
   /// The global, local and collection state a descriptor walk carries from item to item.
