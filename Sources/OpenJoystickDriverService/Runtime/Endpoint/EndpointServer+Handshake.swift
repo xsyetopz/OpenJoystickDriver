@@ -14,6 +14,29 @@ extension EndpointServer {
       }
       connection.finish()
     }
+    guard admitAndWelcome(connection, origin: origin, port: port) else { return }
+    connection.setReceiveTimeout(seconds: 0)
+
+    var next = readRequest(connection, accepting: Self.requestKinds)
+    while let found = next, found.request.kind.isCommand {
+      guard perform(found.request.kind, line: found.line, on: connection) else { return }
+      next = readRequest(connection, accepting: Self.requestKinds)
+    }
+    guard let request = next?.request else { return }
+    if request.kind == .feedRequest {
+      serveFeedRequest(request, on: connection)
+    } else {
+      serveSubscription(request, on: connection)
+    }
+  }
+
+  /// Sends the challenge, registers `connection` within the per-transport limit, and runs the
+  /// handshake under its overall deadline; true when the client was welcomed.
+  private func admitAndWelcome(
+    _ connection: EndpointConnection,
+    origin: String?,
+    port: Int?
+  ) -> Bool {
     // The challenge comes first, so that a client can read one line before any error.
     let nonce = AccessTokenGrant.randomBase64URL()
     connection.send(EndpointChallenge(nonce: nonce))
@@ -30,11 +53,11 @@ extension EndpointServer {
           message: "The endpoint serves at most \(Self.maximumConnections) clients per transport."
         )
       )
-      return
+      return false
     }
     // A TCP peer has no user or audit token; the WebSocket relies on the token alone.
     let peer = LocalSocketPeer.authenticated(connection.descriptor)
-    guard connection.kind == .web || peer != nil else { return }
+    guard connection.kind == .web || peer != nil else { return false }
     try? LocalServiceRPCTransport.setTimeout(
       connection.descriptor,
       seconds: TimeInterval(Self.handshakeSeconds)
@@ -52,33 +75,30 @@ extension EndpointServer {
     let challenge = Challenge(nonce: nonce, origin: origin ?? "", port: port.map(String.init) ?? "")
     let welcomed = handshake(connection, peer: peer, origin: origin, challenge: challenge)
     handshakeEnded.signal()
-    guard welcomed else { return }
-    connection.setReceiveTimeout(seconds: 0)
+    return welcomed
+  }
 
-    var next = readRequest(connection, accepting: Self.requestKinds)
-    while let found = next, found.request.kind.isCommand {
-      guard perform(found.request.kind, line: found.line, on: connection) else { return }
-      next = readRequest(connection, accepting: Self.requestKinds)
-    }
-    guard let request = next?.request else { return }
-    if request.kind == .feedRequest {
-      guard connection.session?.scopes.contains(.control) == true else {
-        connection.close(
-          EndpointError(code: .notGranted, message: "FeedRequest needs the control scope.")
-        )
-        return
-      }
-      guard let persona = request.as.flatMap(VirtualHIDProfileID.init(rawValue:)) else {
-        let allowed = VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")
-        let refused = request.as.map { "\($0) is not a persona the service publishes. " } ?? ""
-        connection.close(
-          Self.invalid("\(refused)Send FeedRequest with a persona: \(allowed).")
-        )
-        return
-      }
-      feed(connection, persona: persona)
+  /// Starts the feed a `FeedRequest` asks for, or closes `connection` with the reason it cannot.
+  private func serveFeedRequest(_ request: EndpointRequest, on connection: EndpointConnection) {
+    guard connection.session?.scopes.contains(.control) == true else {
+      connection.close(
+        EndpointError(code: .notGranted, message: "FeedRequest needs the control scope.")
+      )
       return
     }
+    guard let persona = request.as.flatMap(VirtualHIDProfileID.init(rawValue:)) else {
+      let allowed = VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")
+      let refused = request.as.map { "\($0) is not a persona the service publishes. " } ?? ""
+      connection.close(
+        Self.invalid("\(refused)Send FeedRequest with a persona: \(allowed).")
+      )
+      return
+    }
+    feed(connection, persona: persona)
+  }
+
+  /// Streams the list a `Subscription` asks for until the client sends any further line.
+  private func serveSubscription(_ request: EndpointRequest, on connection: EndpointConnection) {
     guard request.kind == .subscription,
       let stream = request.stream.flatMap(Self.SubscriptionStream.init),
       stream == .controllers || request.output == nil
