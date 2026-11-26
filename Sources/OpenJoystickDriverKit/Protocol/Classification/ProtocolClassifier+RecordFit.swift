@@ -17,6 +17,27 @@ extension ProtocolClassifier {
     return !numbers.isEmpty && !numbers.contains(where: range.contains)
   }
 
+  /// The `HIDDescriptor` binding of `interface`, whose rule is the SDL game controller database
+  /// when it supplies a usage map for `device` and the descriptor contract otherwise.
+  static func descriptorBinding(
+    device: PhysicalDevice,
+    interface: PhysicalInterfaceSignature,
+    backend: DeviceAccessBackend,
+    database: SDLGameControllerDatabase
+  ) -> ProtocolBinding {
+    let resolution = database.resolve(device: device, interface: interface)
+    return ProtocolBinding(
+      protocolID: .hidDescriptor,
+      variant: nil,
+      accessBackend: backend,
+      interfaceNumber: interface.interfaceNumber,
+      rule: resolution.usageMap == nil ? .hidDescriptor : .sdlGameControllerDB,
+      matchedPredicates: [.hidDescriptorContract],
+      record: nil,
+      sdl: resolution
+    )
+  }
+
   /// The `HIDDescriptor` binding that serves a device whose `record` fits none of its interfaces,
   /// or nil when a HID interface fails the descriptor contract or the record states that macOS
   /// serves the pad.
@@ -30,16 +51,11 @@ extension ProtocolClassifier {
     guard !(record.statesServer && record.server == .system),
       let interface = descriptorInterface(interfaces)
     else { return nil }
-    let resolution = database.resolve(device: device, interface: interface)
-    var binding = ProtocolBinding(
-      protocolID: .hidDescriptor,
-      variant: nil,
-      accessBackend: backend,
-      interfaceNumber: interface.interfaceNumber,
-      rule: resolution.usageMap == nil ? .hidDescriptor : .sdlGameControllerDB,
-      matchedPredicates: [.hidDescriptorContract],
-      record: nil,
-      sdl: resolution
+    var binding = descriptorBinding(
+      device: device,
+      interface: interface,
+      backend: backend,
+      database: database
     )
     binding.unfitRecordID = record.recordID
     return .bound(binding)

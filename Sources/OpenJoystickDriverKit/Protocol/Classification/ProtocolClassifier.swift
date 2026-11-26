@@ -505,18 +505,8 @@ enum ProtocolClassifier {
         )
       )
     }
-    let resolution = database.resolve(device: device, interface: interface)
     return .bound(
-      ProtocolBinding(
-        protocolID: .hidDescriptor,
-        variant: nil,
-        accessBackend: backend,
-        interfaceNumber: interface.interfaceNumber,
-        rule: resolution.usageMap == nil ? .hidDescriptor : .sdlGameControllerDB,
-        matchedPredicates: [.hidDescriptorContract],
-        record: nil,
-        sdl: resolution
-      )
+      descriptorBinding(device: device, interface: interface, backend: backend, database: database)
     )
   }
 
