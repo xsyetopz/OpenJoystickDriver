@@ -123,4 +123,22 @@ struct SemanticVersionTests {
     #expect(!(lhs < rhs))
     #expect(!(rhs < lhs))
   }
+
+  @Test
+  func rejectsMalformedCoreAndOverflow() {
+    #expect(SemanticVersion("") == nil)
+    #expect(SemanticVersion("v") == nil)
+    #expect(SemanticVersion("1.2") == nil)
+    #expect(SemanticVersion("1.2.3.4") == nil)
+    #expect(SemanticVersion("1.-2.3") == nil)
+    #expect(SemanticVersion("99999999999999999999.0.0") == nil)
+    #expect(SemanticVersion("+build") == nil)
+  }
+
+  @Test
+  func dropsBuildMetadataBeforeReadingPrerelease() throws {
+    let version = try #require(SemanticVersion("1.2.3-rc.1+build.5"))
+    #expect(version.prerelease == ["rc", "1"])
+    #expect(SemanticVersion("1.2.3-rc.1+") == nil)
+  }
 }

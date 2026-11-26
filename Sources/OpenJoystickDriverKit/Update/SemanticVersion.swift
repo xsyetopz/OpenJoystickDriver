@@ -20,20 +20,41 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
   public init?(_ value: String) {
     var version = value
     if version.first == "v" || version.first == "V" { version.removeFirst() }
+    guard let withoutBuild = Self.removingBuildMetadata(version) else { return nil }
 
-    if let buildStart = version.firstIndex(of: "+") {
-      let build = String(version[version.index(after: buildStart)...])
-      guard Self.isValidBuildMetadata(build) else { return nil }
-      version = String(version[..<buildStart])
-    }
-
-    let versionAndPrerelease = version.split(
+    let versionAndPrerelease = withoutBuild.split(
       separator: "-",
       maxSplits: 1,
       omittingEmptySubsequences: false
     )
-    guard let core = versionAndPrerelease.first else { return nil }
+    guard let core = versionAndPrerelease.first, let numbers = Self.parseCore(core) else {
+      return nil
+    }
+    var identifiers: [String] = []
+    if versionAndPrerelease.count == 2 {
+      guard let parsed = Self.parsePrerelease(versionAndPrerelease[1]) else { return nil }
+      identifiers = parsed
+    }
 
+    self.major = numbers.major
+    self.minor = numbers.minor
+    self.patch = numbers.patch
+    self.prerelease = identifiers
+  }
+
+  /// Returns `version` without its `+` build metadata, or nil when the metadata is invalid.
+  private static func removingBuildMetadata(_ version: String) -> String? {
+    guard let buildStart = version.firstIndex(of: "+") else { return version }
+    let build = String(version[version.index(after: buildStart)...])
+    guard Self.isValidBuildMetadata(build) else { return nil }
+    return String(version[..<buildStart])
+  }
+
+  /// Parses the `MAJOR.MINOR.PATCH` core, or returns nil when a number is not a valid identifier
+  /// or does not fit an `Int`.
+  private static func parseCore(
+    _ core: Substring
+  ) -> (major: Int, minor: Int, patch: Int)? {
     let numbers = core.split(separator: ".", omittingEmptySubsequences: false)
     guard numbers.count == 3, Self.isValidNumericIdentifier(String(numbers[0])),
       Self.isValidNumericIdentifier(String(numbers[1])),
@@ -41,20 +62,14 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
       let minorNumber = Int(numbers[1]), let patchNumber = Int(numbers[2]),
       majorNumber >= 0, minorNumber >= 0, patchNumber >= 0
     else { return nil }
+    return (majorNumber, minorNumber, patchNumber)
+  }
 
-    let identifiers: [String]
-    if versionAndPrerelease.count == 2 {
-      identifiers = versionAndPrerelease[1].split(separator: ".", omittingEmptySubsequences: false)
-        .map(String.init)
-      guard !identifiers.isEmpty, identifiers.allSatisfy(Self.isValidIdentifier) else { return nil }
-    } else {
-      identifiers = []
-    }
-
-    self.major = majorNumber
-    self.minor = minorNumber
-    self.patch = patchNumber
-    self.prerelease = identifiers
+  /// Parses the dot-separated prerelease identifiers, or returns nil when one is invalid.
+  private static func parsePrerelease(_ text: Substring) -> [String]? {
+    let identifiers = text.split(separator: ".", omittingEmptySubsequences: false).map(String.init)
+    guard !identifiers.isEmpty, identifiers.allSatisfy(Self.isValidIdentifier) else { return nil }
+    return identifiers
   }
 
   /// Whether `lhs` has lower precedence than `rhs`.
