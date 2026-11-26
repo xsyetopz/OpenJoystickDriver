@@ -107,50 +107,64 @@ public indirect enum OrderedJSON: Equatable, Sendable {
   public init(foundation value: Any, order: Self? = nil) throws {
     switch value {
     case let dictionary as [String: Any]:
-      var guide: [String: Self] = [:]
-      var guided: [String] = []
-      if case .object(let members)? = order {
-        for member in members where guide[member.key] == nil {
-          guided.append(member.key)
-          guide[member.key] = member.value
-        }
-      }
-      var remaining = dictionary
-      var members: [Member] = []
-      for key in guided {
-        guard let child = remaining.removeValue(forKey: key) else { continue }
-        members.append(Member(key: key, value: try Self(foundation: child, order: guide[key])))
-      }
-      for (key, child) in remaining.sorted(by: { $0.key < $1.key }) {
-        members.append(Member(key: key, value: try Self(foundation: child)))
-      }
-      self = .object(members)
+      self = try Self.object(foundation: dictionary, order: order)
     case let list as [Any]:
-      var guideItems: [Self] = []
-      if case .array(let items)? = order { guideItems = items }
-      var items: [Self] = []
-      for (index, item) in list.enumerated() {
-        items.append(
-          try Self(foundation: item, order: index < guideItems.count ? guideItems[index] : nil)
-        )
-      }
-      self = .array(items)
+      self = try Self.array(foundation: list, order: order)
     case let text as String:
       self = .string(text)
     case is NSNull:
       self = .null
     // swiftlint:disable:next legacy_objc_type
     case let number as NSNumber:
-      if CFGetTypeID(number) == CFBooleanGetTypeID() {
-        self = .bool(number.boolValue)
-      } else if case .number(let text)? = order, Self.reads(text, as: number) {
-        self = .number(text)
-      } else {
-        self = .number(try Self.text(of: number))
-      }
+      self = try Self.scalar(foundation: number, order: order)
     default:
       throw Problem(reason: .notJSONValue("\(type(of: value)) is not a JSON value"), offset: nil)
     }
+  }
+
+  /// The object for `dictionary`, its members laid out after the object `order` holds.
+  private static func object(foundation dictionary: [String: Any], order: Self?) throws -> Self {
+    var guide: [String: Self] = [:]
+    var guided: [String] = []
+    if case .object(let members)? = order {
+      for member in members where guide[member.key] == nil {
+        guided.append(member.key)
+        guide[member.key] = member.value
+      }
+    }
+    var remaining = dictionary
+    var members: [Member] = []
+    for key in guided {
+      guard let child = remaining.removeValue(forKey: key) else { continue }
+      members.append(Member(key: key, value: try Self(foundation: child, order: guide[key])))
+    }
+    for (key, child) in remaining.sorted(by: { $0.key < $1.key }) {
+      members.append(Member(key: key, value: try Self(foundation: child)))
+    }
+    return .object(members)
+  }
+
+  /// The array for `list`, each item laid out after the item of `order` at the same position.
+  private static func array(foundation list: [Any], order: Self?) throws -> Self {
+    var guideItems: [Self] = []
+    if case .array(let items)? = order { guideItems = items }
+    var items: [Self] = []
+    for (index, item) in list.enumerated() {
+      items.append(
+        try Self(foundation: item, order: index < guideItems.count ? guideItems[index] : nil)
+      )
+    }
+    return .array(items)
+  }
+
+  /// The boolean or number for `number`, keeping the text `order` holds when it reads the same.
+  private static func scalar(
+    foundation number: NSNumber,  // swiftlint:disable:this legacy_objc_type
+    order: Self?
+  ) throws -> Self {
+    if CFGetTypeID(number) == CFBooleanGetTypeID() { return .bool(number.boolValue) }
+    if case .number(let text)? = order, reads(text, as: number) { return .number(text) }
+    return .number(try text(of: number))
   }
 
   /// Whether the JSON number `text` has the value of `number`.
@@ -276,54 +290,70 @@ public indirect enum OrderedJSON: Equatable, Sendable {
   private func write(into output: inout String, indent: Int, prefix: Int, suffix: Int) {
     switch self {
     case .object(let members):
-      guard !members.isEmpty else {
-        output += "{}"
-        return
-      }
-      output += "{\n"
-      let inner = indent + Self.indentWidth
-      for (index, member) in members.enumerated() {
-        let key = Self.quoted(member.key) + ": "
-        let last = index == members.count - 1
-        output += String(repeating: " ", count: inner) + key
-        member.value.write(
-          into: &output,
-          indent: inner,
-          prefix: inner + Self.columns(key),
-          suffix: last ? 0 : 1
-        )
-        output += last ? "\n" : ",\n"
-      }
-      output += String(repeating: " ", count: indent) + "}"
+      Self.writeObject(members, into: &output, indent: indent)
     case .array(let items):
-      guard !items.isEmpty else {
-        output += "[]"
-        return
-      }
-      if let flat = flatText, prefix + Self.columns(flat) + suffix <= Self.lineWidth {
-        output += flat
-        return
-      }
-      output += "[\n"
-      let inner = indent + Self.indentWidth
-      let numbers = items.compactMap { item -> String? in
-        if case .number(let text) = item { return text }
-        return nil
-      }
-      if numbers.count == items.count {
-        Self.fill(numbers, into: &output, indent: inner)
-      } else {
-        for (index, item) in items.enumerated() {
-          let last = index == items.count - 1
-          output += String(repeating: " ", count: inner)
-          item.write(into: &output, indent: inner, prefix: inner, suffix: last ? 0 : 1)
-          output += last ? "\n" : ",\n"
-        }
-      }
-      output += String(repeating: " ", count: indent) + "]"
+      writeArray(items, into: &output, indent: indent, prefix: prefix, suffix: suffix)
     default:
       output += flatText ?? ""
     }
+  }
+
+  /// Writes an object, one member to a line.
+  private static func writeObject(_ members: [Member], into output: inout String, indent: Int) {
+    guard !members.isEmpty else {
+      output += "{}"
+      return
+    }
+    output += "{\n"
+    let inner = indent + indentWidth
+    for (index, member) in members.enumerated() {
+      let key = quoted(member.key) + ": "
+      let last = index == members.count - 1
+      output += String(repeating: " ", count: inner) + key
+      member.value.write(
+        into: &output,
+        indent: inner,
+        prefix: inner + columns(key),
+        suffix: last ? 0 : 1
+      )
+      output += last ? "\n" : ",\n"
+    }
+    output += String(repeating: " ", count: indent) + "}"
+  }
+
+  /// Writes an array on one line when it fits, as filled numbers, or one item to a line.
+  private func writeArray(
+    _ items: [Self],
+    into output: inout String,
+    indent: Int,
+    prefix: Int,
+    suffix: Int
+  ) {
+    guard !items.isEmpty else {
+      output += "[]"
+      return
+    }
+    if let flat = flatText, prefix + Self.columns(flat) + suffix <= Self.lineWidth {
+      output += flat
+      return
+    }
+    output += "[\n"
+    let inner = indent + Self.indentWidth
+    let numbers = items.compactMap { item -> String? in
+      if case .number(let text) = item { return text }
+      return nil
+    }
+    if numbers.count == items.count {
+      Self.fill(numbers, into: &output, indent: inner)
+    } else {
+      for (index, item) in items.enumerated() {
+        let last = index == items.count - 1
+        output += String(repeating: " ", count: inner)
+        item.write(into: &output, indent: inner, prefix: inner, suffix: last ? 0 : 1)
+        output += last ? "\n" : ",\n"
+      }
+    }
+    output += String(repeating: " ", count: indent) + "]"
   }
 
   /// Writes `numbers` as `biome` fills an array of numbers: each number, with its comma, goes on
