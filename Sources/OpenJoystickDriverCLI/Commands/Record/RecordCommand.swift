@@ -134,17 +134,7 @@ struct RecordShowCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let set = RecordStore.load()
-      RecordStore.warn(set.problems.filter { $0.model == model })
-      guard let record = set.records[model] else {
-        throw CLIFailure(
-          .notFound,
-          CLILocalized.format(
-            "cli.record.show.notFound",
-            model.description
-          )
-        )
-      }
+      let record = try RecordStore.record(for: model)
       let fields = record.fieldLayers.mapValues(\.rawValue)
       switch CLIContext.current.format {
       case .json:

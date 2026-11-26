@@ -42,6 +42,21 @@ enum RecordStore {
     }
   }
 
+  /// The record of `model`, after a warning for each skipped user file of that model.
+  ///
+  /// - Throws: ``CLIFailure`` with the not-found code when no record has that model.
+  static func record(for model: ControllerModelID) throws -> ControllerRecord {
+    let set = load()
+    warn(set.problems.filter { $0.model == model })
+    guard let record = set.records[model] else {
+      throw CLIFailure(
+        .notFound,
+        CLILocalized.format("cli.record.show.notFound", model.description)
+      )
+    }
+    return record
+  }
+
   /// Prints each skipped user file on stderr.
   static func warn(_ files: [ControllerRecordFile]) {
     for file in files {
