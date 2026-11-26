@@ -73,9 +73,8 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
 
   /// The last rumble again while a motor runs, when the template names a resend interval.
   public func keepAliveWrites() -> [PhysicalOutputWrite] {
-    guard let rumbleTemplate, let intensities = rumbleTemplate.resendIntensities(after: lastRumble)
-    else { return [] }
-    return rumbleTemplate.reportSequence(intensities).map { rumbleWrite(rumbleTemplate, $0) }
+    guard let rumbleTemplate else { return [] }
+    return rumbleTemplate.resendWrites(after: lastRumble) { self.rumbleWrite(rumbleTemplate, $0) }
   }
 
   /// Builds the write of one template report: the template's own HID report, or a raw-USB packet

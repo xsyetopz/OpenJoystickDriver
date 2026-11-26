@@ -323,6 +323,17 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     return last
   }
 
+  /// The writes of a keep-alive tick: the last rumble again while a motor runs, when the template
+  /// names a resend interval; none otherwise. `send` builds the write of each raw-USB packet, as in
+  /// ``encode(_:sending:)``.
+  func resendWrites(
+    after last: RumbleIntensities,
+    sending send: (([UInt8]) -> PhysicalOutputWrite)? = nil
+  ) -> [PhysicalOutputWrite] {
+    guard let intensities = resendIntensities(after: last) else { return [] }
+    return reportSequence(intensities).map(send ?? hidWrite)
+  }
+
   /// Rumble through this template; the motors run until the next report. `send` builds the write
   /// of each raw-USB packet, whose driver owns the endpoint; a HID template writes its own reports.
   func encode(
