@@ -121,13 +121,13 @@ struct CommandTreeTests {
     }
   }
 
-  @Test(arguments: CLICommandTree.leafPaths)
-  func globalOptionsReachLeafBeforeAndAfterSubcommand(path: [String]) async throws {
+  // Parsing is CPU-bound and the leaf paths are many: serial cases hold one pool thread, so the
+  // in-process servers of deadline-bound tests keep threads to answer on.
+  @Test(.serialized, arguments: CLICommandTree.leafPaths)
+  func globalOptionsReachLeafBeforeAndAfterSubcommand(path: [String]) throws {
     let flags = ["--json", "--quiet", "--no-color", "--no-input", "--timeout", "2.5"]
     let leaf = path + CLICommandTree.sampleOperands(for: path)
     for arguments in [flags + leaf, leaf + flags] {
-      // Parsing is CPU-bound; yielding keeps the shared pool free for deadline-bound tests.
-      await Task.yield()
       let command = try OJDCommand.parseAsRoot(arguments)
       let global = try #require(CLICommandTree.globalOptions(of: command), "\(arguments)")
       let context = try global.context(environment: [:])

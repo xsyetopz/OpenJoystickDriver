@@ -453,21 +453,46 @@ enum GUISources {
 
   /// Whether `symbol` is declared in the GUI sources and used outside its declarations.
   static func isDeclaredAndReferenced(_ symbol: String) -> Bool {
-    let name = NSRegularExpression.escapedPattern(for: symbol)
-    let declaration =
-      "\\b(func|case|var|let|struct|class|enum|actor|protocol|typealias)\\s+\(name)\\b"
-    let declarations = count(of: declaration)
-    return declarations >= 1 && count(of: "\\b\(name)\\b") > declarations
+    let declarations = index.declarations[Substring(symbol), default: 0]
+    return declarations >= 1 && index.words[Substring(symbol), default: 0] > declarations
   }
 
-  private static func count(of pattern: String) -> Int {
-    guard let expression = try? NSRegularExpression(pattern: pattern) else {
-      fatalError("invalid pattern \(pattern)")
+  /// How often each word occurs in `text`, and how often it follows a declaring keyword.
+  struct WordIndex {
+    var words: [Substring: Int] = [:]
+    var declarations: [Substring: Int] = [:]
+  }
+
+  static let declaringKeywords: Set<Substring> = [
+    "func", "case", "var", "let", "struct", "class", "enum", "actor", "protocol", "typealias",
+  ]
+
+  /// Words are runs of letters, digits and `_`; a declaration is a word that follows a declaring
+  /// keyword with only whitespace between them.
+  static let index: WordIndex = {
+    var index = WordIndex()
+    var previous: Substring?
+    var position = text.startIndex
+    while position < text.endIndex {
+      guard isWordCharacter(text[position]) else {
+        if !text[position].isWhitespace { previous = nil }
+        position = text.index(after: position)
+        continue
+      }
+      let end = text[position...].firstIndex { !isWordCharacter($0) } ?? text.endIndex
+      let word = text[position..<end]
+      index.words[word, default: 0] += 1
+      if let previous, declaringKeywords.contains(previous) {
+        index.declarations[word, default: 0] += 1
+      }
+      previous = word
+      position = end
     }
-    return expression.numberOfMatches(
-      in: text,
-      range: NSRange(text.startIndex..., in: text)
-    )
+    return index
+  }()
+
+  private static func isWordCharacter(_ character: Character) -> Bool {
+    character.isLetter || character.isNumber || character == "_"
   }
 
   /// Swift source without line comments, nested block comments or string literal text.
