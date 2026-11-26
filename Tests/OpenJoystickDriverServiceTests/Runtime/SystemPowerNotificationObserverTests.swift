@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverService
@@ -19,6 +20,7 @@ struct SystemPowerNotificationObserverTests {
     await recorder.waitForSleepHandlerSuspended()
     center.send(.systemHasPoweredOn)
 
+    // Absence: the wake stays buffered behind the blocked handler, and nothing signals that.
     try? await Task.sleep(for: .milliseconds(20))
     #expect(await recorder.events == [.willSleep])
 
@@ -79,6 +81,7 @@ struct SystemPowerNotificationObserverTests {
     await observer.stop()
     center.send(.systemWillSleep(notificationID: 7))
     observer.start()
+    // Absence: a stopped observer delivers nothing, and nothing signals that.
     try? await Task.sleep(for: .milliseconds(20))
 
     #expect(await recorder.events == [.didWake])
@@ -96,12 +99,14 @@ struct SystemPowerNotificationObserverTests {
     source.send(.systemWillSleep(notificationID: 7))
     await recorder.waitForSleepHandlerSuspended()
     source.send(.systemHasPoweredOn)
+    // Absence: no acknowledgement while the sleep handler blocks, and nothing signals that.
     try? await Task.sleep(for: .milliseconds(20))
     #expect(source.acknowledgements.isEmpty)
 
     await recorder.resumeWillSleep()
     await source.waitForAcknowledgements(1)
     await recorder.waitForEventCount(2)
+    // Absence: no second acknowledgement follows, and nothing signals that.
     try? await Task.sleep(for: .milliseconds(20))
     #expect(source.acknowledgements == [7])
     #expect(await recorder.events == [.willSleep, .didWake])
@@ -175,9 +180,7 @@ private final class FakePowerSource: SystemPowerSource, @unchecked Sendable {
   }
 
   func waitForAcknowledgements(_ count: Int) async {
-    for _ in 0..<200 where acknowledgements.count < count {
-      try? await Task.sleep(for: .milliseconds(10))
-    }
+    await waitUntil("\(count) acknowledgements") { acknowledgements.count >= count }
   }
 }
 
