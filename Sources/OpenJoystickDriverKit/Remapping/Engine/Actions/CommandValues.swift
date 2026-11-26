@@ -27,6 +27,18 @@ public enum RemappingCommandValueParser {
   /// - Throws: ``RemappingCommandValueError/invalidSource(_:)`` when no source form matches.
   public static func source(_ raw: String) throws -> RemappingSource {
     let parts = raw.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
+    let parsed: RemappingSource? =
+      switch parts[0] {
+      case "button", "dpad", "axis", "trigger", "motion": controlSource(parts)
+      case "touch": touchSource(parts) ?? regionSource(parts)
+      default: regionSource(parts)
+      }
+    guard let parsed else { throw RemappingCommandValueError.invalidSource(raw) }
+    return parsed
+  }
+
+  /// Parses the `button`, `dpad`, `axis`, `trigger:TRIGGER:STAGE` and `motion:lean` forms.
+  private static func controlSource(_ parts: [String]) -> RemappingSource? {
     if parts.count == 2, parts[0] == "button",
       let button = CommandLineName.value(of: parts[1], in: Control.self)
     {
@@ -59,6 +71,11 @@ public enum RemappingCommandValueParser {
     {
       return .motionLean(direction)
     }
+    return nil
+  }
+
+  /// Parses the `touch:SURFACE:contact`, `grid` and `swipe` forms.
+  private static func touchSource(_ parts: [String]) -> RemappingSource? {
     if parts.count == 3, parts[0] == "touch",
       let surface = CommandLineName.value(of: parts[1], in: RemappingTouchSurface.self),
       parts[2] == "contact"
@@ -95,8 +112,7 @@ public enum RemappingCommandValueParser {
         )
       )
     }
-    if let region = regionSource(parts) { return region }
-    throw RemappingCommandValueError.invalidSource(raw)
+    return nil
   }
 
   /// Parses the `stick-region`, `trigger-band` and `touch:SURFACE:area` forms.
@@ -177,6 +193,24 @@ public enum RemappingCommandValueParser {
   public static func destination(_ raw: String) throws -> RemappingDestination {
     if let system = systemDestination(raw) { return system }
     let parts = raw.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
+    let parsed: RemappingDestination? =
+      switch parts[0] {
+      case "gamepad": gamepadDestination(parts)
+      case "key": keyboardDestination(parts)
+      case "mouse", "move", "position", "scroll": pointerDestination(parts)
+      case "physical": physicalDestination(parts)
+      case "pause": parts.count == 2 ? switchMode(parts[1]).map { .pause($0) } : nil
+      case "profile":
+        parts.count == 3 && parts[1] == "switch"
+          ? profileTarget(parts[2]).map { .profileSwitch($0) } : nil
+      default: midiDestination(parts)
+      }
+    guard let parsed else { throw RemappingCommandValueError.invalidDestination(raw) }
+    return parsed
+  }
+
+  /// Parses the `gamepad:axis`, `gamepad:dpad` and `gamepad:button` forms.
+  private static func gamepadDestination(_ parts: [String]) -> RemappingDestination? {
     if parts.count == 3, parts[0] == "gamepad", parts[1] == "axis",
       let axis = CommandLineName.value(of: parts[2], in: RemappingAxis.self)
     {
@@ -192,6 +226,11 @@ public enum RemappingCommandValueParser {
     {
       return .gamepadButton(button)
     }
+    return nil
+  }
+
+  /// Parses `key:KEY` and `key:KEY:mods=MODIFIERS`.
+  private static func keyboardDestination(_ parts: [String]) -> RemappingDestination? {
     if parts.count == 2, parts[0] == "key",
       let key = CommandLineName.value(of: parts[1], in: RemappingKeyboardKey.self)
     {
@@ -209,6 +248,11 @@ public enum RemappingCommandValueParser {
         return .keyboard(key: key, modifiers: Set(modifiers))
       }
     }
+    return nil
+  }
+
+  /// Parses the `mouse`, `move`, `position` and `scroll` forms.
+  private static func pointerDestination(_ parts: [String]) -> RemappingDestination? {
     if parts.count == 2, parts[0] == "mouse",
       let button = CommandLineName.value(of: parts[1], in: RemappingMouseButton.self)
     {
@@ -229,6 +273,11 @@ public enum RemappingCommandValueParser {
     {
       return .scroll(axis)
     }
+    return nil
+  }
+
+  /// Parses the `physical:rumble`, `player`, `color`, `brightness` and `adaptive` forms.
+  private static func physicalDestination(_ parts: [String]) -> RemappingDestination? {
     if parts.count == 4, parts[0] == "physical", parts[1] == "rumble",
       let motor = CommandLineName.value(of: parts[2], in: PhysicalRumbleMotor.self),
       let intensity = boundedUnit(parts[3])
@@ -273,16 +322,7 @@ public enum RemappingCommandValueParser {
         )
       )
     }
-    if parts.count == 2, parts[0] == "pause", let mode = switchMode(parts[1]) {
-      return .pause(mode)
-    }
-    if parts.count == 3, parts[0] == "profile", parts[1] == "switch",
-      let target = profileTarget(parts[2])
-    {
-      return .profileSwitch(target)
-    }
-    if let midi = midiDestination(parts) { return midi }
-    throw RemappingCommandValueError.invalidDestination(raw)
+    return nil
   }
 
   /// Parses a layer target operand into the layer name and the mode, or returns `nil`.
