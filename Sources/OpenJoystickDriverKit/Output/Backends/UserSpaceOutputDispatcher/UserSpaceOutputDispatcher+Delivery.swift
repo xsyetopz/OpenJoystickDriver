@@ -23,24 +23,11 @@ extension UserSpaceOutputDispatcher {
     guard lifecycle.isOpen, !outputSuppressed || neutralizing || !remapped else {
       throw CancellationError()
     }
-    let activeEntry: Entry
-    do {
-      if neutralizing {
-        guard let existing = registryLock.withLock({ entries[identifier] }) else { return }
-        activeEntry = existing
-      } else {
-        activeEntry = try await entry(for: identifier)
-      }
-    } catch {
-      withRegistry { if lifecycle.isOpen { _status = .error("\(error)") } }
-      throw error
-    }
+    guard let activeEntry = try await deliveryEntry(for: identifier, neutralizing: neutralizing)
+    else { return }
     guard lifecycle.isOpen else { throw CancellationError() }
     if outputSuppressed, !neutralizing { return }
-    let stickTransfer =
-      remappedState == nil
-      ? VirtualGamepadReportMapping.stickTransfer(for: identifier)
-      : VirtualGamepadReportMapping.StickTransfer(deadzone: 0, rescalesDeadzone: false)
+    let stickTransfer = Self.stickTransfer(for: identifier, remapped: remappedState != nil)
     let rightPadIsRightStick = VirtualGamepadReportMapping.rightPadIsRightStick(identifier)
     let isActive: @Sendable () -> Bool = { [self] in
       lifecycle.isOpen && (!isOutputSuppressed(remapped: remapped) || neutralizing)
@@ -53,42 +40,103 @@ extension UserSpaceOutputDispatcher {
       ) {
         [activeEntry] in
         guard isActive() else { throw CancellationError() }
-        let primaryReport = activeEntry.inputReportState.update(remapped: remapped) { state in
-          if let remappedState {
-            VirtualGamepadReportMapping.apply(remappedState, to: &state)
-          } else if let input {
-            VirtualGamepadReportMapping.apply(
-              input,
-              stickTransfer: stickTransfer,
-              rightPadIsRightStick: rightPadIsRightStick,
-              to: &state
-            )
-          }
-        }
-        // The dedup compares unstamped bytes, so a per-report counter never defeats it.
-        let state = activeEntry.inputReportState
-        let primary = state.claimDelivery(of: primaryReport) ? [state.stamped(primaryReport)] : []
-        return primary + state.claimChangedAuxiliaryReports()
+        return Self.reports(
+          of: activeEntry,
+          remapped: remapped,
+          remappedState: remappedState,
+          input: input,
+          stickTransfer: stickTransfer,
+          rightPadIsRightStick: rightPadIsRightStick
+        )
       }.value()
       onPublished()
-      // Every change to the entries recomputes the status, so a backend status is current; only
-      // an earlier error needs clearing after a send that succeeded.
-      withRegistry {
-        if case .backend = _status { return }
-        recomputeStatusLocked()
-      }
+      clearErrorStatus()
     } catch UserSpaceReportSender.Failure.superseded {
       // A newer frame in the queue carries the complete state, so the device stays open.
       return
     } catch {
-      let removed = withRegistry { () -> Entry? in
-        guard entries[identifier] === activeEntry else { return nil }
-        _status = .error("\(error)")
-        return entries.removeValue(forKey: identifier)
-      }
-      await removed?.close()
+      await discard(activeEntry, of: identifier, after: error)
       throw error
     }
+  }
+
+  /// The entry a delivery submits to, or nil when a neutral state meets no device.
+  ///
+  /// A neutral state never creates a device. An error of creating one sets the status to an error.
+  private func deliveryEntry(
+    for identifier: LogicalControllerID,
+    neutralizing: Bool
+  ) async throws -> Entry? {
+    do {
+      if neutralizing { return registryLock.withLock { entries[identifier] } }
+      return try await entry(for: identifier)
+    } catch {
+      withRegistry { if lifecycle.isOpen { _status = .error("\(error)") } }
+      throw error
+    }
+  }
+
+  /// The stick transfer of a report: a remapped state is already transferred, so it takes none.
+  private static func stickTransfer(
+    for identifier: LogicalControllerID,
+    remapped: Bool
+  ) -> VirtualGamepadReportMapping.StickTransfer {
+    remapped
+      ? VirtualGamepadReportMapping.StickTransfer(deadzone: 0, rescalesDeadzone: false)
+      : VirtualGamepadReportMapping.stickTransfer(for: identifier)
+  }
+
+  /// Recomputes the status after a send that succeeded.
+  ///
+  /// Every change to the entries recomputes the status, so a backend status is current; only an
+  /// earlier error needs clearing.
+  private func clearErrorStatus() {
+    withRegistry {
+      if case .backend = _status { return }
+      recomputeStatusLocked()
+    }
+  }
+
+  /// Sets the error status and closes `entry` when it is still the device of `identifier`.
+  private func discard(
+    _ entry: Entry,
+    of identifier: LogicalControllerID,
+    after error: any Error
+  ) async {
+    let removed = withRegistry { () -> Entry? in
+      guard entries[identifier] === entry else { return nil }
+      _status = .error("\(error)")
+      return entries.removeValue(forKey: identifier)
+    }
+    await removed?.close()
+  }
+
+  /// The reports `entry` sends for one state: the primary report when it differs from the last
+  /// one delivered, then the changed auxiliary reports.
+  private static func reports(
+    of entry: Entry,
+    remapped: Bool,
+    remappedState: RemappingGamepadState?,
+    input: ControllerState?,
+    stickTransfer: VirtualGamepadReportMapping.StickTransfer,
+    rightPadIsRightStick: Bool
+  ) -> [[UInt8]] {
+    let state = entry.inputReportState
+    let primaryReport = state.update(remapped: remapped) { state in
+      if let remappedState {
+        VirtualGamepadReportMapping.apply(remappedState, to: &state)
+      } else if let input {
+        VirtualGamepadReportMapping.apply(
+          input,
+          stickTransfer: stickTransfer,
+          rightPadIsRightStick: rightPadIsRightStick,
+          to: &state
+        )
+      }
+    }
+    // The dedup compares unstamped bytes, so a per-report counter never defeats it.
+    let primary = state.claimDelivery(of: primaryReport) ? [state.stamped(primaryReport)] : []
+    return primary + state.claimChangedAuxiliaryReports()
   }
 
   /// The device entry of `identifier`; it creates the device when none exists.
