@@ -406,11 +406,7 @@
           try Task.checkCancellation()
           guard generation == samplingGeneration else { return }
           if let snapshot {
-            liveState.update(snapshot)
-            guidedCheck.observe(snapshot)
-            let next: SessionState =
-              sessionState == .live || snapshot.hasControlOffRest ? .live : .receiving
-            if sessionState != next { sessionState = next }
+            applySample(snapshot)
             receivedSnapshot = true
             consecutiveFailures = 0
           } else {
@@ -431,6 +427,15 @@
 
         do { try await sleep(sampleIntervalNanoseconds) } catch { return }
       }
+    }
+
+    /// Shows `snapshot` and moves the session state to `live` once a control is off its rest value.
+    private func applySample(_ snapshot: ControllerState) {
+      liveState.update(snapshot)
+      guidedCheck.observe(snapshot)
+      let next: SessionState =
+        sessionState == .live || snapshot.hasControlOffRest ? .live : .receiving
+      if sessionState != next { sessionState = next }
     }
 
     /// Cancels the sampling and sets the session state.

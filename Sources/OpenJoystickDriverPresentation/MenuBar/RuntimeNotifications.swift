@@ -298,40 +298,50 @@
       from previous: RuntimeNotificationSnapshot,
       to current: RuntimeNotificationSnapshot
     ) -> [RuntimeNotificationEvent] {
+      connectionEvents(from: previous.controllers, to: current.controllers)
+        + profileEvents(from: previous.activeProfiles, to: current.activeProfiles)
+        + attentionEvents(from: previous.controllerHealth, to: current.controllerHealth)
+    }
+
+    /// Returns the connected events, then the disconnected events, between two controller lists.
+    private static func connectionEvents(
+      from previous: [String: String]?,
+      to current: [String: String]?
+    ) -> [RuntimeNotificationEvent] {
+      guard let previous, let current else { return [] }
       var events: [RuntimeNotificationEvent] = []
-      if let previousControllers = previous.controllers,
-        let currentControllers = current.controllers
-      {
-        for identifier in currentControllers.keys.sorted()
-        where previousControllers[identifier] == nil {
-          if let name = currentControllers[identifier] { events.append(.controllerConnected(name)) }
-        }
-        for identifier in previousControllers.keys.sorted()
-        where currentControllers[identifier] == nil {
-          if let name = previousControllers[identifier] {
-            events.append(.controllerDisconnected(name))
-          }
-        }
+      for identifier in current.keys.sorted() where previous[identifier] == nil {
+        if let name = current[identifier] { events.append(.controllerConnected(name)) }
       }
-      if let previousProfiles = previous.activeProfiles,
-        let currentProfiles = current.activeProfiles
-      {
-        for device in Set(previousProfiles.keys).union(currentProfiles.keys).sorted()
-        where previousProfiles[device] != currentProfiles[device] {
-          events.append(
-            .activeProfileChanged(from: previousProfiles[device], to: currentProfiles[device])
-          )
-        }
+      for identifier in previous.keys.sorted() where current[identifier] == nil {
+        if let name = previous[identifier] { events.append(.controllerDisconnected(name)) }
       }
-      if let previousHealth = previous.controllerHealth,
-        let currentHealth = current.controllerHealth
-      {
-        for identifier in currentHealth.keys.sorted() {
-          guard let currentController = currentHealth[identifier],
-            currentController.state != .healthy, previousHealth[identifier]?.state == .healthy
-          else { continue }
-          events.append(.controllerNeedsAttention(currentController.name))
-        }
+      return events
+    }
+
+    /// Returns one event for each device whose active profile differs.
+    private static func profileEvents(
+      from previous: [String: String]?,
+      to current: [String: String]?
+    ) -> [RuntimeNotificationEvent] {
+      guard let previous, let current else { return [] }
+      return Set(previous.keys).union(current.keys).sorted()
+        .filter { previous[$0] != current[$0] }
+        .map { RuntimeNotificationEvent.activeProfileChanged(from: previous[$0], to: current[$0]) }
+    }
+
+    /// Returns one event for each controller that was healthy and no longer is.
+    private static func attentionEvents(
+      from previous: [String: RuntimeControllerHealthSnapshot]?,
+      to current: [String: RuntimeControllerHealthSnapshot]?
+    ) -> [RuntimeNotificationEvent] {
+      guard let previous, let current else { return [] }
+      var events: [RuntimeNotificationEvent] = []
+      for identifier in current.keys.sorted() {
+        guard let controller = current[identifier],
+          controller.state != .healthy, previous[identifier]?.state == .healthy
+        else { continue }
+        events.append(.controllerNeedsAttention(controller.name))
       }
       return events
     }

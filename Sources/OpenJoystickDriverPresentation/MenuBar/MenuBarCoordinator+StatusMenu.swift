@@ -115,20 +115,28 @@
       case .testInput(let token): showInputTest(controllerID: token)
       case .showController(let token): mainWindow?.showController(id: token)
       case .disconnectWireless(let token): disconnectWirelessController(sessionToken: token)
-      case .activateProfile(let id):
-        if let operation = confirmedActivation(of: id) { changeProfile(operation) }
+      case .activateProfile(let id): activateProfileFromMenu(id)
       case .deactivateProfile(let id): changeProfile(.deactivate(profileID: id))
       case .showArea(let area): mainWindow?.showMainWindow(area: area)
       case .showPermission(let kind): mainWindow?.showAccess(permission: kind)
-      case .startService:
-        // A failed restart shows in the status line and the problem banner, which `refresh` keeps.
-        Task { @MainActor in
-          await viewModel.restartListener()
-          await viewModel.refresh()
-        }
+      case .startService: restartServiceFromMenu()
       case .openWindow: mainWindow?.showMainWindow(area: nil)
       case .showSettings: settingsWindow?.showSettings(pane: nil)
       case .quit: NSApplication.shared.terminate(sender)
+      }
+    }
+
+    /// Activates the profile once the person has confirmed any replacement it needs.
+    private func activateProfileFromMenu(_ id: UUID) {
+      if let operation = confirmedActivation(of: id) { changeProfile(operation) }
+    }
+
+    /// Restarts the service's request listener, then reads the status again.
+    private func restartServiceFromMenu() {
+      // A failed restart shows in the status line and the problem banner, which `refresh` keeps.
+      Task { @MainActor in
+        await viewModel.restartListener()
+        await viewModel.refresh()
       }
     }
 

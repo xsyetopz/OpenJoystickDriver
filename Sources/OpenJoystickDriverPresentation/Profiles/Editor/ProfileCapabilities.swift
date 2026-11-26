@@ -80,15 +80,14 @@ enum ProfileCapabilityPolicy {
     case .axis(let axis), .axisDirection(let axis, _):
       return input.controls.contains(axis.control)
     case .triggerStage(let trigger, _):
-      return input.controls.contains(trigger == .left ? .leftTrigger : .rightTrigger)
+      return supports(trigger, input: input)
     case .motionLean: return input.motion
     case .touchContact(let surface): return supports(surface, input: input)
     case .touchGrid(let source): return supports(source.surface, input: input)
     case .touchSwipe(let source): return supports(source.surface, input: input)
     case .stickRegion(let region):
-      return input.controls.contains(region.stick == .left ? .leftStickX : .rightStickX)
-    case .triggerBand(let band):
-      return input.controls.contains(band.trigger == .left ? .leftTrigger : .rightTrigger)
+      return supports(region.stick, input: input)
+    case .triggerBand(let band): return supports(band.trigger, input: input)
     case .touchArea(let area): return supports(area.surface, input: input)
     }
   }
@@ -110,6 +109,22 @@ enum ProfileCapabilityPolicy {
     case .brightness: return physical.lightingFeatures.contains(.programmableBrightness)
     case .adaptiveTrigger(let trigger, _): return physical.adaptiveTriggers.contains(trigger)
     }
+  }
+
+  /// Returns whether the controller has the trigger.
+  private static func supports(
+    _ trigger: RemappingTriggerSource,
+    input: ControllerCapabilities
+  ) -> Bool {
+    input.controls.contains(trigger == .left ? .leftTrigger : .rightTrigger)
+  }
+
+  /// Returns whether the controller has the stick.
+  private static func supports(
+    _ stick: RemappingStickSource,
+    input: ControllerCapabilities
+  ) -> Bool {
+    input.controls.contains(stick == .left ? .leftStickX : .rightStickX)
   }
 
   /// Returns whether the controller has the touch surface.

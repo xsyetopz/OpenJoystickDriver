@@ -103,52 +103,72 @@ extension RuntimeViewModel {
   /// A failure shows as an error only while the status is loading; otherwise it sets
   /// ``liveStatusError`` and keeps the last list.
   private func refreshStatusRetainingPresentation(generation: Int) async {
+    let payload: ApplicationServiceStatusPayload
     do {
-      let payload = try await gateway.status()
-      guard generation == liveStatusGeneration else { return }
-      let previousStatus: RuntimeStatusPresentation?
-      if case .available(let status) = statusState {
-        previousStatus = status
-      } else {
-        previousStatus = nil
-      }
-      let permissions: RuntimePermissionSummary
-      switch permissionState {
-      case .requesting:
-        permissions =
-          authoritativePermissionSummary
-          ?? RuntimePermissionSummary(inputRead: .unknown, inputInject: .unknown)
-      case .loading, .available, .unavailable, .error:
-        permissions = RuntimePermissionSummary(status: payload)
-        authoritativePermissionSummary = permissions
-      }
-      let nextStatusState = RuntimeStatusState.available(
-        RuntimeStatusPresentation(
-          payload: payload,
-          postEventAccess: authoritativePostEventAccess ?? previousStatus?.postEventAccess,
-          requiresPostEventAccess: previousStatus?.requiresPostEventAccess
-        ).applyingPermissions(permissions)
-      )
-      if statusState != nextStatusState { statusState = nextStatusState }
-      publishControllerInventory(payload.connectedDevices)
-      if case .requesting = permissionState {
-        // The explicit permission request remains authoritative until its response arrives.
-      } else {
-        let nextPermissionState = RuntimePermissionLoadState.available(permissions)
-        if permissionState != nextPermissionState { permissionState = nextPermissionState }
-      }
-      if loadState != .available { loadState = .available }
-      if liveStatusError != nil { liveStatusError = nil }
+      payload = try await gateway.status()
     } catch {
       guard generation == liveStatusGeneration else { return }
-      let message = RuntimePresentation.userFacingError(error)
-      if case .loading = statusState {
-        statusState =
-          RuntimePresentation.isUnavailable(error) ? .unavailable(message) : .error(message)
-      } else if liveStatusError != message {
-        // The last list stays visible, but must not pass for current while reads keep failing.
-        liveStatusError = message
-      }
+      recordLiveStatusFailure(error)
+      return
+    }
+    guard generation == liveStatusGeneration else { return }
+    applyLiveStatus(payload)
+  }
+
+  /// Stores the status read from the service, the permissions it carries and its controllers.
+  private func applyLiveStatus(_ payload: ApplicationServiceStatusPayload) {
+    let previousStatus: RuntimeStatusPresentation?
+    if case .available(let status) = statusState {
+      previousStatus = status
+    } else {
+      previousStatus = nil
+    }
+    let permissions = livePermissions(from: payload)
+    let nextStatusState = RuntimeStatusState.available(
+      RuntimeStatusPresentation(
+        payload: payload,
+        postEventAccess: authoritativePostEventAccess ?? previousStatus?.postEventAccess,
+        requiresPostEventAccess: previousStatus?.requiresPostEventAccess
+      ).applyingPermissions(permissions)
+    )
+    if statusState != nextStatusState { statusState = nextStatusState }
+    publishControllerInventory(payload.connectedDevices)
+    if case .requesting = permissionState {
+      // The explicit permission request remains authoritative until its response arrives.
+    } else {
+      let nextPermissionState = RuntimePermissionLoadState.available(permissions)
+      if permissionState != nextPermissionState { permissionState = nextPermissionState }
+    }
+    if loadState != .available { loadState = .available }
+    if liveStatusError != nil { liveStatusError = nil }
+  }
+
+  /// Returns the permissions to show for `payload`, and keeps them as the authoritative summary
+  /// unless a permission request is pending.
+  private func livePermissions(
+    from payload: ApplicationServiceStatusPayload
+  ) -> RuntimePermissionSummary {
+    switch permissionState {
+    case .requesting:
+      return authoritativePermissionSummary
+        ?? RuntimePermissionSummary(inputRead: .unknown, inputInject: .unknown)
+    case .loading, .available, .unavailable, .error:
+      let permissions = RuntimePermissionSummary(status: payload)
+      authoritativePermissionSummary = permissions
+      return permissions
+    }
+  }
+
+  /// Shows `error` as the status error while the status loads; afterwards it marks the kept list
+  /// as not current.
+  private func recordLiveStatusFailure(_ error: any Error) {
+    let message = RuntimePresentation.userFacingError(error)
+    if case .loading = statusState {
+      statusState =
+        RuntimePresentation.isUnavailable(error) ? .unavailable(message) : .error(message)
+    } else if liveStatusError != message {
+      // The last list stays visible, but must not pass for current while reads keep failing.
+      liveStatusError = message
     }
   }
 
