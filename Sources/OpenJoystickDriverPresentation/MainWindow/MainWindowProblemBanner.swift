@@ -52,6 +52,7 @@
           Button(OJDLocalized.string(titleKey)) { perform(action) }.disabled(
             !problem.isActionEnabled
           ).help(OJDLocalized.string(action.helpKey))
+            .accessibilityIdentifier("mainWindow.problemAction.\(action)")
         }
       }.padding(.horizontal, 12).padding(.vertical, 8)
         // `.contain` keeps the button a separate element named by its visible title; `.combine`

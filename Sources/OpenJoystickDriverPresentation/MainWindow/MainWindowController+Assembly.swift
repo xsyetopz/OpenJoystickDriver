@@ -133,6 +133,7 @@
         backing: .buffered,
         defer: false
       )
+      window.identifier = NSUserInterfaceItemIdentifier("mainWindow")
       window.hidesOnDeactivate = false
       window.isReleasedWhenClosed = false
       window.contentViewController = content

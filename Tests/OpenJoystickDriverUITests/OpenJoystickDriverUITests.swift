@@ -4,7 +4,7 @@ import XCTest
 
 final class OpenJoystickDriverUITests: XCTestCase {
   @MainActor
-  func testLaunchesAndKeepsRunning() throws {
+  func testStaysRunningAfterLaunchWithHiddenWindow() throws {
     // A second copy exits at startup because the running one owns the app's RPC service.
     let bundleIdentifier = "com.openjoystickdriver"
     if !NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier).isEmpty {

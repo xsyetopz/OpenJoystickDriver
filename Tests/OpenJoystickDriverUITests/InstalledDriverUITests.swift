@@ -9,7 +9,7 @@ final class InstalledDriverUITests: XCTestCase {
   private let extensionID = "com.openjoystickdriver.XboxUSBDevice"
 
   @MainActor
-  func testOffersNoRepairWhileTheEmbeddedDriverIsActive() throws {
+  func testShowsNoRepairBannerWhileTheEmbeddedDriverIsActive() throws {
     // Arrange
     if !NSRunningApplication.runningApplications(withBundleIdentifier: "com.openjoystickdriver")
       .isEmpty
@@ -46,10 +46,10 @@ final class InstalledDriverUITests: XCTestCase {
       arguments: ["-b", "com.openjoystickdriver"]
     )
     reopen.waitUntilExit()
-    XCTAssertTrue(app.windows.firstMatch.waitForExistence(timeout: 15))
+    XCTAssertTrue(app.windows["mainWindow"].waitForExistence(timeout: 15))
 
-    // Assert: the inspection runs at launch, so give it time to show a banner.
-    let repair = app.buttons["Repair Xbox USB Driver"]
+    // Assert: the inspection runs at launch, so the banner would appear within the timeout.
+    let repair = app.buttons["mainWindow.problemAction.repairDriver"]
     XCTAssertFalse(
       repair.waitForExistence(timeout: 5),
       "The app offers a repair while macOS lists:\n\(listing.joined(separator: "\n"))"
