@@ -156,13 +156,53 @@ enum HIDReportDescriptorParser {
   ///
   /// Returns nil for a truncated item or unbalanced collections.
   static func parse(descriptor: [UInt8]) -> HIDParsedDescriptor? {
+    var state = ParseState()
     var i = 0
+    while i < descriptor.count {
+      let prefix = descriptor[i]
+      i += 1
 
-    var usagePage: Int = 0
-    var logicalMin: Int = 0
-    var logicalMax: Int = 0
-    var reportSize: Int = 0
-    var reportCount: Int = 0
+      // Xbox One S Bluetooth descriptors end with a zero byte after the last End Collection;
+      // Linux ignores it as an unknown main item.
+      if prefix == 0, state.collectionDepth == 0, descriptor[i...].allSatisfy({ $0 == 0 }) { break }
+
+      if prefix == 0xFE {
+        // Long item: [0xFE][size][tag][data...]
+        guard i + 2 <= descriptor.count else { return nil }
+        let size = Int(descriptor[i])
+        guard i + 2 + size <= descriptor.count else { return nil }
+        i += 2 + size
+        state.containsUnsupportedItem = true
+        continue
+      }
+
+      let sizeCode = prefix & 0x03
+      let dataSize: Int = (sizeCode == 0x03) ? 4 : Int(sizeCode)
+      let type = HIDItemType(rawValue: (prefix >> 2) & 0x03) ?? .reserved
+      let tag = (prefix >> 4) & 0x0F
+
+      guard i + dataSize <= descriptor.count else { return nil }
+      let data = Array(descriptor[i..<(i + dataSize)])
+      i += dataSize
+
+      switch type {
+      case .global: state.applyGlobal(tag: tag, data: data)
+      case .local: state.applyLocal(tag: tag, data: data)
+      case .main: guard state.applyMain(tag: tag, data: data) else { return nil }
+      case .reserved: state.containsUnsupportedItem = true
+      }
+    }
+    guard state.collectionDepth == 0 else { return nil }
+    return state.descriptor
+  }
+
+  /// The global, local and collection state a descriptor walk carries from item to item.
+  private struct ParseState {
+    var usagePage = 0
+    var logicalMin = 0
+    var logicalMax = 0
+    var reportSize = 0
+    var reportCount = 0
     var reportID: UInt8 = 0
 
     // A 4-byte usage carries its own page in the high 16 bits (extended usage);
@@ -182,39 +222,137 @@ enum HIDReportDescriptorParser {
     var collectionDepth = 0
     var application: Int?
 
-    func readSigned(_ bytes: [UInt8]) -> Int {
-      switch bytes.count {
-      case 0: return 0
-      case 1: return Int(Int8(bitPattern: bytes[0]))
-      case 2:
-        let v = UInt16(bytes[0]) | (UInt16(bytes[1]) << 8)
-        return Int(Int16(bitPattern: v))
-      case 4:
-        let v =
-          UInt32(bytes[0]) | (UInt32(bytes[1]) << 8) | (UInt32(bytes[2]) << 16)
-          | (UInt32(bytes[3]) << 24)
-        return Int(Int32(bitPattern: v))
-      default: return 0
+    /// The parse result, with each report ID's data size rounded up to whole bytes.
+    var descriptor: HIDParsedDescriptor {
+      HIDParsedDescriptor(
+        fields: fields,
+        arrays: arrays,
+        payloadSizeBytesByReportID: bitOffsetByReportID.mapValues { ($0 + 7) / 8 },
+        applicationCollections: applicationCollections,
+        inputReportIDs: inputReportIDs,
+        containsUnsupportedItem: containsUnsupportedItem,
+        containsInvalidInputSize: containsInvalidInputSize,
+        containsFeatureItem: containsFeatureItem
+      )
+    }
+
+    mutating func applyGlobal(tag: UInt8, data: [UInt8]) {
+      guard let global = HIDGlobalTag(rawValue: tag) else {
+        // Tags 0x3...0x6 (physical extent, unit exponent, unit) are legal but unused.
+        if tag > HIDGlobalTag.pop.rawValue { containsUnsupportedItem = true }
+        return
+      }
+      switch global {
+      case .usagePage: usagePage = Self.readUnsigned(data)
+      case .logicalMinimum: logicalMin = Self.readSigned(data)
+      case .logicalMaximum: logicalMax = Self.readSigned(data)
+      case .reportSize: reportSize = Self.readUnsigned(data)
+      case .reportCount: reportCount = Self.readUnsigned(data)
+      case .reportID:
+        reportID = UInt8(clamping: Self.readUnsigned(data))
+        if bitOffsetByReportID[reportID] == nil { bitOffsetByReportID[reportID] = 0 }
+      case .push, .pop: containsUnsupportedItem = true
       }
     }
 
-    func readUnsigned(_ bytes: [UInt8]) -> Int {
-      var v = 0
-      for (idx, b) in bytes.enumerated() { v |= Int(b) << (8 * idx) }
-      return v
+    mutating func applyLocal(tag: UInt8, data: [UInt8]) {
+      guard let local = HIDLocalTag(rawValue: tag) else {
+        // Designator and string tags only name physical parts; Delimiter (0xA)
+        // defines alternate usages and 0x6 is reserved.
+        if !HIDReportDescriptorParser.ignoredLocalTags.contains(tag) {
+          containsUnsupportedItem = true
+        }
+        return
+      }
+      switch local {
+      case .usage: localUsages.append(Self.readUsage(data))
+      case .usageMinimum: usageMin = Self.readUsage(data)
+      case .usageMaximum: usageMax = Self.readUsage(data)
+      }
     }
 
-    func readUsage(_ bytes: [UInt8]) -> (page: Int?, usage: Int) {
-      let value = readUnsigned(bytes)
-      return bytes.count == 4 ? (value >> 16, value & 0xFFFF) : (nil, value)
+    /// Applies a main item; false for an End Collection without an open collection.
+    mutating func applyMain(tag: UInt8, data: [UInt8]) -> Bool {
+      switch HIDMainTag(rawValue: tag) {
+      case .input: readInput(HIDInputFlags(Self.readUnsigned(data)))
+      case .collection:
+        if collectionDepth == 0 {
+          application = nil
+          if Self.readUnsigned(data) == HIDReportDescriptorParser.applicationCollection {
+            applicationCollections.append(
+              localUsages.first.map(resolve) ?? HIDUsage(usagePage: usagePage, usage: 0)
+            )
+            application = applicationCollections.count - 1
+          }
+        }
+        collectionDepth += 1
+      case .endCollection:
+        guard collectionDepth > 0 else { return false }
+        collectionDepth -= 1
+        if collectionDepth == 0 { application = nil }
+      case .output: break
+      case .feature: containsFeatureItem = true
+      case nil: containsUnsupportedItem = true
+      }
+      // Every main item consumes local usage state. If those usages leak into
+      // the next Input item, Xbox One descriptors parse stick axes as stale
+      // collection usages instead of X/Y/Rx/Ry.
+      localUsages.removeAll(keepingCapacity: true)
+      usageMin = nil
+      usageMax = nil
+      return true
     }
 
-    func resolve(_ local: (page: Int?, usage: Int)) -> HIDUsage {
+    /// Records an Input item as Variable fields or one Array field, and advances its report.
+    private mutating func readInput(_ flags: HIDInputFlags) {
+      inputReportIDs.insert(reportID)
+      if reportSize == 0 || reportCount == 0
+        || reportSize > HIDReportDescriptorParser.maximumFieldBits
+      {
+        containsInvalidInputSize = true
+      }
+      let base = bitOffsetByReportID[reportID] ?? 0
+      bitOffsetByReportID[reportID] = base + reportSize * reportCount
+      guard !flags.isConstant, reportSize > 0, reportCount > 0 else { return }
+      guard let usages = declaredUsages() else {
+        containsUnsupportedItem = true
+        return
+      }
+      guard flags.isVariable else {
+        arrays.append(
+          HIDArrayField(
+            reportID: reportID,
+            count: reportCount,
+            usages: usages,
+            flags: flags,
+            applicationCollection: application
+          )
+        )
+        return
+      }
+      for (idx, usage) in usages.prefix(reportCount).enumerated() {
+        fields.append(
+          HIDField(
+            reportID: reportID,
+            bitOffset: base + (idx * reportSize),
+            bitSize: reportSize,
+            usagePage: usage.usagePage,
+            usage: usage.usage,
+            logicalMin: logicalMin,
+            logicalMax: logicalMax,
+            flags: flags,
+            applicationCollection: application
+          )
+        )
+      }
+    }
+
+    private func resolve(_ local: (page: Int?, usage: Int)) -> HIDUsage {
       HIDUsage(usagePage: local.page ?? usagePage, usage: local.usage)
     }
 
-    // The explicit usage list, or the usage range when no list was declared.
-    func declaredUsages() -> [HIDUsage]? {
+    /// The explicit usage list, or the usage range when no list was declared.
+    private func declaredUsages() -> [HIDUsage]? {
       guard localUsages.isEmpty, let usageMin, let usageMax else { return localUsages.map(resolve) }
       let first = resolve(usageMin)
       let last = resolve(usageMax)
@@ -222,152 +360,25 @@ enum HIDReportDescriptorParser {
       return (first.usage...last.usage).map { HIDUsage(usagePage: first.usagePage, usage: $0) }
     }
 
-    func currentBitOffset() -> Int { bitOffsetByReportID[reportID] ?? 0 }
-    func advanceBits(_ bits: Int) { bitOffsetByReportID[reportID] = currentBitOffset() + bits }
-
-    while i < descriptor.count {
-      let prefix = descriptor[i]
-      i += 1
-
-      // Xbox One S Bluetooth descriptors end with a zero byte after the last End Collection;
-      // Linux ignores it as an unknown main item.
-      if prefix == 0, collectionDepth == 0, descriptor[i...].allSatisfy({ $0 == 0 }) { break }
-
-      if prefix == 0xFE {
-        // Long item: [0xFE][size][tag][data...]
-        guard i + 2 <= descriptor.count else { return nil }
-        let size = Int(descriptor[i])
-        guard i + 2 + size <= descriptor.count else { return nil }
-        i += 2  // skip size + tag
-        i += size
-        containsUnsupportedItem = true
-        continue
-      }
-
-      let sizeCode = prefix & 0x03
-      let dataSize: Int = (sizeCode == 0x03) ? 4 : Int(sizeCode)
-      let type = HIDItemType(rawValue: (prefix >> 2) & 0x03) ?? .reserved
-      let tag = (prefix >> 4) & 0x0F
-
-      guard i + dataSize <= descriptor.count else { return nil }
-      let data = Array(descriptor[i..<(i + dataSize)])
-      i += dataSize
-
-      switch type {
-      case .global:
-        guard let g = HIDGlobalTag(rawValue: tag) else {
-          // Tags 0x3...0x6 (physical extent, unit exponent, unit) are legal but unused.
-          if tag > HIDGlobalTag.pop.rawValue { containsUnsupportedItem = true }
-          break
-        }
-        switch g {
-        case .usagePage: usagePage = readUnsigned(data)
-        case .logicalMinimum: logicalMin = readSigned(data)
-        case .logicalMaximum: logicalMax = readSigned(data)
-        case .reportSize: reportSize = readUnsigned(data)
-        case .reportCount: reportCount = readUnsigned(data)
-        case .reportID:
-          reportID = UInt8(clamping: readUnsigned(data))
-          if bitOffsetByReportID[reportID] == nil { bitOffsetByReportID[reportID] = 0 }
-        case .push, .pop: containsUnsupportedItem = true
-        }
-      case .local:
-        guard let l = HIDLocalTag(rawValue: tag) else {
-          // Designator and string tags only name physical parts; Delimiter (0xA)
-          // defines alternate usages and 0x6 is reserved.
-          if !Self.ignoredLocalTags.contains(tag) { containsUnsupportedItem = true }
-          break
-        }
-        switch l {
-        case .usage: localUsages.append(readUsage(data))
-        case .usageMinimum: usageMin = readUsage(data)
-        case .usageMaximum: usageMax = readUsage(data)
-        }
-      case .main:
-        switch HIDMainTag(rawValue: tag) {
-        case .input:
-          let flags = HIDInputFlags(readUnsigned(data))
-          inputReportIDs.insert(reportID)
-          if reportSize == 0 || reportCount == 0 || reportSize > Self.maximumFieldBits {
-            containsInvalidInputSize = true
-          }
-          let base = currentBitOffset()
-          advanceBits(reportSize * reportCount)
-          guard !flags.isConstant, reportSize > 0, reportCount > 0 else { break }
-          guard let usages = declaredUsages() else {
-            containsUnsupportedItem = true
-            break
-          }
-          guard flags.isVariable else {
-            arrays.append(
-              HIDArrayField(
-                reportID: reportID,
-                count: reportCount,
-                usages: usages,
-                flags: flags,
-                applicationCollection: application
-              )
-            )
-            break
-          }
-          for (idx, usage) in usages.prefix(reportCount).enumerated() {
-            fields.append(
-              HIDField(
-                reportID: reportID,
-                bitOffset: base + (idx * reportSize),
-                bitSize: reportSize,
-                usagePage: usage.usagePage,
-                usage: usage.usage,
-                logicalMin: logicalMin,
-                logicalMax: logicalMax,
-                flags: flags,
-                applicationCollection: application
-              )
-            )
-          }
-        case .collection:
-          if collectionDepth == 0 {
-            application = nil
-            if readUnsigned(data) == Self.applicationCollection {
-              applicationCollections.append(
-                localUsages.first.map(resolve) ?? HIDUsage(usagePage: usagePage, usage: 0)
-              )
-              application = applicationCollections.count - 1
-            }
-          }
-          collectionDepth += 1
-        case .endCollection:
-          guard collectionDepth > 0 else { return nil }
-          collectionDepth -= 1
-          if collectionDepth == 0 { application = nil }
-        case .output: break
-        case .feature: containsFeatureItem = true
-        case nil: containsUnsupportedItem = true
-        }
-        // Every main item consumes local usage state. If those usages leak into
-        // the next Input item, Xbox One descriptors parse stick axes as stale
-        // collection usages instead of X/Y/Rx/Ry.
-        localUsages.removeAll(keepingCapacity: true)
-        usageMin = nil
-        usageMax = nil
-      case .reserved: containsUnsupportedItem = true
+    private static func readSigned(_ bytes: [UInt8]) -> Int {
+      switch bytes.count {
+      case 1: return Int(Int8(bitPattern: bytes[0]))
+      case 2: return Int(Int16(bitPattern: UInt16(truncatingIfNeeded: readUnsigned(bytes))))
+      case 4: return Int(Int32(bitPattern: UInt32(truncatingIfNeeded: readUnsigned(bytes))))
+      default: return 0
       }
     }
-    guard collectionDepth == 0 else { return nil }
 
-    // Compute data size per report ID.
-    var payloadSize: [UInt8: Int] = [:]
-    for (rid, bits) in bitOffsetByReportID { payloadSize[rid] = (bits + 7) / 8 }
-    return HIDParsedDescriptor(
-      fields: fields,
-      arrays: arrays,
-      payloadSizeBytesByReportID: payloadSize,
-      applicationCollections: applicationCollections,
-      inputReportIDs: inputReportIDs,
-      containsUnsupportedItem: containsUnsupportedItem,
-      containsInvalidInputSize: containsInvalidInputSize,
-      containsFeatureItem: containsFeatureItem
-    )
+    private static func readUnsigned(_ bytes: [UInt8]) -> Int {
+      var value = 0
+      for (idx, byte) in bytes.enumerated() { value |= Int(byte) << (8 * idx) }
+      return value
+    }
+
+    private static func readUsage(_ bytes: [UInt8]) -> (page: Int?, usage: Int) {
+      let value = readUnsigned(bytes)
+      return bytes.count == 4 ? (value >> 16, value & 0xFFFF) : (nil, value)
+    }
   }
 
   /// Designator Index/Minimum/Maximum and String Index/Minimum/Maximum.
