@@ -449,36 +449,14 @@ enum ProtocolClassifier {
         modeID: modeID
       )
     {
-      switch record.idleReason {
-      case .noControllerLinked?: return .unsupported(.noControllerLinked)
-      case .bootloader?: return .unsupported(.bootloaderIdentity)
-      case .awaitsReenumeration?: return .unsupported(.awaitsReenumeration)
-      case nil: break
-      }
-      if !record.hasDefaultMode, modeID == nil {
-        // No mode matches the device, so no mode of the record fits what it exposes.
-        guard backend == .hid, !interfaces.isEmpty else { return .unsupported(.noModeMatched) }
-        return descriptorFallback(
-          for: record,
-          device: device,
-          interfaces: interfaces,
-          backend: backend,
-          database: database
-        ) ?? .unsupported(.noModeMatched)
-      }
-      let result =
-        otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
-        ?? bind(record, interfaces: interfaces, backend: backend)
-      guard recordFitsNoInterface(record, interfaces: interfaces, backend: backend) else {
-        return result
-      }
-      return descriptorFallback(
-        for: record,
+      return classify(
+        record: record,
         device: device,
         interfaces: interfaces,
         backend: backend,
+        modeID: modeID,
         database: database
-      ) ?? mismatch(of: record, kept: result)
+      )
     }
     if let result = classifySignature(interfaces, backend: backend)
       ?? classifyDeviceSignature(device, backend: backend)
@@ -486,6 +464,16 @@ enum ProtocolClassifier {
       return result
     }
     guard !backend.usesRawUSB else { return .unsupported(.noProtocolMatch) }
+    return classifyDescriptor(device, interfaces: interfaces, backend: backend, database: database)
+  }
+
+  /// Classifies `device` by the `HIDDescriptor` contract.
+  private static func classifyDescriptor(
+    _ device: PhysicalDevice,
+    interfaces: [PhysicalInterfaceSignature],
+    backend: DeviceAccessBackend,
+    database: SDLGameControllerDatabase
+  ) -> ProtocolClassification {
     guard let interface = descriptorInterface(interfaces) else {
       guard let line = database.match(for: device) else {
         return .unsupported(.descriptorContractMismatch)
@@ -508,6 +496,47 @@ enum ProtocolClassifier {
     return .bound(
       descriptorBinding(device: device, interface: interface, backend: backend, database: database)
     )
+  }
+
+  /// Classifies `device` by its catalog `record`.
+  private static func classify(
+    record: DeviceRuntimeProfile,
+    device: PhysicalDevice,
+    interfaces: [PhysicalInterfaceSignature],
+    backend: DeviceAccessBackend,
+    modeID: String?,
+    database: SDLGameControllerDatabase
+  ) -> ProtocolClassification {
+    switch record.idleReason {
+    case .noControllerLinked?: return .unsupported(.noControllerLinked)
+    case .bootloader?: return .unsupported(.bootloaderIdentity)
+    case .awaitsReenumeration?: return .unsupported(.awaitsReenumeration)
+    case nil: break
+    }
+    if !record.hasDefaultMode, modeID == nil {
+      // No mode matches the device, so no mode of the record fits what it exposes.
+      guard backend == .hid, !interfaces.isEmpty else { return .unsupported(.noModeMatched) }
+      return descriptorFallback(
+        for: record,
+        device: device,
+        interfaces: interfaces,
+        backend: backend,
+        database: database
+      ) ?? .unsupported(.noModeMatched)
+    }
+    let result =
+      otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
+      ?? bind(record, interfaces: interfaces, backend: backend)
+    guard recordFitsNoInterface(record, interfaces: interfaces, backend: backend) else {
+      return result
+    }
+    return descriptorFallback(
+      for: record,
+      device: device,
+      interfaces: interfaces,
+      backend: backend,
+      database: database
+    ) ?? mismatch(of: record, kept: result)
   }
 
   /// Binds a catalog `record` to the interfaces and access path that `backend` observed.
