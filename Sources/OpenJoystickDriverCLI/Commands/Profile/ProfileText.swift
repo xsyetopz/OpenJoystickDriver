@@ -49,20 +49,14 @@ enum ProfileText {
     case .gamepadAxis(let axis): return "gamepad:axis:\(word(axis))"
     case .gamepadDpad(let direction): return "gamepad:dpad:\(word(direction))"
     case .gamepadButton(let button): return "gamepad:button:\(word(button))"
-    case .keyboard(let key, let modifiers):
-      let suffix =
-        modifiers.isEmpty
-        ? "" : ":mods=" + modifiers.map(word).sorted().joined(separator: ",")
-      return "key:\(word(key))\(suffix)"
+    case .keyboard(let key, let modifiers): return keyText(key, modifiers)
     case .mouseButton(let value): return "mouse:\(word(value))"
     case .mouseMovement(let value): return "move:\(word(value))"
     case .pointerPosition(let value): return "position:\(word(value))"
     case .scroll(let value): return "scroll:\(word(value))"
     case .physical(let output): return physicalOutput(output)
     case .macro(let id): return "macro:\(macros.first { $0.id == id }?.name ?? id.uuidString)"
-    case .profileSwitch(.profile(let id)): return "profile:switch:\(id.uuidString)"
-    case .profileSwitch(let target):
-      return "profile:switch:\(target == .next ? "next" : "previous")"
+    case .profileSwitch(let target): return profileSwitchText(target)
     case .layerSet(let layer, let mode):
       return "layer:\(layers.first { $0.id == layer }?.name ?? layer.uuidString):\(word(mode))"
     case .pause(let mode): return "pause:\(word(mode))"
@@ -77,6 +71,26 @@ enum ProfileText {
       return "midi-note:\(channel):\(note):\(velocity)"
     case .midiControlChange(let channel, let controller):
       return "midi-cc:\(channel):\(controller)"
+    }
+  }
+
+  /// The key in its `key:KEY[:mods=A,B]` form, with the modifiers sorted.
+  private static func keyText(
+    _ key: RemappingKeyboardKey,
+    _ modifiers: Set<RemappingKeyModifier>
+  ) -> String {
+    let suffix =
+      modifiers.isEmpty
+      ? "" : ":mods=" + modifiers.map(word).sorted().joined(separator: ",")
+    return "key:\(word(key))\(suffix)"
+  }
+
+  /// The profile switch in its `profile:switch:TARGET` form.
+  private static func profileSwitchText(_ target: RemappingProfileTarget) -> String {
+    switch target {
+    case .profile(let id): "profile:switch:\(id.uuidString)"
+    case .next: "profile:switch:next"
+    case .previous: "profile:switch:previous"
     }
   }
 
