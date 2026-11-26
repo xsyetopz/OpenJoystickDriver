@@ -115,18 +115,7 @@ struct MacroSummary: Encodable, Equatable {
   }
 }
 
-extension RemappingMacroWhileRunning: ExpressibleByArgument {
-  /// Reads a `--while-running` value: `ignore` or `restart`.
-  public init?(argument: String) {
-    guard let value = CommandLineName.value(of: argument, in: Self.self) else { return nil }
-    self = value
-  }
-
-  /// The spellings that the command line accepts.
-  public static var allValueStrings: [String] {
-    allCases.map { CommandLineName.kebab($0.rawValue) }
-  }
-}
+extension RemappingMacroWhileRunning: KebabCaseArgument {}
 
 /// The `ojd macro list` command: prints the macros of a profile.
 struct MacroListCommand: AsyncParsableCommand {

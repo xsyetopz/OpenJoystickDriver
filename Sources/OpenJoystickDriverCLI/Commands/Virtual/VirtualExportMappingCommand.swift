@@ -2,18 +2,7 @@ public import ArgumentParser
 import Foundation
 public import OpenJoystickDriverKit
 
-extension VirtualMappingFormat: ExpressibleByArgument {
-  /// A format on the command line is its lowercase name: `sdl` or `w3c`.
-  public init?(argument: String) {
-    guard let format = CommandLineName.value(of: argument, in: Self.self) else { return nil }
-    self = format
-  }
-
-  /// The format names that the command line accepts.
-  public static var allValueStrings: [String] {
-    allCases.map { CommandLineName.kebab($0.rawValue) }
-  }
-}
+extension VirtualMappingFormat: KebabCaseArgument {}
 
 /// The `ojd virtual export-mapping --json` result: one entry per persona, carrying only the
 /// requested format.

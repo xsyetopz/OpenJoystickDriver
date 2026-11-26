@@ -88,8 +88,13 @@ enum ProfileTemplate: String, CaseIterable, ExpressibleByArgument {
 
 extension RemappingGyroStickTemplate.Stick: ExpressibleByArgument {}
 
-extension RemappingVirtualGamepadPolicy: ExpressibleByArgument {
-  /// Reads a `--virtual-gamepad` value: `disabled`, `mapped` or `passthrough`.
+/// An enumeration that the command line spells in kebab-case: a raw value of `tapOnPress` is
+/// `tap-on-press`.
+protocol KebabCaseArgument: ExpressibleByArgument, CaseIterable, RawRepresentable
+where RawValue == String {}
+
+extension KebabCaseArgument {
+  /// Reads the case whose raw value spells `argument` in kebab-case.
   public init?(argument: String) {
     guard let value = CommandLineName.value(of: argument, in: Self.self) else { return nil }
     self = value
@@ -101,54 +106,12 @@ extension RemappingVirtualGamepadPolicy: ExpressibleByArgument {
   }
 }
 
-extension RemappingPhysicalInputPolicy: ExpressibleByArgument {
-  /// Reads a `--physical-input` value: `shared` or `exclusive`.
-  public init?(argument: String) {
-    guard let value = CommandLineName.value(of: argument, in: Self.self) else { return nil }
-    self = value
-  }
+extension RemappingVirtualGamepadPolicy: KebabCaseArgument {}
 
-  /// The spellings that the command line accepts.
-  public static var allValueStrings: [String] {
-    allCases.map { CommandLineName.kebab($0.rawValue) }
-  }
-}
+extension RemappingPhysicalInputPolicy: KebabCaseArgument {}
 
-extension RemappingBindingBehavior: ExpressibleByArgument {
-  /// The lowercase kebab-case spelling of a case, such as `tap-on-press`.
-  public init?(argument: String) {
-    guard let value = CommandLineName.value(of: argument, in: Self.self) else { return nil }
-    self = value
-  }
+extension RemappingBindingBehavior: KebabCaseArgument {}
 
-  /// The spellings that the command line accepts.
-  public static var allValueStrings: [String] {
-    allCases.map { CommandLineName.kebab($0.rawValue) }
-  }
-}
+extension RemappingResponseCurve: KebabCaseArgument {}
 
-extension RemappingResponseCurve: ExpressibleByArgument {
-  /// The lowercase kebab-case spelling of a case, such as `ease-in`.
-  public init?(argument: String) {
-    guard let value = CommandLineName.value(of: argument, in: Self.self) else { return nil }
-    self = value
-  }
-
-  /// The spellings that the command line accepts.
-  public static var allValueStrings: [String] {
-    allCases.map { CommandLineName.kebab($0.rawValue) }
-  }
-}
-
-extension RemappingMotionCalibrationCommand: ExpressibleByArgument {
-  /// The lowercase kebab-case spelling of a case, such as `start`.
-  public init?(argument: String) {
-    guard let value = CommandLineName.value(of: argument, in: Self.self) else { return nil }
-    self = value
-  }
-
-  /// The spellings that the command line accepts.
-  public static var allValueStrings: [String] {
-    allCases.map { CommandLineName.kebab($0.rawValue) }
-  }
-}
+extension RemappingMotionCalibrationCommand: KebabCaseArgument {}

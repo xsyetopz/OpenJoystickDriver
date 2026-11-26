@@ -1,9 +1,9 @@
-public import ArgumentParser
+import ArgumentParser
 import Foundation
 public import OpenJoystickDriverKit
 
 /// What `ojd controller calibrate` does with its action argument.
-enum ControllerCalibrateAction: String, CaseIterable, ExpressibleByArgument {
+enum ControllerCalibrateAction: String, CaseIterable, KebabCaseArgument {
   /// Starts collecting gyro drift.
   case start
   /// Stops collecting gyro drift.
@@ -21,29 +21,9 @@ enum ControllerCalibrateAction: String, CaseIterable, ExpressibleByArgument {
     case .reset, .sticks: nil
     }
   }
-
-  /// The lowercase spelling of a case, such as `sticks`.
-  init?(argument: String) {
-    guard let value = CommandLineName.value(of: argument, in: Self.self) else { return nil }
-    self = value
-  }
-
-  /// The spellings that the command line accepts.
-  static var allValueStrings: [String] { allCases.map { CommandLineName.kebab($0.rawValue) } }
 }
 
-extension ControllerCalibration.Step: ExpressibleByArgument {
-  /// The lowercase spelling of a case, such as `circle`.
-  public init?(argument: String) {
-    guard let value = CommandLineName.value(of: argument, in: Self.self) else { return nil }
-    self = value
-  }
-
-  /// The spellings that the command line accepts.
-  public static var allValueStrings: [String] {
-    allCases.map { CommandLineName.kebab($0.rawValue) }
-  }
-}
+extension ControllerCalibration.Step: KebabCaseArgument {}
 
 /// The `--json` result of `ojd controller calibrate` with `sticks` or `reset`.
 struct ControllerRecalibrationReport: Encodable, Equatable {
