@@ -283,21 +283,12 @@ extension SteamTritonDriver {
 
   /// The hat direction of the D-pad bits of `buttons`.
   private static func hat(_ buttons: UInt32) -> HatDirection {
-    let up = buttons & dpadUp != 0
-    let down = buttons & dpadDown != 0
-    let left = buttons & dpadLeft != 0
-    let right = buttons & dpadRight != 0
-    switch (up, right, down, left) {
-    case (true, false, false, false): return .north
-    case (true, true, false, false): return .northEast
-    case (false, true, false, false): return .east
-    case (false, true, true, false): return .southEast
-    case (false, false, true, false): return .south
-    case (false, false, true, true): return .southWest
-    case (false, false, false, true): return .west
-    case (true, false, false, true): return .northWest
-    default: return .neutral
-    }
+    HatDirection(
+      exactUp: buttons & dpadUp != 0,
+      right: buttons & dpadRight != 0,
+      down: buttons & dpadDown != 0,
+      left: buttons & dpadLeft != 0
+    )
   }
 
   /// Triggers are signed 16-bit and rest at 0; SDL maps `0...32767` onto its full trigger range.

@@ -60,20 +60,4 @@ extension GIPDriver {
     let rsy = Int16(bitPattern: UInt16(bytes[12]) | (UInt16(bytes[13]) << 8))
     return (lsx, lsy, rsx, rsy)
   }
-
-  /// The hat direction of the D-pad bits: up 1, down 2, left 4, right 8.
-  func mapDpad(_ value: UInt8) -> HatDirection {
-    // bits: up=1, down=2, left=4, right=8
-    switch value {
-    case 1: .north
-    case 2: .south
-    case 4: .west
-    case 8: .east
-    case 9: .northEast  // up + right
-    case 5: .northWest  // up + left
-    case 10: .southEast  // down + right
-    case 6: .southWest  // down + left
-    default: .neutral
-    }
-  }
 }

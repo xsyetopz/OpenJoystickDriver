@@ -330,21 +330,11 @@ extension SteamControllerDriver {
 
   /// The hat direction of the D-pad bits: up 1, right 2, left 4, down 8.
   private func mapDpad(_ value: UInt8) -> HatDirection {
-    let up = (value & 0x01) != 0
-    let right = (value & 0x02) != 0
-    let left = (value & 0x04) != 0
-    let down = (value & 0x08) != 0
-
-    switch (up, right, down, left) {
-    case (true, false, false, false): return .north
-    case (true, true, false, false): return .northEast
-    case (false, true, false, false): return .east
-    case (false, true, true, false): return .southEast
-    case (false, false, true, false): return .south
-    case (false, false, true, true): return .southWest
-    case (false, false, false, true): return .west
-    case (true, false, false, true): return .northWest
-    default: return .neutral
-    }
+    HatDirection(
+      exactUp: value & 0x01 != 0,
+      right: value & 0x02 != 0,
+      down: value & 0x08 != 0,
+      left: value & 0x04 != 0
+    )
   }
 }

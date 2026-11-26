@@ -228,6 +228,33 @@ public enum HatDirection: String, Codable, Sendable {
 }
 
 extension HatDirection {
+  /// The direction whose D-pad flags are held and no others; any other combination, such as
+  /// opposing flags, is at rest. `init(up:right:down:left:)` instead lets opposing flags cancel.
+  init(exactUp up: Bool, right: Bool, down: Bool, left: Bool) {
+    switch (up, right, down, left) {
+    case (true, false, false, false): self = .north
+    case (true, true, false, false): self = .northEast
+    case (false, true, false, false): self = .east
+    case (false, true, true, false): self = .southEast
+    case (false, false, true, false): self = .south
+    case (false, false, true, true): self = .southWest
+    case (false, false, false, true): self = .west
+    case (true, false, false, true): self = .northWest
+    default: self = .neutral
+    }
+  }
+
+  /// The direction of the low four bits of `bits`: up 1, down 2, left 4, right 8; a combination
+  /// that is not one of the eight directions is at rest, and higher bits are ignored.
+  init(dpadNibble bits: UInt8) {
+    self.init(
+      exactUp: bits & 0x01 != 0,
+      right: bits & 0x08 != 0,
+      down: bits & 0x02 != 0,
+      left: bits & 0x04 != 0
+    )
+  }
+
   /// The D-pad control the hat points at; a diagonal names its vertical id, and at rest the
   /// first D-pad id.
   public var dpadControl: Control {

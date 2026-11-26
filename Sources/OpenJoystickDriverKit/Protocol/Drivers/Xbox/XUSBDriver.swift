@@ -320,7 +320,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
 
     var next = state
     for (bit, control) in Self.buttonTable { next.set(control, pressed: buttons & (1 << bit) != 0) }
-    next.hat = mapDpad(buttons & 0x000F)
+    next.hat = HatDirection(dpadNibble: UInt8(buttons & 0x000F))
     next.leftTrigger = UnipolarValue(normalized: Float(bytes[4]) / xbox360TriggerMax)
     next.rightTrigger = UnipolarValue(normalized: Float(bytes[5]) / xbox360TriggerMax)
     next.leftStick = StickPosition(x: normalizeStick(lsx), y: -normalizeStick(lsy))
@@ -419,21 +419,5 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   private func normalizeStick(_ raw: Int16) -> Float {
     if raw == Int16.min { return -1.0 }
     return Float(raw) / xbox360StickMax
-  }
-
-  /// The hat direction of the D-pad bits of the button word.
-  private func mapDpad(_ value: UInt16) -> HatDirection {
-    // bits: up=1, down=2, left=4, right=8
-    switch value {
-    case 1: .north
-    case 2: .south
-    case 4: .west
-    case 8: .east
-    case 9: .northEast  // up + right
-    case 5: .northWest  // up + left
-    case 10: .southEast  // down + right
-    case 6: .southWest  // down + left
-    default: .neutral
-    }
   }
 }

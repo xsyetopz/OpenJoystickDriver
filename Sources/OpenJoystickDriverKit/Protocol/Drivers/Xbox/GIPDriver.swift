@@ -457,7 +457,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
       next.set(control, pressed: bytes[index] & bit != 0)
     }
     if let share = shareByte(in: bytes) { next.set(.capture, pressed: share & 1 != 0) }
-    next.hat = mapDpad(bytes[1] & gipDpadMask)
+    next.hat = HatDirection(dpadNibble: bytes[1] & gipDpadMask)
     next.leftStick = StickPosition(x: normalizeStick(lsx), y: -normalizeStick(lsy))
     next.rightStick = StickPosition(x: normalizeStick(rsx), y: -normalizeStick(rsy))
     next.leftTrigger = UnipolarValue(normalized: Float(parseLT(from: bytes)) / gipTriggerMax)

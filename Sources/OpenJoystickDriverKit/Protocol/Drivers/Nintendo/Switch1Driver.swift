@@ -225,8 +225,8 @@ public final class Switch1Driver: PhysicalProtocolDriver {
 
     var next = state
     for (mask, control) in buttonTable { next.set(control, pressed: buttons & mask != 0) }
-    next.hat = mapDpad(
-      up: buttons & 0x0002_0000 != 0,
+    next.hat = HatDirection(
+      exactUp: buttons & 0x0002_0000 != 0,
       right: buttons & 0x0004_0000 != 0,
       down: buttons & 0x0001_0000 != 0,
       left: buttons & 0x0008_0000 != 0
@@ -367,21 +367,5 @@ public final class Switch1Driver: PhysicalProtocolDriver {
   private func normalizeStick(_ value: UInt16) -> Float {
     let centered = Float(Int(value) - Int(switchProStickCenter)) / switchProStickMax
     return max(-1, min(1, centered))
-  }
-
-  /// The hat direction of four D-pad flags; opposing directions cancel to rest only through the
-  /// at-rest case.
-  private func mapDpad(up: Bool, right: Bool, down: Bool, left: Bool) -> HatDirection {
-    switch (up, right, down, left) {
-    case (true, false, false, false): return .north
-    case (true, true, false, false): return .northEast
-    case (false, true, false, false): return .east
-    case (false, true, true, false): return .southEast
-    case (false, false, true, false): return .south
-    case (false, false, true, true): return .southWest
-    case (false, false, false, true): return .west
-    case (true, false, false, true): return .northWest
-    default: return .neutral
-    }
   }
 }

@@ -186,8 +186,8 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
       bytes[ReportOffset.buttons1],
       bytes[ReportOffset.buttons2]
     ) { next.set(control, pressed: byte & mask != 0) }
-    next.hat = mapDpad(
-      up: b0 & 0x10 != 0,
+    next.hat = HatDirection(
+      exactUp: b0 & 0x10 != 0,
       right: b0 & 0x20 != 0,
       down: b0 & 0x40 != 0,
       left: b0 & 0x80 != 0
@@ -230,20 +230,5 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
     let divisor = centered >= 0 ? ds3AxisPositiveMax : ds3AxisNegativeMax
     let normalized = centered / divisor
     return max(-1, min(1, normalized))
-  }
-
-  /// The hat direction of four D-pad flags.
-  private func mapDpad(up: Bool, right: Bool, down: Bool, left: Bool) -> HatDirection {
-    switch (up, right, down, left) {
-    case (true, false, false, false): return .north
-    case (true, true, false, false): return .northEast
-    case (false, true, false, false): return .east
-    case (false, true, true, false): return .southEast
-    case (false, false, true, false): return .south
-    case (false, false, true, true): return .southWest
-    case (false, false, false, true): return .west
-    case (true, false, false, true): return .northWest
-    default: return .neutral
-    }
   }
 }
