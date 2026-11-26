@@ -27,14 +27,30 @@ struct IOUSBHostRequestTests {
   @Test
   func handlerAfterFailedEnqueueIsIgnored() async {
     let refusal = NSError(domain: NSPOSIXErrorDomain, code: Int(EBUSY))
+    let captured = CapturedCompletion()
 
     await #expect(throws: refusal) {
       _ = try await IOUSBHostRequest.run { completion in
-        DispatchQueue.global().asyncAfter(deadline: .now() + .milliseconds(10)) {
-          completion(kIOReturnSuccess, 1)
-        }
+        captured.store(completion)
         throw refusal
       }
     }
+
+    // The request already failed, so a completion arriving afterwards must not resume it again.
+    captured.complete(kIOReturnSuccess, 1)
+  }
+}
+
+/// Holds the completion handler of a request so a test can call it at a chosen moment.
+private final class CapturedCompletion: @unchecked Sendable {
+  private let lock = NSLock()
+  private var handler: ((IOReturn, Int) -> Void)?
+
+  func store(_ completion: @escaping (IOReturn, Int) -> Void) {
+    lock.withLock { handler = completion }
+  }
+
+  func complete(_ status: IOReturn, _ count: Int) {
+    lock.withLock { handler }?(status, count)
   }
 }

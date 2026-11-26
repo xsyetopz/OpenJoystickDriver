@@ -25,8 +25,8 @@ struct HIDRunLoopModeTests {
 
     // Act
     // Other main-queue work also runs in common modes, so one pass can end on its source first.
-    let deadline = Date().addingTimeInterval(2)
-    while !fired, Date() < deadline {
+    let limit = ProcessInfo.processInfo.systemUptime + 2
+    while !fired, ProcessInfo.processInfo.systemUptime < limit {
       _ = CFRunLoopRunInMode(eventTracking, 0.1, true)
     }
 

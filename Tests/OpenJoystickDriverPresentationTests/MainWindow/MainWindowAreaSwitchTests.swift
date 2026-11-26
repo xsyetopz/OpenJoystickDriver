@@ -1,4 +1,5 @@
 import AppKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -17,18 +18,21 @@ struct MainWindowAreaSwitchTests {
   /// The stub service never answers, so Controllers shows its loading spinner; Activity at Simple
   /// shows only its placeholder. Activity left in the detail after a switch has no spinner.
   @Test
-  func detailShowsAreaChosenAfterAnother() throws {
+  func detailShowsAreaChosenAfterAnother() async throws {
     // Arrange
     let (controller, cleanup) = try MainWindowController.offScreen()
     defer { cleanup() }
+    let window = try #require(controller.window)
     let detail = controller.splitViewController.splitViewItems[2].viewController.view
     controller.navigation.requestArea(.activity)
-    RunLoop.main.run(until: .now.addingTimeInterval(0.3))
+    window.layoutIfNeeded()
     #expect(spinners(in: detail) == 0)
 
     // Act
     controller.navigation.requestArea(.controllers)
-    RunLoop.main.run(until: .now.addingTimeInterval(0.3))
+    await waitUntil("Controllers shows its loading spinner in the detail", deadline: 10) {
+      spinners(in: detail) > 0
+    }
 
     // Assert
     #expect(spinners(in: detail) > 0)

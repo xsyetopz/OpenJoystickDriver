@@ -38,7 +38,7 @@ extension MainWindowController {
 @MainActor
 struct MainWindowTitleFitTests {
   @Test(arguments: [false, true])
-  func titleAndSubtitleEndInsideListColumn(sidebarCollapsed: Bool) throws {
+  func titleAndSubtitleEndInsideListColumn(sidebarCollapsed: Bool) async throws {
     let (controller, cleanup) = try MainWindowController.offScreen()
     defer { cleanup() }
     let window = try #require(controller.window)
@@ -48,11 +48,17 @@ struct MainWindowTitleFitTests {
     window.layoutIfNeeded()
     let splitView = controller.splitViewController.splitView
     splitView.setPosition(splitView.arrangedSubviews[1].frame.minX, ofDividerAt: 1)
-    RunLoop.main.run(until: .now.addingTimeInterval(0.2))
-    window.layoutIfNeeded()
+    let titleEdges = {
+      window.layoutIfNeeded()
+      return MainWindowTitleFit.textEdges(of: window)
+    }
+    await waitUntil("the title text ends inside the list column", deadline: 10) {
+      let edges = titleEdges()
+      return !edges.isEmpty && edges.allSatisfy { $0 <= splitView.arrangedSubviews[1].frame.maxX }
+    }
 
     let listEdge = splitView.arrangedSubviews[1].frame.maxX
-    let edges = MainWindowTitleFit.textEdges(of: window)
+    let edges = titleEdges()
     #expect(!edges.isEmpty)
     for edge in edges { #expect(edge <= listEdge) }
   }
