@@ -45,7 +45,7 @@ extension DeviceManager {
         "[USBTransport] USB configuration descriptor read failed for \(device.serviceID) "
           + "\(attempt) polls in a row: \(failure); left unclaimed until it re-enumerates"
       )
-      recordUnreadableConfiguration(
+      recordUnboundUSBDevice(
         device,
         reason: .configurationUnreadable,
         interfaces: interfaces
@@ -68,7 +68,7 @@ extension DeviceManager {
         "[DeviceManager] USB device \(device.serviceID) refused the configuration read: "
           + "\(ownerNote); left unclaimed until it re-enumerates"
       )
-      recordUnreadableConfiguration(
+      recordUnboundUSBDevice(
         device,
         reason: .configurationUnreadable,
         interfaces: interfaces
@@ -80,7 +80,7 @@ extension DeviceManager {
       "[DeviceManager] USB device \(device.serviceID) refused the configuration read: "
         + "\(ownerNote); left unclaimed until it re-enumerates or the host reports no owner"
     )
-    recordUnreadableConfiguration(
+    recordUnboundUSBDevice(
       device,
       reason: .deviceInUse,
       interfaces: interfaces,
@@ -141,26 +141,5 @@ extension DeviceManager {
   ) async throws -> String? {
     if let owner = try await provider.exclusiveOwner(of: device) { return owner }
     return try await provider.interfaceExclusiveOwner(of: device, interfaceNumber: 0)
-  }
-
-  /// Records the service as unbound for `reason`, with the interfaces observed.
-  private func recordUnreadableConfiguration(
-    _ device: USBTransportDevice,
-    reason: ProtocolBindingReason,
-    interfaces: [PhysicalInterfaceSignature],
-    exclusiveOwner: USBExclusiveOwner? = nil
-  ) {
-    recordUnboundDevice(
-      .usb(device.serviceAddress),
-      vendorID: device.vendorID,
-      productID: device.productID,
-      productName: device.productName,
-      connection: "USB",
-      backend: DeviceAccessBackend(route: device.route),
-      reason: reason,
-      rejectedCandidates: [],
-      interfaces: interfaces,
-      exclusiveOwner: exclusiveOwner
-    )
   }
 }

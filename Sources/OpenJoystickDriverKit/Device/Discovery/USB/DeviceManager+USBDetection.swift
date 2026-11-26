@@ -489,12 +489,13 @@ extension DeviceManager {
     )
   }
 
-  /// Records a raw-USB service as unbound for `reason`.
-  private func recordUnboundUSBDevice(
+  /// Records a raw-USB service as unbound for `reason`, with the interfaces observed.
+  func recordUnboundUSBDevice(
     _ device: USBTransportDevice,
     reason: ProtocolBindingReason,
-    rejectedCandidates: [ProtocolBindingResult.RejectedCandidate],
-    interfaces: [PhysicalInterfaceSignature]
+    rejectedCandidates: [ProtocolBindingResult.RejectedCandidate] = [],
+    interfaces: [PhysicalInterfaceSignature],
+    exclusiveOwner: USBExclusiveOwner? = nil
   ) {
     recordUnboundDevice(
       .usb(device.serviceAddress),
@@ -505,7 +506,8 @@ extension DeviceManager {
       backend: DeviceAccessBackend(route: device.route),
       reason: reason,
       rejectedCandidates: rejectedCandidates,
-      interfaces: interfaces
+      interfaces: interfaces,
+      exclusiveOwner: exclusiveOwner
     )
   }
 }
