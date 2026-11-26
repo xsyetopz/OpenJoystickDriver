@@ -44,12 +44,7 @@
         }.ojdAccessibilityLabel(title).ojdAccessibilityValue(
           OJDLocalized.formatted("ui.inputTest.axisPair", x, y)
         )
-        HStack(spacing: OJDSpacing.medium) {
-          Text(OJDLocalized.formatted("ui.inputTest.axisX", x))
-          Text(OJDLocalized.formatted("ui.inputTest.axisY", y))
-        }.font(.system(.caption, design: .monospaced)).foregroundColor(
-          Color(NSColor.secondaryLabelColor)
-        )
+        InputTestAxisReadout(x: x, y: y)
         InputTestIndicator(
           title: OJDLocalized.string("ui.inputTest.pointerTracking"),
           active: tracking
@@ -135,12 +130,7 @@
         }.ojdAccessibilityLabel(title).ojdAccessibilityValue(
           OJDLocalized.formatted("ui.inputTest.axisPair", x, y)
         )
-        HStack(spacing: OJDSpacing.medium) {
-          Text(OJDLocalized.formatted("ui.inputTest.axisX", x))
-          Text(OJDLocalized.formatted("ui.inputTest.axisY", y))
-        }.font(.system(.caption, design: .monospaced)).foregroundColor(
-          Color(NSColor.secondaryLabelColor)
-        )
+        InputTestAxisReadout(x: x, y: y)
         InputTestIndicator(
           title: clickPresentation.title,
           symbol: clickPresentation.symbol,
@@ -149,6 +139,24 @@
           active: clickActive
         )
       }.frame(maxWidth: .infinity)
+    }
+  }
+
+  /// The X and Y numbers of a pointer or stick position, side by side.
+  private struct InputTestAxisReadout: View {
+    /// The horizontal position, -1 to 1.
+    let x: Float
+    /// The vertical position, -1 to 1.
+    let y: Float
+
+    /// The two numbers.
+    var body: some View {
+      HStack(spacing: OJDSpacing.medium) {
+        Text(OJDLocalized.formatted("ui.inputTest.axisX", x))
+        Text(OJDLocalized.formatted("ui.inputTest.axisY", y))
+      }.font(.system(.caption, design: .monospaced)).foregroundColor(
+        Color(NSColor.secondaryLabelColor)
+      )
     }
   }
 
