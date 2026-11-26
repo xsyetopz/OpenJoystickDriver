@@ -56,63 +56,101 @@ extension RemappingEngineState {
     from identifier: LogicalControllerID,
     at uptimeNanoseconds: UInt64
   ) -> [RemappingEngineAction] {
-    if devices[identifier]?.isPaused == true {
-      switch change {
-      case .leftStick(let x, let y):
-        return processAxes(
-          [(.leftStickX, x), (.leftStickY, y)],
-          for: identifier,
-          at: uptimeNanoseconds
-        )
-      case .rightStick(let x, let y):
-        return processAxes(
-          [(.rightStickX, x), (.rightStickY, y)],
-          for: identifier,
-          at: uptimeNanoseconds
-        )
-      case .pointer(let x, let y):
-        return processAxes(
-          [(.pointerX, x), (.pointerY, y)],
-          for: identifier,
-          at: uptimeNanoseconds
-        )
-      case .leftTrigger(let value):
-        return processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
-      case .rightTrigger(let value):
-        return processAxes([(.rightTrigger, value)], for: identifier, at: uptimeNanoseconds)
-      case .motion, .touch: return []
-      case .button, .dpad: break
-      }
+    if devices[identifier]?.isPaused == true,
+      let pausedActions = processPausedChange(change, for: identifier, at: uptimeNanoseconds)
+    {
+      return pausedActions
     }
     switch change {
     case .button(let button, let isPressed):
       return setSource(.button(button), isActive: isPressed, for: identifier, at: uptimeNanoseconds)
     case .dpad(let direction): return setDpad(direction, for: identifier, at: uptimeNanoseconds)
     case .leftStick(let x, let y):
-      let actions = processAdvancedStick(.left, x: x, y: y, for: identifier, at: uptimeNanoseconds)
-      return actions
-        + processAxes([(.leftStickX, x), (.leftStickY, y)], for: identifier, at: uptimeNanoseconds)
-        + processStickRegions(.left, x: x, y: y, for: identifier, at: uptimeNanoseconds)
+      return processStick(.left, x: x, y: y, change: change, for: identifier, at: uptimeNanoseconds)
     case .rightStick(let x, let y):
-      let actions = processAdvancedStick(.right, x: x, y: y, for: identifier, at: uptimeNanoseconds)
-      return actions
-        + processAxes(
-          [(.rightStickX, x), (.rightStickY, y)],
-          for: identifier,
-          at: uptimeNanoseconds
-        ) + processStickRegions(.right, x: x, y: y, for: identifier, at: uptimeNanoseconds)
-    case .pointer(let x, let y):
-      return processAxes([(.pointerX, x), (.pointerY, y)], for: identifier, at: uptimeNanoseconds)
+      return processStick(
+        .right,
+        x: x,
+        y: y,
+        change: change,
+        for: identifier,
+        at: uptimeNanoseconds
+      )
+    case .pointer:
+      return processAxes(Self.axisValues(of: change), for: identifier, at: uptimeNanoseconds)
     case .leftTrigger(let value):
-      return processAdvancedTrigger(.left, value: value, for: identifier, at: uptimeNanoseconds)
-        + processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
-        + processTriggerBands(.left, value: value, for: identifier, at: uptimeNanoseconds)
+      return processTrigger(
+        .left,
+        value: value,
+        change: change,
+        for: identifier,
+        at: uptimeNanoseconds
+      )
     case .rightTrigger(let value):
-      return processAdvancedTrigger(.right, value: value, for: identifier, at: uptimeNanoseconds)
-        + processAxes([(.rightTrigger, value)], for: identifier, at: uptimeNanoseconds)
-        + processTriggerBands(.right, value: value, for: identifier, at: uptimeNanoseconds)
+      return processTrigger(
+        .right,
+        value: value,
+        change: change,
+        for: identifier,
+        at: uptimeNanoseconds
+      )
     case .motion(let sample): return processMotion(sample, for: identifier)
     case .touch(let sample): return processTouch(sample, for: identifier, at: uptimeNanoseconds)
+    }
+  }
+
+  /// Applies a change of a paused controller: analog axes keep running, motion and touch stop, and
+  /// `nil` leaves buttons and the d-pad to the regular path.
+  private mutating func processPausedChange(
+    _ change: RemappingInputChange,
+    for identifier: LogicalControllerID,
+    at uptimeNanoseconds: UInt64
+  ) -> [RemappingEngineAction]? {
+    switch change {
+    case .leftStick, .rightStick, .pointer, .leftTrigger, .rightTrigger:
+      return processAxes(Self.axisValues(of: change), for: identifier, at: uptimeNanoseconds)
+    case .motion, .touch: return []
+    case .button, .dpad: return nil
+    }
+  }
+
+  /// Applies a stick change: its stick mapping, then its axis sources, then its regions.
+  private mutating func processStick(
+    _ stick: RemappingStickSource,
+    x: Float,
+    y: Float,
+    change: RemappingInputChange,
+    for identifier: LogicalControllerID,
+    at uptimeNanoseconds: UInt64
+  ) -> [RemappingEngineAction] {
+    let actions = processAdvancedStick(stick, x: x, y: y, for: identifier, at: uptimeNanoseconds)
+    return actions
+      + processAxes(Self.axisValues(of: change), for: identifier, at: uptimeNanoseconds)
+      + processStickRegions(stick, x: x, y: y, for: identifier, at: uptimeNanoseconds)
+  }
+
+  /// Applies a trigger change: its trigger mapping, then its axis source, then its bands.
+  private mutating func processTrigger(
+    _ trigger: RemappingTriggerSource,
+    value: Float,
+    change: RemappingInputChange,
+    for identifier: LogicalControllerID,
+    at uptimeNanoseconds: UInt64
+  ) -> [RemappingEngineAction] {
+    processAdvancedTrigger(trigger, value: value, for: identifier, at: uptimeNanoseconds)
+      + processAxes(Self.axisValues(of: change), for: identifier, at: uptimeNanoseconds)
+      + processTriggerBands(trigger, value: value, for: identifier, at: uptimeNanoseconds)
+  }
+
+  /// Returns the axis values that a change carries, and none for a change without axes.
+  private static func axisValues(of change: RemappingInputChange) -> [(RemappingAxis, Float)] {
+    switch change {
+    case .leftStick(let x, let y): [(.leftStickX, x), (.leftStickY, y)]
+    case .rightStick(let x, let y): [(.rightStickX, x), (.rightStickY, y)]
+    case .pointer(let x, let y): [(.pointerX, x), (.pointerY, y)]
+    case .leftTrigger(let value): [(.leftTrigger, value)]
+    case .rightTrigger(let value): [(.rightTrigger, value)]
+    case .button, .dpad, .motion, .touch: []
     }
   }
 
@@ -176,45 +214,7 @@ extension RemappingEngineState {
     var actions: [RemappingEngineAction] = []
 
     for binding in device.binding(for: .axis(axis))?.expandedActions ?? [] {
-      if let tuning = binding.axisTuning, case .gamepadAxis(let destination) = binding.destination {
-        let value = RemappingTransform.value(rawValue, tuning: tuning)
-        device.analog.virtualAxisBindings.insert(binding.id)
-        if let state = device.outputs.gamepad.update(
-          RemappingGamepadState(axes: [destination: value]),
-          for: binding.id
-        ) {
-          actions.append(.gamepad(state, identifier))
-        }
-      }
-
-      actions += midiControlChange(binding, rawValue: rawValue, device: &device)
-
-      if let tuning = binding.axisTuning,
-        case .pointerPosition(let pointerAxis) = binding.destination
-      {
-        actions.append(
-          .system(
-            .pointerPlaced(
-              axis: pointerAxis,
-              position: Double(RemappingTransform.value(rawValue, tuning: tuning))
-            )
-          )
-        )
-      }
-
-      if let tuning = binding.axisTuning,
-        let continuousDestination = RemappingContinuousDestination(binding.destination)
-      {
-        let transformed = RemappingTransform.value(rawValue, tuning: tuning)
-        if transformed == 0 {
-          device.outputs.continuous.removeValue(forKey: binding.id)
-        } else {
-          device.outputs.continuous[binding.id] = RemappingContinuousOutput(
-            destination: continuousDestination,
-            amount: transformed
-          )
-        }
-      }
+      actions += processAxisBinding(binding, rawValue: rawValue, device: &device, for: identifier)
     }
 
     for direction in [RemappingAxisDirection.negative, .positive] {
@@ -235,6 +235,56 @@ extension RemappingEngineState {
     }
     devices[identifier] = device
     actions += stoppedContinuousActions(previous: oldContinuous)
+    return actions
+  }
+
+  /// Drives the destination of one axis binding from a raw axis value.
+  private mutating func processAxisBinding(
+    _ binding: RemappingBinding,
+    rawValue: Float,
+    device: inout RemappingDeviceState,
+    for identifier: LogicalControllerID
+  ) -> [RemappingEngineAction] {
+    var actions: [RemappingEngineAction] = []
+    if let tuning = binding.axisTuning, case .gamepadAxis(let destination) = binding.destination {
+      let value = RemappingTransform.value(rawValue, tuning: tuning)
+      device.analog.virtualAxisBindings.insert(binding.id)
+      if let state = device.outputs.gamepad.update(
+        RemappingGamepadState(axes: [destination: value]),
+        for: binding.id
+      ) {
+        actions.append(.gamepad(state, identifier))
+      }
+    }
+
+    actions += midiControlChange(binding, rawValue: rawValue, device: &device)
+
+    if let tuning = binding.axisTuning,
+      case .pointerPosition(let pointerAxis) = binding.destination
+    {
+      actions.append(
+        .system(
+          .pointerPlaced(
+            axis: pointerAxis,
+            position: Double(RemappingTransform.value(rawValue, tuning: tuning))
+          )
+        )
+      )
+    }
+
+    if let tuning = binding.axisTuning,
+      let continuousDestination = RemappingContinuousDestination(binding.destination)
+    {
+      let transformed = RemappingTransform.value(rawValue, tuning: tuning)
+      if transformed == 0 {
+        device.outputs.continuous.removeValue(forKey: binding.id)
+      } else {
+        device.outputs.continuous[binding.id] = RemappingContinuousOutput(
+          destination: continuousDestination,
+          amount: transformed
+        )
+      }
+    }
     return actions
   }
 
@@ -270,13 +320,7 @@ extension RemappingEngineState {
       device.sourcePressTimes.removeValue(forKey: source)
     }
     if device.profile.gyroOutput.activationSource == source {
-      if isActive, device.profile.gyroOutput.activationMode == .toggle {
-        device.motion.gyroToggleActive.toggle()
-      }
-      if gyroWasActive != device.isGyroActive {
-        device.motion.gyroAwaitingBaseline = true
-        if !device.isGyroActive { actions += device.clearGyroStick() }
-      }
+      actions += updateGyroActivation(device: &device, isActive: isActive, wasActive: gyroWasActive)
     }
 
     let oldContinuous = continuousTotals()
@@ -287,6 +331,34 @@ extension RemappingEngineState {
       return actions + layerActions + stoppedContinuousActions(previous: oldContinuous)
     }
 
+    actions += runSourceActions(source, isActive: isActive, device: &device, at: uptimeNanoseconds)
+    devices[identifier] = device
+    return actions
+  }
+
+  /// Toggles the gyro activation of its source and resets the baseline when gyro output changes.
+  private func updateGyroActivation(
+    device: inout RemappingDeviceState,
+    isActive: Bool,
+    wasActive: Bool
+  ) -> [RemappingEngineAction] {
+    if isActive, device.profile.gyroOutput.activationMode == .toggle {
+      device.motion.gyroToggleActive.toggle()
+    }
+    guard wasActive != device.isGyroActive else { return [] }
+    device.motion.gyroAwaitingBaseline = true
+    return device.isGyroActive ? [] : device.clearGyroStick()
+  }
+
+  /// Runs the bindings of a source unless a chord or held-back press pauses them, records the press
+  /// in the sequence history, and evaluates chords and sequences.
+  private mutating func runSourceActions(
+    _ source: RemappingSource,
+    isActive: Bool,
+    device: inout RemappingDeviceState,
+    at uptimeNanoseconds: UInt64
+  ) -> [RemappingEngineAction] {
+    var actions: [RemappingEngineAction] = []
     let wasConsumed = device.chords.consumedChordSources.contains(source)
     let buffered = isActive && device.bufferChordPress(source, at: uptimeNanoseconds)
     let modifierOwned = device.effectiveChords.contains {
@@ -320,7 +392,6 @@ extension RemappingEngineState {
     }
     actions += processChords(for: &device)
     actions += processSequences(for: &device, at: uptimeNanoseconds)
-    devices[identifier] = device
     return actions
   }
 
