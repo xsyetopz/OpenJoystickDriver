@@ -78,46 +78,58 @@ struct RemappingDualStageTriggerRuntime {
 
   /// Derives the reported stages from the physical stages, the mode and the skip window.
   private mutating func evaluate(at uptime: UInt64) -> [RemappingTriggerStageChange] {
-    guard mapping.mode.buffersSoftPull else {
-      phase = softPhysical ? .soft : .idle
-      let soft = softPhysical && (mapping.mode != .exclusive || !fullPhysical)
-      return setOutputs(soft: soft, full: fullPhysical)
-    }
-
+    guard mapping.mode.buffersSoftPull else { return evaluateUnbuffered() }
     switch phase {
-    case .idle:
-      guard softPhysical else { return setOutputs(soft: false, full: false) }
-      let window = UInt64((mapping.skipWindowMs * 1_000_000).rounded())
-      let (due, overflow) = uptime.addingReportingOverflow(window)
-      phase = .pending(deadline: overflow ? .max : due)
-      return setOutputs(soft: mapping.mode.emitsSoftWhileBuffered, full: false)
-    case .pending(let deadline):
-      guard softPhysical else {
-        phase = .idle
-        return setOutputs(soft: false, full: false)
-      }
-      if fullPhysical, uptime <= deadline {
-        phase = .quickFull
-        return setOutputs(soft: false, full: true)
-      }
-      if uptime >= deadline {
-        phase = .soft
-        return setOutputs(soft: true, full: mapping.mode.permitsLateFullPull && fullPhysical)
-      }
-      return setOutputs(soft: mapping.mode.emitsSoftWhileBuffered, full: false)
-    case .soft:
-      guard softPhysical else {
-        phase = .idle
-        return setOutputs(soft: false, full: false)
-      }
-      return setOutputs(soft: true, full: mapping.mode.permitsLateFullPull && fullPhysical)
-    case .quickFull:
-      guard softPhysical else {
-        phase = .idle
-        return setOutputs(soft: false, full: false)
-      }
-      return setOutputs(soft: false, full: fullPhysical)
+    case .idle: return evaluateIdle(at: uptime)
+    case .pending(let deadline): return evaluatePending(deadline: deadline, at: uptime)
+    case .soft: return evaluateSoft()
+    case .quickFull: return evaluateQuickFull()
     }
+  }
+
+  private mutating func evaluateUnbuffered() -> [RemappingTriggerStageChange] {
+    phase = softPhysical ? .soft : .idle
+    let soft = softPhysical && (mapping.mode != .exclusive || !fullPhysical)
+    return setOutputs(soft: soft, full: fullPhysical)
+  }
+
+  private mutating func evaluateIdle(at uptime: UInt64) -> [RemappingTriggerStageChange] {
+    guard softPhysical else { return setOutputs(soft: false, full: false) }
+    let window = UInt64((mapping.skipWindowMs * 1_000_000).rounded())
+    let (due, overflow) = uptime.addingReportingOverflow(window)
+    phase = .pending(deadline: overflow ? .max : due)
+    return setOutputs(soft: mapping.mode.emitsSoftWhileBuffered, full: false)
+  }
+
+  private mutating func evaluatePending(
+    deadline: UInt64,
+    at uptime: UInt64
+  ) -> [RemappingTriggerStageChange] {
+    guard softPhysical else { return releaseToIdle() }
+    if fullPhysical, uptime <= deadline {
+      phase = .quickFull
+      return setOutputs(soft: false, full: true)
+    }
+    if uptime >= deadline {
+      phase = .soft
+      return setOutputs(soft: true, full: mapping.mode.permitsLateFullPull && fullPhysical)
+    }
+    return setOutputs(soft: mapping.mode.emitsSoftWhileBuffered, full: false)
+  }
+
+  private mutating func evaluateSoft() -> [RemappingTriggerStageChange] {
+    guard softPhysical else { return releaseToIdle() }
+    return setOutputs(soft: true, full: mapping.mode.permitsLateFullPull && fullPhysical)
+  }
+
+  private mutating func evaluateQuickFull() -> [RemappingTriggerStageChange] {
+    guard softPhysical else { return releaseToIdle() }
+    return setOutputs(soft: false, full: fullPhysical)
+  }
+
+  private mutating func releaseToIdle() -> [RemappingTriggerStageChange] {
+    phase = .idle
+    return setOutputs(soft: false, full: false)
   }
 
   /// Sets the reported stages and returns their changes, with all releases before the presses.
