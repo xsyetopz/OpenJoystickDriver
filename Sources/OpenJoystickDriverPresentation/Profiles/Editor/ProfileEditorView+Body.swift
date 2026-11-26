@@ -57,211 +57,311 @@
           editorFooter
         }
       }.disabled(isEditingDisabled).sheet(item: $editor.activeSheet) { sheet in
-        Group {
-          switch sheet {
-          case .metadata: ProfileMetadataSheet(profile: draft.profile) { updateMetadata($0) }
-          case .sticks:
-            ProfileStickSheet(mappings: draft.profile.stickMappings) { mappings in
-              draft = try draft.settingStickMappings(mappings)
-              localError = nil
-              saveError = nil
-              reportEditingState()
-            }
-          case .triggers:
-            ProfileTriggerSheet(mappings: draft.profile.triggerMappings) { mappings in
-              draft = try draft.settingTriggerMappings(mappings)
-              localError = nil
-              saveError = nil
-              reportEditingState()
-            }
-          case .touch:
-            ProfileTouchSheet(mappings: draft.profile.touchMappings, capabilities: capabilities) {
-              mappings in applyDraftChange { try draft.settingTouchMappings(mappings) }
-            }
-          case .regions:
-            ProfileRegionSheet(viewModel: viewModel, stickMappings: draft.profile.stickMappings) {
-              source,
-              destination in
-              draft = try draft.addingBinding(source: source, destination: destination)
-              localError = nil
-              saveError = nil
-              reportEditingState()
-            }
-          case .pointerSpeed:
-            ProfilePointerSpeedSheet(
-              speed: draft.profile.pointerSpeed,
-              capabilities: capabilities,
-              liveState: {
-                let model = ControllerModelID(
-                  vendorID: draft.profile.device.vendorID,
-                  productID: draft.profile.device.productID
-                )
-                return try await viewModel.gateway.controllerState(for: .model(model))
-              },
-              onSave: { speed in applyDraftChange { try draft.settingPointerSpeed(speed) } }
-            )
-          case .motion:
-            ProfileMotionSheet(tuning: draft.profile.motionTuning, output: draft.profile.gyroOutput)
-            { tuning, output in
-              applyDraftChange { try draft.settingMotionTuning(tuning, gyroOutput: output) }
-            }
-          case .layerMotion(let layer):
-            ProfileMotionSheet(
-              tuning: layer.motionTuning ?? draft.profile.motionTuning,
-              output: .default,
-              showsGyroOutput: false,
-              onInherit: {
-                applyDraftChange { try draft.settingLayerMotionTuning(nil, for: layer.id) }
-              },
-              onSave: { tuning, _ in
-                applyDraftChange { try draft.settingLayerMotionTuning(tuning, for: layer.id) }
-              }
-            )
-          case .capture:
-            CaptureAssignmentSheet(
-              viewModel: viewModel,
-              capabilities: capabilities,
-              macros: draft.profile.macros
-            ) {
-              source,
-              destination in addBinding(source: source, destination: destination)
-            }
-          case .adjustment(let binding):
-            AxisAdjustmentSheet(binding: binding) { tuning in
-              updateAxisTuning(tuning, for: binding.id)
-            }
-          case .behavior(let binding):
-            BindingBehaviorSheet(binding: binding, capabilities: capabilities) {
-              behavior,
-              pulseDurationMs,
-              turbo,
-              longHold,
-              multiTap,
-              actions,
-              remark in
-              applyDraftChange {
-                try draft.settingBindingBehaviors(
-                  behavior: behavior,
-                  pulseDurationMs: pulseDurationMs,
-                  turbo: turbo,
-                  longHold: longHold,
-                  multiTap: multiTap,
-                  for: binding.id
-                ).settingAdditionalActions(actions, for: binding.id)
-                  .settingRemark(remark, for: binding.id)
-              }
-            }
-          case .chord:
-            ProfileCombinationSheet(kind: .chord, capabilities: capabilities) {
-              sources,
-              mode,
-              windowMs,
-              destination in
-              addChord(sources: sources, mode: mode, windowMs: windowMs, destination: destination)
-            }
-          case .sequence:
-            ProfileCombinationSheet(kind: .sequence, capabilities: capabilities) {
-              sources,
-              _,
-              windowMs,
-              destination in
-              addSequence(sources: sources, windowMs: windowMs, destination: destination)
-            }
-          case .layer:
-            ProfileLayerSheet(capabilities: capabilities) { name, activator, mode in
-              addLayer(name: name, activator: activator, mode: mode)
-            }
-          case .macro(let macro):
-            MacroEditorSheet(macro: macro, capabilities: capabilities) { saveMacro($0) }
-          case .layerBinding(let layer):
-            ProfileLayerBindingSheet(layer: layer, capabilities: capabilities) {
-              source,
-              destination in
-              setLayerBinding(layerID: layer.id, source: source, destination: destination)
-            }
-          case .layerAdjustment(let layerID, let binding):
-            AxisAdjustmentSheet(binding: binding) { tuning in
-              updateLayerAxisTuning(tuning, layerID: layerID, bindingID: binding.id)
-            }
-          case .layerBehavior(let layerID, let binding):
-            BindingBehaviorSheet(binding: binding, capabilities: capabilities) {
-              behavior,
-              pulseDurationMs,
-              turbo,
-              longHold,
-              multiTap,
-              actions,
-              remark in
-              applyDraftChange {
-                try draft.settingLayerBindingBehaviors(
-                  behavior: behavior,
-                  pulseDurationMs: pulseDurationMs,
-                  layerID: layerID,
-                  bindingID: binding.id,
-                  turbo: turbo,
-                  longHold: longHold,
-                  multiTap: multiTap
-                ).settingAdditionalActions(actions, for: binding.id, layerID: layerID)
-                  .settingRemark(remark, for: binding.id, layerID: layerID)
-              }
-            }
-          }
-        }.disabled(isEditingDisabled)
-      }.alert(item: $confirmation) { confirmation in
-        switch confirmation {
-        case .activateEmpty:
-          Alert(
-            title: Text(
-              OJDLocalized.string(
-                "ui.profiles.emptyActivationTitle"
-              )
-            ),
-            message: Text(
-              OJDLocalized.string(
-                "ui.profiles.emptyActivationMessage"
-              )
-            ),
-            primaryButton: .destructive(
-              Text(OJDLocalized.string("action.setActive"))
-            ) { activateProfile(allowEmpty: true) },
-            secondaryButton: .cancel { self.confirmation = nil }
-          )
-        case .activateNotice(let message):
-          Alert(
-            title: Text(OJDLocalized.string("ui.profiles.activationTitle")),
-            message: Text(message),
-            primaryButton: .default(
-              Text(OJDLocalized.string("action.setActive"))
-            ) { activateProfile(allowEmpty: false) },
-            secondaryButton: .cancel { self.confirmation = nil }
-          )
-        case .clearInputs:
-          Alert(
-            title: Text(
-              OJDLocalized.string("ui.profiles.clearInputsTitle")
-            ),
-            message: Text(
-              OJDLocalized.string(
-                "ui.profiles.clearInputsMessage"
-              )
-            ),
-            primaryButton: .destructive(
-              Text(OJDLocalized.string("ui.profiles.clearInputsConfirm"))
-            ) { clearInputs() },
-            secondaryButton: .cancel { self.confirmation = nil }
-          )
-        case .removeAllAssignments:
-          Alert(
-            title: Text(OJDLocalized.string("ui.profiles.removeAllAssignmentsTitle")),
-            message: Text(OJDLocalized.string("ui.profiles.removeAllAssignmentsMessage")),
-            primaryButton: .destructive(
-              Text(OJDLocalized.string("ui.profiles.removeAllAssignmentsConfirm"))
-            ) { removeAllAssignments() },
-            secondaryButton: .cancel { self.confirmation = nil }
-          )
+        Group { editorSheet(sheet) }.disabled(isEditingDisabled)
+      }.alert(item: $confirmation) { confirmation in confirmationAlert(confirmation) }
+        .onReceive(library.$mutationState) { mutation in handleMutation(mutation) }.onAppear {
+          reportEditingState()
         }
-      }.onReceive(library.$mutationState) { mutation in handleMutation(mutation) }.onAppear {
+    }
+
+    /// The sheet that ``activeSheet`` names.
+    @ViewBuilder
+    private func editorSheet(_ sheet: ProfileEditorSheet) -> some View {
+      switch sheet {
+      case .metadata: metadataSheet()
+      case .sticks: sticksSheet()
+      case .triggers: triggersSheet()
+      case .touch: touchSheet()
+      case .regions: regionsSheet()
+      case .pointerSpeed: pointerSpeedSheet()
+      case .motion: motionSheet()
+      case .layerMotion(let layer): layerMotionSheet(layer)
+      case .capture: captureSheet()
+      case .adjustment(let binding): adjustmentSheet(binding)
+      case .behavior(let binding): behaviorSheet(binding)
+      case .chord: chordSheet()
+      case .sequence: sequenceSheet()
+      case .layer: layerCreationSheet()
+      case .macro(let macro): macroSheet(macro)
+      case .layerBinding(let layer): layerBindingSheet(layer)
+      case .layerAdjustment(let layerID, let binding): layerAdjustmentSheet(layerID, binding)
+      case .layerBehavior(let layerID, let binding): layerBehaviorSheet(layerID, binding)
+      }
+    }
+
+    /// The `metadata` sheet.
+    @ViewBuilder
+    private func metadataSheet() -> some View {
+      ProfileMetadataSheet(profile: draft.profile) { updateMetadata($0) }
+    }
+
+    /// The `sticks` sheet.
+    @ViewBuilder
+    private func sticksSheet() -> some View {
+      ProfileStickSheet(mappings: draft.profile.stickMappings) { mappings in
+        draft = try draft.settingStickMappings(mappings)
+        localError = nil
+        saveError = nil
         reportEditingState()
+      }
+    }
+
+    /// The `triggers` sheet.
+    @ViewBuilder
+    private func triggersSheet() -> some View {
+      ProfileTriggerSheet(mappings: draft.profile.triggerMappings) { mappings in
+        draft = try draft.settingTriggerMappings(mappings)
+        localError = nil
+        saveError = nil
+        reportEditingState()
+      }
+    }
+
+    /// The `touch` sheet.
+    @ViewBuilder
+    private func touchSheet() -> some View {
+      ProfileTouchSheet(mappings: draft.profile.touchMappings, capabilities: capabilities) {
+        mappings in applyDraftChange { try draft.settingTouchMappings(mappings) }
+      }
+    }
+
+    /// The `regions` sheet.
+    @ViewBuilder
+    private func regionsSheet() -> some View {
+      ProfileRegionSheet(viewModel: viewModel, stickMappings: draft.profile.stickMappings) {
+        source,
+        destination in
+        draft = try draft.addingBinding(source: source, destination: destination)
+        localError = nil
+        saveError = nil
+        reportEditingState()
+      }
+    }
+
+    /// The `pointerSpeed` sheet.
+    @ViewBuilder
+    private func pointerSpeedSheet() -> some View {
+      ProfilePointerSpeedSheet(
+        speed: draft.profile.pointerSpeed,
+        capabilities: capabilities,
+        liveState: {
+          let model = ControllerModelID(
+            vendorID: draft.profile.device.vendorID,
+            productID: draft.profile.device.productID
+          )
+          return try await viewModel.gateway.controllerState(for: .model(model))
+        },
+        onSave: { speed in applyDraftChange { try draft.settingPointerSpeed(speed) } }
+      )
+    }
+
+    /// The `motion` sheet.
+    @ViewBuilder
+    private func motionSheet() -> some View {
+      ProfileMotionSheet(tuning: draft.profile.motionTuning, output: draft.profile.gyroOutput) {
+        tuning,
+        output in
+        applyDraftChange { try draft.settingMotionTuning(tuning, gyroOutput: output) }
+      }
+    }
+
+    /// The `layerMotion` sheet.
+    @ViewBuilder
+    private func layerMotionSheet(_ layer: RemappingLayer) -> some View {
+      ProfileMotionSheet(
+        tuning: layer.motionTuning ?? draft.profile.motionTuning,
+        output: .default,
+        showsGyroOutput: false,
+        onInherit: {
+          applyDraftChange { try draft.settingLayerMotionTuning(nil, for: layer.id) }
+        },
+        onSave: { tuning, _ in
+          applyDraftChange { try draft.settingLayerMotionTuning(tuning, for: layer.id) }
+        }
+      )
+    }
+
+    /// The `capture` sheet.
+    @ViewBuilder
+    private func captureSheet() -> some View {
+      CaptureAssignmentSheet(
+        viewModel: viewModel,
+        capabilities: capabilities,
+        macros: draft.profile.macros
+      ) {
+        source,
+        destination in addBinding(source: source, destination: destination)
+      }
+    }
+
+    /// The `adjustment` sheet.
+    @ViewBuilder
+    private func adjustmentSheet(_ binding: RemappingBinding) -> some View {
+      AxisAdjustmentSheet(binding: binding) { tuning in
+        updateAxisTuning(tuning, for: binding.id)
+      }
+    }
+
+    /// The `behavior` sheet.
+    @ViewBuilder
+    private func behaviorSheet(_ binding: RemappingBinding) -> some View {
+      BindingBehaviorSheet(binding: binding, capabilities: capabilities) {
+        behavior,
+        pulseDurationMs,
+        turbo,
+        longHold,
+        multiTap,
+        actions,
+        remark in
+        applyDraftChange {
+          try draft.settingBindingBehaviors(
+            behavior: behavior,
+            pulseDurationMs: pulseDurationMs,
+            turbo: turbo,
+            longHold: longHold,
+            multiTap: multiTap,
+            for: binding.id
+          ).settingAdditionalActions(actions, for: binding.id)
+            .settingRemark(remark, for: binding.id)
+        }
+      }
+    }
+
+    /// The `chord` sheet.
+    @ViewBuilder
+    private func chordSheet() -> some View {
+      ProfileCombinationSheet(kind: .chord, capabilities: capabilities) {
+        sources,
+        mode,
+        windowMs,
+        destination in
+        addChord(sources: sources, mode: mode, windowMs: windowMs, destination: destination)
+      }
+    }
+
+    /// The `sequence` sheet.
+    @ViewBuilder
+    private func sequenceSheet() -> some View {
+      ProfileCombinationSheet(kind: .sequence, capabilities: capabilities) {
+        sources,
+        _,
+        windowMs,
+        destination in
+        addSequence(sources: sources, windowMs: windowMs, destination: destination)
+      }
+    }
+
+    /// The `layer` sheet.
+    @ViewBuilder
+    private func layerCreationSheet() -> some View {
+      ProfileLayerSheet(capabilities: capabilities) { name, activator, mode in
+        addLayer(name: name, activator: activator, mode: mode)
+      }
+    }
+
+    /// The `macro` sheet.
+    @ViewBuilder
+    private func macroSheet(_ macro: RemappingMacro?) -> some View {
+      MacroEditorSheet(macro: macro, capabilities: capabilities) { saveMacro($0) }
+    }
+
+    /// The `layerBinding` sheet.
+    @ViewBuilder
+    private func layerBindingSheet(_ layer: RemappingLayer) -> some View {
+      ProfileLayerBindingSheet(layer: layer, capabilities: capabilities) {
+        source,
+        destination in
+        setLayerBinding(layerID: layer.id, source: source, destination: destination)
+      }
+    }
+
+    /// The `layerAdjustment` sheet.
+    @ViewBuilder
+    private func layerAdjustmentSheet(_ layerID: UUID, _ binding: RemappingBinding) -> some View {
+      AxisAdjustmentSheet(binding: binding) { tuning in
+        updateLayerAxisTuning(tuning, layerID: layerID, bindingID: binding.id)
+      }
+    }
+
+    /// The `layerBehavior` sheet.
+    @ViewBuilder
+    private func layerBehaviorSheet(_ layerID: UUID, _ binding: RemappingBinding) -> some View {
+      BindingBehaviorSheet(binding: binding, capabilities: capabilities) {
+        behavior,
+        pulseDurationMs,
+        turbo,
+        longHold,
+        multiTap,
+        actions,
+        remark in
+        applyDraftChange {
+          try draft.settingLayerBindingBehaviors(
+            behavior: behavior,
+            pulseDurationMs: pulseDurationMs,
+            layerID: layerID,
+            bindingID: binding.id,
+            turbo: turbo,
+            longHold: longHold,
+            multiTap: multiTap
+          ).settingAdditionalActions(actions, for: binding.id, layerID: layerID)
+            .settingRemark(remark, for: binding.id, layerID: layerID)
+        }
+      }
+    }
+
+    /// The confirmation dialog for the pending ``confirmation``.
+    private func confirmationAlert(_ confirmation: ProfileEditorConfirmation) -> Alert {
+      switch confirmation {
+      case .activateEmpty:
+        Alert(
+          title: Text(
+            OJDLocalized.string(
+              "ui.profiles.emptyActivationTitle"
+            )
+          ),
+          message: Text(
+            OJDLocalized.string(
+              "ui.profiles.emptyActivationMessage"
+            )
+          ),
+          primaryButton: .destructive(
+            Text(OJDLocalized.string("action.setActive"))
+          ) { activateProfile(allowEmpty: true) },
+          secondaryButton: .cancel { self.confirmation = nil }
+        )
+      case .activateNotice(let message):
+        Alert(
+          title: Text(OJDLocalized.string("ui.profiles.activationTitle")),
+          message: Text(message),
+          primaryButton: .default(
+            Text(OJDLocalized.string("action.setActive"))
+          ) { activateProfile(allowEmpty: false) },
+          secondaryButton: .cancel { self.confirmation = nil }
+        )
+      case .clearInputs:
+        Alert(
+          title: Text(
+            OJDLocalized.string("ui.profiles.clearInputsTitle")
+          ),
+          message: Text(
+            OJDLocalized.string(
+              "ui.profiles.clearInputsMessage"
+            )
+          ),
+          primaryButton: .destructive(
+            Text(OJDLocalized.string("ui.profiles.clearInputsConfirm"))
+          ) { clearInputs() },
+          secondaryButton: .cancel { self.confirmation = nil }
+        )
+      case .removeAllAssignments:
+        Alert(
+          title: Text(OJDLocalized.string("ui.profiles.removeAllAssignmentsTitle")),
+          message: Text(OJDLocalized.string("ui.profiles.removeAllAssignmentsMessage")),
+          primaryButton: .destructive(
+            Text(OJDLocalized.string("ui.profiles.removeAllAssignmentsConfirm"))
+          ) { removeAllAssignments() },
+          secondaryButton: .cancel { self.confirmation = nil }
+        )
       }
     }
 
