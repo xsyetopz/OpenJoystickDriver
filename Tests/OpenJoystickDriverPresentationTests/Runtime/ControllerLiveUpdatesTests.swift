@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -32,12 +33,12 @@ struct ControllerLiveUpdatesTests {
     updates.start()
     defer { updates.stop() }
     source.answer(.revision(1))
-    await refreshed.waitUntil(1, timeout: 30)
+    await refreshed.wait(forCount: 1)
     #expect(updates.mode == .subscribed)
     #expect(refreshed.value == 1)
 
     source.answer(.revision(2))
-    await refreshed.waitUntil(2, timeout: 30)
+    await refreshed.wait(forCount: 2)
 
     #expect(refreshed.value == 2)
   }
@@ -51,12 +52,12 @@ struct ControllerLiveUpdatesTests {
     updates.start()
     defer { updates.stop() }
     source.answer(.revision(1))
-    await refreshed.waitUntil(1, timeout: 30)
+    await refreshed.wait(forCount: 1)
     let id = UUID()
 
     source.answer(.revision(1), event: .testNotification, announcement: id)
     source.answer(.revision(2))
-    await refreshed.waitUntil(2, timeout: 30)
+    await refreshed.wait(forCount: 2)
 
     #expect(answers.ids == [id])
     #expect(refreshed.value == 2)
@@ -72,7 +73,7 @@ struct ControllerLiveUpdatesTests {
     source.answer(.revision(1))
     source.answer(.revision(1))
     source.answer(.revision(2))
-    await refreshed.waitUntil(2, timeout: 30)
+    await refreshed.wait(forCount: 2)
 
     #expect(refreshed.value == 2)
   }
@@ -85,9 +86,9 @@ struct ControllerLiveUpdatesTests {
     updates.start()
     defer { updates.stop() }
     source.answer(.revision(0))
-    await refreshed.waitUntil(1, timeout: 30)
+    await refreshed.wait(forCount: 1)
     source.answer(.revision(0, instance: "00000000-0000-0000-0000-000000000002"))
-    await refreshed.waitUntil(2, timeout: 30)
+    await refreshed.wait(forCount: 2)
 
     #expect(refreshed.value == 2)
   }
@@ -105,14 +106,14 @@ struct ControllerLiveUpdatesTests {
     for _ in 0..<(ControllerLiveUpdates.failuresBeforeReporting - 1) {
       source.fail(ScriptedFailure.unreachable)
     }
-    await refreshed.waitUntil(ControllerLiveUpdates.failuresBeforeReporting - 1, timeout: 30)
+    await refreshed.wait(forCount: ControllerLiveUpdates.failuresBeforeReporting - 1)
     #expect(modes.values.isEmpty)
     #expect(logged.lines.count == 1)
     #expect(logged.lines.first?.contains("polling every 0.01 s") == true)
     #expect(logged.lines.first?.contains("The service is unreachable.") == true)
 
     source.fail(ScriptedFailure.unreachable)
-    await refreshed.waitUntil(ControllerLiveUpdates.failuresBeforeReporting, timeout: 30)
+    await refreshed.wait(forCount: ControllerLiveUpdates.failuresBeforeReporting)
 
     let expected = ControllerLiveUpdateMode.polling(
       failure: .other,
@@ -134,15 +135,15 @@ struct ControllerLiveUpdatesTests {
     for _ in 0..<ControllerLiveUpdates.failuresBeforeReporting {
       source.fail(ScriptedFailure.unreachable)
     }
-    await refreshed.waitUntil(ControllerLiveUpdates.failuresBeforeReporting, timeout: 30)
+    await refreshed.wait(forCount: ControllerLiveUpdates.failuresBeforeReporting)
     source.fail(ScriptedFailure.other("first"))
     source.fail(ScriptedFailure.other("second"))
-    await refreshed.waitUntil(ControllerLiveUpdates.failuresBeforeReporting + 2, timeout: 30)
+    await refreshed.wait(forCount: ControllerLiveUpdates.failuresBeforeReporting + 2)
 
     #expect(modes.values.count == 1)
 
     source.fail(ApplicationServiceClientError.timeout)
-    await refreshed.waitUntil(ControllerLiveUpdates.failuresBeforeReporting + 3, timeout: 30)
+    await refreshed.wait(forCount: ControllerLiveUpdates.failuresBeforeReporting + 3)
 
     #expect(modes.values.count == 2)
   }
@@ -157,9 +158,9 @@ struct ControllerLiveUpdatesTests {
     updates.start()
     defer { updates.stop() }
     source.fail(ScriptedFailure.unreachable)
-    await refreshed.waitUntil(1, timeout: 30)
+    await refreshed.wait(forCount: 1)
     source.answer(.revision(5))
-    await refreshed.waitUntil(2, timeout: 30)
+    await refreshed.wait(forCount: 2)
 
     #expect(updates.mode == .subscribed)
     #expect(modes.values.isEmpty)
@@ -177,10 +178,10 @@ struct ControllerLiveUpdatesTests {
     for _ in 0..<ControllerLiveUpdates.failuresBeforeReporting {
       source.fail(ScriptedFailure.unreachable)
     }
-    await refreshed.waitUntil(ControllerLiveUpdates.failuresBeforeReporting, timeout: 30)
+    await refreshed.wait(forCount: ControllerLiveUpdates.failuresBeforeReporting)
 
     source.answer(.revision(5))
-    await refreshed.waitUntil(ControllerLiveUpdates.failuresBeforeReporting + 1, timeout: 30)
+    await refreshed.wait(forCount: ControllerLiveUpdates.failuresBeforeReporting + 1)
 
     #expect(updates.mode == .subscribed)
     #expect(modes.values.last == .subscribed)
@@ -219,9 +220,8 @@ private final class Counter {
   private(set) var value = 0
   func increment() { value += 1 }
 
-  func waitUntil(_ target: Int, timeout: Double) async {
-    let deadline = Date().addingTimeInterval(timeout)
-    while value < target, Date() < deadline { try? await Task.sleep(nanoseconds: 5_000_000) }
+  func wait(forCount target: Int) async {
+    await waitUntil("the counter reaches \(target)") { value >= target }
   }
 }
 

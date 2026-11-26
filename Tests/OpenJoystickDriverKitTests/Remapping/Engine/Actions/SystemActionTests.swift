@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -153,7 +154,7 @@ struct SystemActionTests {
     for (destination, expected) in cases {
       let profile = profile(destination)
       try await engine.process(event(down: true), from: identifier, using: profile, at: 0)
-      try await performer.wait(for: expected)
+      await performer.wait(for: expected)
       #expect(performer.calls.filter { $0 == expected }.count == 1)
       try await engine.process(event(down: false), from: identifier, using: profile, at: 1)
     }
@@ -176,8 +177,8 @@ struct SystemActionTests {
       using: profile(.runShortcut("Nope")),
       at: 0
     )
-    try await performer.wait(for: "shortcut:Nope")
-    try await reporter.wait()
+    await performer.wait(for: "shortcut:Nope")
+    await reporter.wait()
     let error = try #require(reporter.errors.first as? RemappingSystemActionError)
     #expect(error.errorCode == .systemActionFailed)
     #expect(error.errorDescription?.contains("RunShortcut") == true)
@@ -241,12 +242,8 @@ private final class StubPerformer: RemappingSystemActionPerforming, @unchecked S
 
   var calls: [String] { lock.withLock { recorded } }
 
-  func wait(for call: String) async throws {
-    for _ in 0..<200 {
-      if calls.contains(call) { return }
-      try await Task.sleep(nanoseconds: 10_000_000)
-    }
-    Issue.record("The performer never received \(call).")
+  func wait(for call: String) async {
+    await waitUntil("the performer receives \(call)") { calls.contains(call) }
   }
 
   private func record(_ call: String) throws {
@@ -281,11 +278,7 @@ private final class ErrorRecorder: @unchecked Sendable {
 
   func record(_ error: any Error) { lock.withLock { recorded.append(error) } }
 
-  func wait() async throws {
-    for _ in 0..<200 {
-      if !errors.isEmpty { return }
-      try await Task.sleep(nanoseconds: 10_000_000)
-    }
-    Issue.record("No failure was reported.")
+  func wait() async {
+    await waitUntil("the engine reports a failure") { !errors.isEmpty }
   }
 }

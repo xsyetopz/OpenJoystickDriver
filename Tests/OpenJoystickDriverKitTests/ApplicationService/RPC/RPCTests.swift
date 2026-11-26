@@ -400,32 +400,37 @@ struct LocalServiceRPCTests {
     let socketPath = temporarySocketPath()
     let started = Locked<Set<String>>([])
     let ended = Locked<[String: Bool]>([:])
+    let heldMethod = ApplicationServiceRPCMethod.waitForServiceStatusChange.rawValue
     let server = LocalServiceRPCServer(
       socketPath: socketPath,
       authentication: { _ in true },
       handler: { request in
         started.withLock { _ = $0.insert(request.method) }
-        try? await Task.sleep(nanoseconds: 300_000_000)
+        if request.method == heldMethod {
+          // Held until the server cancels it; the sleep bounds a cancellation that never comes.
+          try? await Task.sleep(nanoseconds: 60_000_000_000)
+        } else {
+          // Outlasts the disconnect: it finishes only after the held request has been cancelled.
+          await waitUntil("the held request ends") {
+            ended.withLock { $0[heldMethod] != nil }
+          }
+        }
         ended.withLock { $0[request.method] = Task.isCancelled }
         return LocalServiceRPCResponse(result: Data(), error: nil)
       }
     )
     try server.start()
     defer { server.stop() }
-    let held = ApplicationServiceRPCMethod.waitForServiceStatusChange.rawValue
+    let held = heldMethod
     let mutation = ApplicationServiceRPCMethod.setSetting.rawValue
 
     let clients = [
       try send(method: held, socketPath: socketPath),
       try send(method: mutation, socketPath: socketPath),
     ]
-    while started.withLock({ $0.count }) < 2 {
-      try await Task.sleep(nanoseconds: 5_000_000)
-    }
+    await waitUntil("both handlers start") { started.withLock { $0.count } == 2 }
     for client in clients { Darwin.close(client) }
-    while ended.withLock({ $0.count }) < 2 {
-      try await Task.sleep(nanoseconds: 5_000_000)
-    }
+    await waitUntil("both handlers end") { ended.withLock { $0.count } == 2 }
 
     #expect(ended.withLock { $0[held] } == true)
     #expect(ended.withLock { $0[mutation] } == false)
