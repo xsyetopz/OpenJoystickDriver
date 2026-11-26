@@ -119,9 +119,13 @@ final class FakeFeedFactory: @unchecked Sendable {
   /// Releases every hung device.
   func release() { for device in devices { device.release() } }
 
+  /// A registry over fake devices.
+  ///
+  /// The activation timeout defaults far above any suite's run time, because a fake device
+  /// activates at once and only a test about the timeout should be able to reach it.
   func registry(
     idleTimeout: TimeInterval = 60,
-    activationTimeout: TimeInterval = VirtualFeedRegistry.activationTimeoutSeconds,
+    activationTimeout: TimeInterval = 3_600,
     clock: VirtualFeedClock = .system
   ) -> VirtualFeedRegistry {
     VirtualFeedRegistry(
