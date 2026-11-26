@@ -14,14 +14,13 @@ struct VirtualFeedFeedbackWaitTests {
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")
     let device = try #require(factory.devices.first)
-    let started = Date()
 
-    async let ready = registry.waitForFeedback(token: session.token, timeout: 30)
-    try await Task.sleep(nanoseconds: 50_000_000)
+    // The timeout exceeds the suite's time limit, so only the command can end the wait; a command
+    // that lands before the wait registers is still seen, so no ordering is needed.
+    async let ready = registry.waitForFeedback(token: session.token, timeout: 3600)
     device.receive(.stopRumble)
 
     #expect(await ready)
-    #expect(Date().timeIntervalSince(started) < 5)
     #expect(registry.exchange(token: session.token, frames: []).feedback == [.stopRumble])
   }
 
@@ -50,8 +49,8 @@ struct VirtualFeedFeedbackWaitTests {
     let registry = factory.registry()
     let session = try await registry.open(profile: "Generic")
 
-    async let ready = registry.waitForFeedback(token: session.token, timeout: 30)
-    try await Task.sleep(nanoseconds: 50_000_000)
+    // The timeout exceeds the suite's time limit, so only the close can end the wait.
+    async let ready = registry.waitForFeedback(token: session.token, timeout: 3600)
     await registry.close(token: session.token)
 
     #expect(await ready)
