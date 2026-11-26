@@ -35,6 +35,65 @@ let steamControllerMaximumPulseMicroseconds = 65_535
 /// The length of the pulse that stands for a held rumble, which the pad cannot hold open-ended.
 let steamControllerHeldPulseMilliseconds = 65
 
+/// The little-endian unsigned 16-bit value at `offset` of `bytes`.
+func steamUInt16LE(_ bytes: [UInt8], _ offset: Int) -> UInt16 {
+  UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)
+}
+
+/// The little-endian signed 16-bit value at `offset` of `bytes`.
+func steamInt16LE(_ bytes: [UInt8], _ offset: Int) -> Int16 {
+  Int16(bitPattern: steamUInt16LE(bytes, offset))
+}
+
+/// The little-endian unsigned 32-bit value at `offset` of `bytes`.
+func steamUInt32LE(_ bytes: [UInt8], _ offset: Int) -> UInt32 {
+  UInt32(steamUInt16LE(bytes, offset)) | UInt32(steamUInt16LE(bytes, offset + 2)) << 16
+}
+
+/// The stick whose signed 16-bit X and Y are at `x` and `y` of `bytes`; raw Y grows upward, so it
+/// is negated to Y-down.
+func steamStickPosition(_ bytes: [UInt8], x: Int, y: Int) -> StickPosition {
+  let rawX = Float(steamInt16LE(bytes, x)) / steamControllerStickMax
+  let rawY = -Float(steamInt16LE(bytes, y)) / steamControllerStickMax
+  return StickPosition(x: max(-1, min(1, rawX)), y: max(-1, min(1, rawY)))
+}
+
+/// The touch frame of the pad on `surface` whose signed 16-bit X coordinate is at `x` of `bytes`,
+/// with Y after it and the unsigned 16-bit pressure at `pressureOffset`.
+///
+/// The pressure, scaled from 32768, is reported only while a finger is on the pad.
+func steamPadFrame(
+  _ surface: ControllerTouchSurface,
+  _ bytes: [UInt8],
+  x: Int,
+  pressure pressureOffset: Int,
+  active: Bool,
+  _ receivedAt: MonotonicTimestamp
+) -> ControllerTouchSample {
+  let contact = SteamTouchSamples.trackpad.contact(
+    slot: 0,
+    isActive: active,
+    rawX: Int32(steamInt16LE(bytes, x)),
+    rawY: Int32(steamInt16LE(bytes, x + 2))
+  )
+  let pressure = UnipolarValue(
+    normalized: min(1, Float(steamUInt16LE(bytes, pressureOffset)) / 32768)
+  )
+  return ControllerTouchSample(
+    surface: surface,
+    timestamp: receivedAt,
+    contacts: [
+      ControllerTouchContact(
+        slot: contact.slot,
+        isActive: contact.isActive,
+        x: contact.x,
+        y: contact.y,
+        pressure: active ? pressure : nil
+      )
+    ]
+  )
+}
+
 /// Driver for the Valve Steam Controller, wired, through its wireless receiver, or over Bluetooth
 /// LE.
 ///

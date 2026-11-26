@@ -72,17 +72,6 @@ extension SteamTritonDriver {
   private static let stateReportMinimumLength = 46
   /// The maximum value of a trigger.
   private static let triggerMax: Float = 32767
-  /// The maximum positive value of a stick axis.
-  private static let stickMax: Float = 32767
-
-  /// Signed 16-bit pad coordinates centered on 0; raw Y grows upward.
-  static let trackpad = ControllerTouchGeometry(
-    originX: -32_768,
-    originY: -32_768,
-    width: 65_536,
-    height: 65_536,
-    rawYIncreasesUpward: true
-  )
 
   /// SDL's output mapping per button bit.
   ///
@@ -143,32 +132,34 @@ extension SteamTritonDriver {
     guard bytes.count >= Self.stateReportMinimumLength else { return nil }
     // Like SDL, a state report is proof that the dongle's controller is connected.
     if !isLogicalControllerConnected { setConnected(true) }
-    let buttons = UInt32(u16(bytes, Offset.buttons)) | UInt32(u16(bytes, Offset.buttons + 2)) << 16
+    let buttons = steamUInt32LE(bytes, Offset.buttons)
 
     var next = state
     for (mask, control) in Self.buttonTable { next.set(control, pressed: buttons & mask != 0) }
     next.hat = Self.hat(buttons)
     next.leftTrigger = trigger(bytes, Offset.leftTrigger)
     next.rightTrigger = trigger(bytes, Offset.rightTrigger)
-    next.leftStick = stick(bytes, x: Offset.leftStickX, y: Offset.leftStickY)
-    next.rightStick = stick(bytes, x: Offset.rightStickX, y: Offset.rightStickY)
+    next.leftStick = steamStickPosition(bytes, x: Offset.leftStickX, y: Offset.leftStickY)
+    next.rightStick = steamStickPosition(bytes, x: Offset.rightStickX, y: Offset.rightStickY)
 
     var motion: [ControllerMotionSample] = []
     if let sample = motionSample(bytes, layout: layout, receivedAt: receivedAt) {
       motion = [sample]
     }
     let touch = [
-      touchFrame(
+      steamPadFrame(
         .left,
         bytes,
         x: layout.leftX,
+        pressure: layout.leftX + 4,
         active: buttons & Self.leftPadTouch != 0,
         receivedAt
       ),
-      touchFrame(
+      steamPadFrame(
         .right,
         bytes,
         x: layout.rightX,
+        pressure: layout.rightX + 4,
         active: buttons & Self.rightPadTouch != 0,
         receivedAt
       ),
@@ -189,8 +180,8 @@ extension SteamTritonDriver {
   ) -> ControllerMotionSample? {
     let counter =
       layout.imuTimestampIs32Bit
-      ? UInt32(u16(bytes, layout.imuTimestamp)) | UInt32(u16(bytes, layout.imuTimestamp + 2)) << 16
-      : UInt32(u16(bytes, layout.imuTimestamp))
+      ? steamUInt32LE(bytes, layout.imuTimestamp)
+      : UInt32(steamUInt16LE(bytes, layout.imuTimestamp))
     guard counter != lastIMUCounter else { return nil }
     lastIMUCounter = counter
     // Thirds of a nanosecond per tick: 1 µs, or 32 µs for the 16-bit counter.
@@ -209,37 +200,6 @@ extension SteamTritonDriver {
       canonicalDegreesPerSecond: vector(bytes, Offset.imuGyro, scale: gyroScale),
       canonicalG: vector(bytes, Offset.imuAccel, scale: accelScale),
       calibrationSource: .nominalDeviceScale
-    )
-  }
-
-  /// The touch frame of the pad whose X coordinate is at `x`, with the pressure that follows the Y
-  /// coordinate while a finger is on it.
-  private func touchFrame(
-    _ surface: ControllerTouchSurface,
-    _ bytes: [UInt8],
-    x: Int,
-    active: Bool,
-    _ receivedAt: MonotonicTimestamp
-  ) -> ControllerTouchSample {
-    let contact = Self.trackpad.contact(
-      slot: 0,
-      isActive: active,
-      rawX: Int32(s16(bytes, x)),
-      rawY: Int32(s16(bytes, x + 2))
-    )
-    let pressure = UnipolarValue(normalized: min(1, Float(u16(bytes, x + 4)) / 32768))
-    return ControllerTouchSample(
-      surface: surface,
-      timestamp: receivedAt,
-      contacts: [
-        ControllerTouchContact(
-          slot: contact.slot,
-          isActive: contact.isActive,
-          x: contact.x,
-          y: contact.y,
-          pressure: active ? pressure : nil
-        )
-      ]
     )
   }
 
@@ -293,32 +253,15 @@ extension SteamTritonDriver {
 
   /// Triggers are signed 16-bit and rest at 0; SDL maps `0...32767` onto its full trigger range.
   private func trigger(_ bytes: [UInt8], _ offset: Int) -> UnipolarValue {
-    UnipolarValue(normalized: max(0, min(1, Float(s16(bytes, offset)) / Self.triggerMax)))
-  }
-
-  /// Raw stick Y grows upward, so it is negated to Y-down.
-  private func stick(_ bytes: [UInt8], x: Int, y: Int) -> StickPosition {
-    let rawX = Float(s16(bytes, x)) / Self.stickMax
-    let rawY = -Float(s16(bytes, y)) / Self.stickMax
-    return StickPosition(x: max(-1, min(1, rawX)), y: max(-1, min(1, rawY)))
+    UnipolarValue(normalized: max(0, min(1, Float(steamInt16LE(bytes, offset)) / Self.triggerMax)))
   }
 
   /// The vector of three signed 16-bit values at `offset`, multiplied by `scale`.
   private func vector(_ bytes: [UInt8], _ offset: Int, scale: Double) -> ControllerMotionVector {
     ControllerMotionVector(
-      x: Double(s16(bytes, offset)) * scale,
-      y: Double(s16(bytes, offset + 2)) * scale,
-      z: Double(s16(bytes, offset + 4)) * scale
+      x: Double(steamInt16LE(bytes, offset)) * scale,
+      y: Double(steamInt16LE(bytes, offset + 2)) * scale,
+      z: Double(steamInt16LE(bytes, offset + 4)) * scale
     )
-  }
-
-  /// The little-endian unsigned 16-bit value at `offset`.
-  private func u16(_ bytes: [UInt8], _ offset: Int) -> UInt16 {
-    UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)
-  }
-
-  /// The little-endian signed 16-bit value at `offset`.
-  private func s16(_ bytes: [UInt8], _ offset: Int) -> Int16 {
-    Int16(bitPattern: u16(bytes, offset))
   }
 }

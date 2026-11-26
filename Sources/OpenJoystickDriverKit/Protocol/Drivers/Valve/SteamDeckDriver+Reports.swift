@@ -72,8 +72,8 @@ extension SteamDeckDriver {
       bytes[1] == steamControllerReportPrefix1, bytes[2] == steamDeckStateMessageID,
       Int(bytes[3]) == steamControllerReportLength
     else { return nil }
-    let low = u32(bytes, Offset.buttonsLow)
-    let high = u32(bytes, Offset.buttonsHigh)
+    let low = steamUInt32LE(bytes, Offset.buttonsLow)
+    let high = steamUInt32LE(bytes, Offset.buttonsHigh)
 
     var next = state
     for (mask, control) in Self.lowButtons { next.set(control, pressed: low & mask != 0) }
@@ -81,12 +81,12 @@ extension SteamDeckDriver {
     next.hat = Self.hat(low)
     next.leftTrigger = trigger(bytes, Offset.leftTrigger)
     next.rightTrigger = trigger(bytes, Offset.rightTrigger)
-    next.leftStick = stick(bytes, x: Offset.leftStickX, y: Offset.leftStickY)
-    next.rightStick = stick(bytes, x: Offset.rightStickX, y: Offset.rightStickY)
+    next.leftStick = steamStickPosition(bytes, x: Offset.leftStickX, y: Offset.leftStickY)
+    next.rightStick = steamStickPosition(bytes, x: Offset.rightStickX, y: Offset.rightStickY)
 
     let motion = motionSamples.decode(bytes, receivedAt: receivedAt.nanoseconds).map { [$0] } ?? []
     let touch = [
-      touchFrame(
+      steamPadFrame(
         .left,
         bytes,
         x: Offset.leftPadX,
@@ -94,7 +94,7 @@ extension SteamDeckDriver {
         active: low & Self.leftPadTouch != 0,
         receivedAt
       ),
-      touchFrame(
+      steamPadFrame(
         .right,
         bytes,
         x: Offset.rightPadX,
@@ -106,39 +106,6 @@ extension SteamDeckDriver {
     next.recordTouch(touch)
     state = next
     return ControllerEvent(timestamp: receivedAt, state: next, motion: motion, touchFrames: touch)
-  }
-
-  // swiftlint:disable:next function_parameter_count
-  /// The touch frame of the pad whose X coordinate is at `x`, with the pressure at `pressureOffset`
-  /// while a finger is on it.
-  private func touchFrame(
-    _ surface: ControllerTouchSurface,
-    _ bytes: [UInt8],
-    x: Int,
-    pressure pressureOffset: Int,
-    active: Bool,
-    _ receivedAt: MonotonicTimestamp
-  ) -> ControllerTouchSample {
-    let contact = SteamTouchSamples.trackpad.contact(
-      slot: 0,
-      isActive: active,
-      rawX: Int32(s16(bytes, x)),
-      rawY: Int32(s16(bytes, x + 2))
-    )
-    let pressure = UnipolarValue(normalized: min(1, Float(u16(bytes, pressureOffset)) / 32768))
-    return ControllerTouchSample(
-      surface: surface,
-      timestamp: receivedAt,
-      contacts: [
-        ControllerTouchContact(
-          slot: contact.slot,
-          isActive: contact.isActive,
-          x: contact.x,
-          y: contact.y,
-          pressure: active ? pressure : nil
-        )
-      ]
-    )
   }
 
   /// The hat direction of the D-pad bits of `buttons`.
@@ -153,28 +120,6 @@ extension SteamDeckDriver {
 
   /// Raw triggers are unsigned; SDL maps `0...32767` onto its full trigger range.
   private func trigger(_ bytes: [UInt8], _ offset: Int) -> UnipolarValue {
-    UnipolarValue(normalized: min(1, Float(u16(bytes, offset)) / Self.triggerMax))
-  }
-
-  /// Raw stick Y grows upward, so it is negated to Y-down.
-  private func stick(_ bytes: [UInt8], x: Int, y: Int) -> StickPosition {
-    let rawX = Float(s16(bytes, x)) / steamControllerStickMax
-    let rawY = -Float(s16(bytes, y)) / steamControllerStickMax
-    return StickPosition(x: max(-1, min(1, rawX)), y: max(-1, min(1, rawY)))
-  }
-
-  /// The little-endian unsigned 32-bit value at `offset`.
-  private func u32(_ bytes: [UInt8], _ offset: Int) -> UInt32 {
-    UInt32(u16(bytes, offset)) | UInt32(u16(bytes, offset + 2)) << 16
-  }
-
-  /// The little-endian unsigned 16-bit value at `offset`.
-  private func u16(_ bytes: [UInt8], _ offset: Int) -> UInt16 {
-    UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)
-  }
-
-  /// The little-endian signed 16-bit value at `offset`.
-  private func s16(_ bytes: [UInt8], _ offset: Int) -> Int16 {
-    Int16(bitPattern: u16(bytes, offset))
+    UnipolarValue(normalized: min(1, Float(steamUInt16LE(bytes, offset)) / Self.triggerMax))
   }
 }
