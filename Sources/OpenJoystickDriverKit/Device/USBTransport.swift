@@ -523,13 +523,8 @@ public enum USBDescriptorTransportResolver {
         let endpoints = interface.endpoints
       else { continue }
       if requirePreferredInterface, interfaceNumber != preferredInterface { continue }
-      guard
-        let input = endpoints.first(where: {
-          $0.address != nil && $0.transferType == .interrupt && $0.direction == .in
-        }),
-        let output = endpoints.first(where: {
-          $0.address != nil && $0.transferType == .interrupt && $0.direction == .out
-        }), let inputAddress = input.address, let outputAddress = output.address
+      guard let inputAddress = interruptAddress(in: endpoints, direction: .in),
+        let outputAddress = interruptAddress(in: endpoints, direction: .out)
       else { continue }
       return DiscoveredUSBTransport(
         interfaceNumber: interfaceNumber,
@@ -539,6 +534,16 @@ public enum USBDescriptorTransportResolver {
       )
     }
     return nil
+  }
+
+  /// The address of the first interrupt endpoint of `direction` that has one.
+  private static func interruptAddress(
+    in endpoints: [PhysicalEndpointSignature],
+    direction: USBEndpointDirection
+  ) -> UInt8? {
+    endpoints.first {
+      $0.address != nil && $0.transferType == .interrupt && $0.direction == direction
+    }?.address
   }
 
   /// The configured profile completed from the observed interfaces; explicit catalog pins win.

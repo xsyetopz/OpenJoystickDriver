@@ -240,6 +240,15 @@ extension DeviceManager {
         startupConnection: connection
       )
     }
+    await sendStartupPlayerIndicatorIfDue(for: key, pipeline: pipeline)
+  }
+
+  /// Sends the player indicator the startup output owes `pipeline`, and records the result on a
+  /// controller OJD serves.
+  private func sendStartupPlayerIndicatorIfDue(
+    for key: LogicalControllerID,
+    pipeline: DevicePipeline
+  ) async {
     // A controller OJD serves holds the slot it was admitted with; one macOS serves claims it here.
     guard pipeline.takeStartupPlayerIndicatorDue(), pipelines[key] === pipeline,
       let indicator = pipeline.startupPlayerIndicator ?? claimStartupPlayerSlot(for: key)
