@@ -57,45 +57,9 @@ extension ControllerRecordDocument {
       if !isDefaultMode, modeMatch == nil {
         throw Self.invalid("match", "every mode but default needs a match", decoder)
       }
-      if let name = try container.decodeOptional(String.self, for: "idle") {
-        guard let reason = ControllerIdleReason(rawValue: name) else {
-          throw Self.invalid(
-            "idle",
-            "idle is NoControllerLinked, Bootloader or AwaitsReenumeration",
-            decoder
-          )
-        }
-        guard !container.contains(DocumentKey("interface")),
-          !container.contains(DocumentKey("session")), !container.contains(DocumentKey("input"))
-        else {
-          throw Self.invalid(
-            "idle",
-            "an idle mode has no interface, no session and no input",
-            decoder
-          )
-        }
-        idle = reason
-      } else {
-        idle = nil
-      }
+      idle = try Self.idleReason(container, decoder)
       server = try Self.server(container, decoder)
-      if server != nil, isDefaultMode {
-        throw Self.invalid("server", "the default mode uses the record's server", decoder)
-      }
-      if server != nil, modeMatch?.probes.isEmpty == false {
-        throw Self.invalid(
-          "server",
-          "a mode with probes uses the record's server; the server is chosen before probes run",
-          decoder
-        )
-      }
-      if idle == .awaitsReenumeration, server != .ojd {
-        throw Self.invalid(
-          "server",
-          "an AwaitsReenumeration mode states server OJD, so OJD holds the device",
-          decoder
-        )
-      }
+      try Self.checkServer(server, idle: idle, isDefault: isDefaultMode, match: modeMatch, decoder)
       self.id = identifier
       self.match = modeMatch
       protocolInfo = try container.decode(ProtocolInfo.self, for: "protocol")
@@ -121,6 +85,60 @@ extension ControllerRecordDocument {
       .dataCorrupted(
         .init(codingPath: decoder.codingPath + [DocumentKey(key)], debugDescription: message)
       )
+    }
+
+    /// Reads an optional `idle` reason; an unknown reason, or an idle mode with an `interface`, a
+    /// `session` or an `input`, is rejected.
+    private static func idleReason(
+      _ container: KeyedDecodingContainer<DocumentKey>,
+      _ decoder: any Decoder
+    ) throws -> ControllerIdleReason? {
+      guard let name = try container.decodeOptional(String.self, for: "idle") else { return nil }
+      guard let reason = ControllerIdleReason(rawValue: name) else {
+        throw Self.invalid(
+          "idle",
+          "idle is NoControllerLinked, Bootloader or AwaitsReenumeration",
+          decoder
+        )
+      }
+      guard !container.contains(DocumentKey("interface")),
+        !container.contains(DocumentKey("session")), !container.contains(DocumentKey("input"))
+      else {
+        throw Self.invalid(
+          "idle",
+          "an idle mode has no interface, no session and no input",
+          decoder
+        )
+      }
+      return reason
+    }
+
+    /// Rejects a `server` on the default mode or on a mode with probes, and an
+    /// `AwaitsReenumeration` mode that does not state `server: OJD`.
+    private static func checkServer(
+      _ server: ControllerServer?,
+      idle: ControllerIdleReason?,
+      isDefault: Bool,
+      match: ControllerModeMatch?,
+      _ decoder: any Decoder
+    ) throws {
+      if server != nil, isDefault {
+        throw Self.invalid("server", "the default mode uses the record's server", decoder)
+      }
+      if server != nil, match?.probes.isEmpty == false {
+        throw Self.invalid(
+          "server",
+          "a mode with probes uses the record's server; the server is chosen before probes run",
+          decoder
+        )
+      }
+      if idle == .awaitsReenumeration, server != .ojd {
+        throw Self.invalid(
+          "server",
+          "an AwaitsReenumeration mode states server OJD, so OJD holds the device",
+          decoder
+        )
+      }
     }
 
     /// Reads an optional `server`; a name other than System or OJD is rejected.
