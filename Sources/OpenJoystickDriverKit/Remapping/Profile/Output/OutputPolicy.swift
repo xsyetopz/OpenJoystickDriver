@@ -221,25 +221,18 @@ extension RemappingProfile {
     layers: [RemappingLayer]? = nil,
     macros: [RemappingMacro]? = nil
   ) -> Self {
-    Self(
-      id: id,
-      name: name,
-      device: device,
-      applicationScope: applicationScope,
+    replacing(
       outputPolicy: outputPolicy,
-      physicalColor: physicalColor,
-      motionTuning: motionTuning ?? self.motionTuning,
-      gyroOutput: gyroOutput ?? self.gyroOutput,
-      joyConPair: joyConPair,
-      pointerSpeed: pointerSpeed,
-      stickMappings: stickMappings ?? self.stickMappings,
-      triggerMappings: triggerMappings ?? self.triggerMappings,
-      touchMappings: touchMappings ?? self.touchMappings,
-      bindings: bindings ?? self.bindings,
-      chords: chords ?? self.chords,
-      sequences: sequences ?? self.sequences,
-      layers: layers ?? self.layers,
-      macros: macros ?? self.macros
+      motionTuning: motionTuning,
+      gyroOutput: gyroOutput,
+      stickMappings: stickMappings,
+      triggerMappings: triggerMappings,
+      touchMappings: touchMappings,
+      bindings: bindings,
+      chords: chords,
+      sequences: sequences,
+      layers: layers,
+      macros: macros
     )
   }
 }
