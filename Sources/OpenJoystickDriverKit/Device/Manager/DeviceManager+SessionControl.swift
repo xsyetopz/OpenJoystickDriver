@@ -50,17 +50,10 @@ extension DeviceManager {
       let pipeline = pipelines[identifier], let info = deviceInfos[identifier]
     else { return ControllerResumeResult(state: .suspended, failure: .notFound) }
     let hidConnection: HIDDeviceConnection?
-    switch info.discoverySource {
-    case .hid:
-      guard let physicalDevice = info.physicalDevice, let connectionID = info.hidConnectionID,
-        let address = identifier.hidRoutingAddress
-      else { return ControllerResumeResult(state: .suspended, failure: .notFound) }
-      hidConnection = HIDDeviceConnection(
-        connectionID: connectionID,
-        physicalDevice: physicalDevice,
-        routingAddress: address
-      )
+    switch Self.resumeConnection(of: info, identifier: identifier) {
     case .rawUSB: hidConnection = nil
+    case .hid(let connection): hidConnection = connection
+    case .notFound: return ControllerResumeResult(state: .suspended, failure: .notFound)
     }
     guard await pipeline.controllerSessionState() == .suspended else {
       return ControllerResumeResult(state: .active, failure: .alreadyActive)
@@ -68,14 +61,8 @@ extension DeviceManager {
     guard pipelines[identifier] === pipeline,
       hidConnection.map({ isCurrentHIDStartupConnection(pipeline, connection: $0) }) ?? true
     else { return ControllerResumeResult(state: .suspended, failure: .notFound) }
-    if let hidConnection {
-      let address = hidConnection.routingAddress
-      if case .failed = await hidManager.reopenDeviceHandles(address: address) {
-        return ControllerResumeResult(state: .suspended, failure: .notFound)
-      }
-      if await pipeline.sessionPlan().parsesHIDElementValues {
-        await hidManager.routeElementValues(connection: hidConnection)
-      }
+    if let hidConnection, !(await reopenHandles(of: hidConnection, pipeline: pipeline)) {
+      return ControllerResumeResult(state: .suspended, failure: .notFound)
     }
     let result = await finishResume(identifier, pipeline: pipeline, hidConnection: hidConnection)
     // A failed resume leaves the session suspended, so it holds no handle either. A detach that
@@ -84,6 +71,52 @@ extension DeviceManager {
       _ = await hidManager.closeDeviceHandles(address: hidConnection.routingAddress)
     }
     return result
+  }
+
+  /// How a resume reaches the device of a controller.
+  private enum ResumeConnection {
+    /// A raw-USB controller, which has no HID handles.
+    case rawUSB
+    /// A HID controller and the connection its handles belong to.
+    case hid(HIDDeviceConnection)
+    /// A HID controller that lacks a physical device, a connection or a routing address.
+    case notFound
+  }
+
+  /// The connection that a resume of the controller `identifier` reopens.
+  private static func resumeConnection(
+    of info: DeviceInfo,
+    identifier: LogicalControllerID
+  ) -> ResumeConnection {
+    switch info.discoverySource {
+    case .hid:
+      guard let physicalDevice = info.physicalDevice, let connectionID = info.hidConnectionID,
+        let address = identifier.hidRoutingAddress
+      else { return .notFound }
+      return .hid(
+        HIDDeviceConnection(
+          connectionID: connectionID,
+          physicalDevice: physicalDevice,
+          routingAddress: address
+        )
+      )
+    case .rawUSB: return .rawUSB
+    }
+  }
+
+  /// Reopens the HID handles of `connection` and routes element values when the session parses
+  /// them; false when the handles do not reopen.
+  private func reopenHandles(
+    of connection: HIDDeviceConnection,
+    pipeline: DevicePipeline
+  ) async -> Bool {
+    if case .failed = await hidManager.reopenDeviceHandles(address: connection.routingAddress) {
+      return false
+    }
+    if await pipeline.sessionPlan().parsesHIDElementValues {
+      await hidManager.routeElementValues(connection: connection)
+    }
+    return true
   }
 
   /// Restarts the output of the suspended `pipeline` and activates its session.
@@ -141,30 +174,14 @@ extension DeviceManager {
       let identifier = await connectedIdentifier(for: controller),
       let pipeline = pipelines[identifier], let info = deviceInfos[identifier]
     else { return WirelessControllerDisconnectResult(state: .active, failure: .notFound) }
-    // CoreBluetooth cancels only connections the calling app holds, and IOBluetooth closes only
-    // classic baseband links, so a system-connected Bluetooth LE HID link has no supported
-    // disconnect path.
-    let transport = await pipeline.currentConnectionState()?.transport
-    guard transport == .bluetoothClassic else {
-      return WirelessControllerDisconnectResult(
-        state: await pipeline.controllerSessionState(),
-        failure: transport == .bluetoothLE ? .bluetoothLEUnsupported : .notBluetooth
-      )
+    let target: WirelessDisconnectTarget
+    switch await wirelessDisconnectTarget(of: info, identifier: identifier, pipeline: pipeline) {
+    case .target(let found): target = found
+    case .refused(let result): return result
     }
-    guard let address = Self.bluetoothAddress(from: info.serialNumber),
-      let routingAddress = identifier.hidRoutingAddress
-    else {
-      return WirelessControllerDisconnectResult(
-        state: await pipeline.controllerSessionState(),
-        failure: .missingAddress
-      )
-    }
-    guard let wirelessControllerDisconnector else {
-      return WirelessControllerDisconnectResult(
-        state: await pipeline.controllerSessionState(),
-        failure: .disconnectFailed
-      )
-    }
+    let address = target.address
+    let routingAddress = target.routingAddress
+    let wirelessControllerDisconnector = target.disconnector
 
     await neutralizePhysicalOutputs(for: identifier, pipeline: pipeline)
     let priorState = await pipeline.controllerSessionState()
@@ -231,6 +248,71 @@ extension DeviceManager {
         restoreHIDClaim: claimWasReleased
       )
     }
+  }
+
+  /// Where a wireless disconnect goes: the Bluetooth address, the HID routing address and the
+  /// disconnector.
+  private struct WirelessDisconnectTarget {
+    /// The Bluetooth address of the controller.
+    let address: String
+    /// The HID address the controller's input claim is held at.
+    let routingAddress: ControllerConnectionAddress
+    /// The service that closes the Bluetooth connection.
+    let disconnector: any WirelessControllerDisconnecting
+  }
+
+  /// A wireless disconnect that can go ahead, or the result that refuses it.
+  private enum WirelessDisconnectPlan {
+    /// The target of the disconnect.
+    case target(WirelessDisconnectTarget)
+    /// The refusal to return.
+    case refused(WirelessControllerDisconnectResult)
+  }
+
+  /// The target of a disconnect of the controller `identifier`, or the refusal for a controller
+  /// that is not Bluetooth Classic, has no address, or has no disconnector.
+  private func wirelessDisconnectTarget(
+    of info: DeviceInfo,
+    identifier: LogicalControllerID,
+    pipeline: DevicePipeline
+  ) async -> WirelessDisconnectPlan {
+    // CoreBluetooth cancels only connections the calling app holds, and IOBluetooth closes only
+    // classic baseband links, so a system-connected Bluetooth LE HID link has no supported
+    // disconnect path.
+    let transport = await pipeline.currentConnectionState()?.transport
+    guard transport == .bluetoothClassic else {
+      return .refused(
+        WirelessControllerDisconnectResult(
+          state: await pipeline.controllerSessionState(),
+          failure: transport == .bluetoothLE ? .bluetoothLEUnsupported : .notBluetooth
+        )
+      )
+    }
+    guard let address = Self.bluetoothAddress(from: info.serialNumber),
+      let routingAddress = identifier.hidRoutingAddress
+    else {
+      return .refused(
+        WirelessControllerDisconnectResult(
+          state: await pipeline.controllerSessionState(),
+          failure: .missingAddress
+        )
+      )
+    }
+    guard let wirelessControllerDisconnector else {
+      return .refused(
+        WirelessControllerDisconnectResult(
+          state: await pipeline.controllerSessionState(),
+          failure: .disconnectFailed
+        )
+      )
+    }
+    return .target(
+      WirelessDisconnectTarget(
+        address: address,
+        routingAddress: routingAddress,
+        disconnector: wirelessControllerDisconnector
+      )
+    )
   }
 
   /// Undoes a failed wireless disconnect and reports `failure` at `stage`.
