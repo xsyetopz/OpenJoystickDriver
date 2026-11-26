@@ -59,27 +59,45 @@ extension DeviceManager {
     for identifier: LogicalControllerID,
     pipeline: DevicePipeline
   ) async throws(ControllerOutputError) -> ControllerOutputCommand {
-    let channel: PhysicalOutputChannel
     switch request {
     case .command(let command): return command
     case .effectiveRumble(let duration):
-      var intensities = RumbleIntensities.off
-      for motor in PhysicalRumbleMotor.allCases {
-        guard
-          case .rumble(_, let intensity) = physicalOutputOwnership.effectiveOutput(
-            for: .rumble(motor),
-            device: identifier
-          )
-        else { continue }
-        intensities[motor] = UnipolarValue(unitInterval: intensity)
-      }
-      return intensities == .off ? .stopRumble : .setRumble(intensities, duration: duration)
-    case .effectiveChannel(let effectiveChannel): channel = effectiveChannel
+      return effectiveRumbleCommand(for: identifier, duration: duration)
+    case .effectiveChannel(let channel):
+      return try await effectiveChannelCommand(channel, for: identifier, pipeline: pipeline)
     }
+  }
+
+  /// The rumble command of the motors' effective intensities; a stop when all are zero.
+  private func effectiveRumbleCommand(
+    for identifier: LogicalControllerID,
+    duration: RumbleDuration
+  ) -> ControllerOutputCommand {
+    var intensities = RumbleIntensities.off
+    for motor in PhysicalRumbleMotor.allCases {
+      guard
+        case .rumble(_, let intensity) = physicalOutputOwnership.effectiveOutput(
+          for: .rumble(motor),
+          device: identifier
+        )
+      else { continue }
+      intensities[motor] = UnipolarValue(unitInterval: intensity)
+    }
+    return intensities == .off ? .stopRumble : .setRumble(intensities, duration: duration)
+  }
+
+  /// The command of the winning claim on `channel`, or of the channel's at-rest value.
+  ///
+  /// A color with no claim takes the pipeline's default color.
+  private func effectiveChannelCommand(
+    _ channel: PhysicalOutputChannel,
+    for identifier: LogicalControllerID,
+    pipeline: DevicePipeline
+  ) async throws(ControllerOutputError) -> ControllerOutputCommand {
     let value = physicalOutputOwnership.effectiveOutput(for: channel, device: identifier)
     switch channel {
     case .rumble:
-      return try await resolve(.effectiveRumble(.held), for: identifier, pipeline: pipeline)
+      return effectiveRumbleCommand(for: identifier, duration: .held)
     case .playerIndicator:
       guard case .playerIndicator(let indicator) = value else { return .setPlayerIndicator(.off) }
       return .setPlayerIndicator(indicator)
