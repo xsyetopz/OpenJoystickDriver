@@ -94,6 +94,8 @@ final class ServiceStatusChanges: @unchecked Sendable {
   var announcementWillReachWait: (@Sendable () -> Void)?
   /// Runs after a test notification request is withdrawn because its caller left.
   var testNotificationRequestDidWithdraw: (@Sendable () -> Void)?
+  /// Runs after a test notification request joins the announcement already pending.
+  var testNotificationRequestDidJoin: (@Sendable () -> Void)?
 
   /// Creates a counter over the two notification centers.
   init(
@@ -210,6 +212,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
     let requestID = UUID()
     return await withTaskCancellationHandler {
       await withCheckedContinuation { continuation in
+        var joined = false
         let handoff = lock.withLock { () -> (Waiter, ServiceStatusReply)? in
           if Task.isCancelled {
             continuation.resume(returning: nil)
@@ -217,6 +220,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
           }
           if let pending {
             pending.requests[requestID] = continuation
+            joined = true
             return nil
           }
           let announcement = Announcement(
@@ -229,6 +233,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
           return handToHeldWait(announcement)
         }
         if let handoff { deliver(handoff) }
+        if joined { testNotificationRequestDidJoin?() }
       }
     } onCancel: {
       withdrawTestNotificationRequest(requestID)

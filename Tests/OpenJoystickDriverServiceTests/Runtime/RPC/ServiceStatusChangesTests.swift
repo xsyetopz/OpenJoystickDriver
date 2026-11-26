@@ -33,6 +33,18 @@ struct ServiceStatusChangesTests {
     for await _ in registered { return }
   }
 
+  /// A stream that yields once for each request that joins a pending announcement.
+  private static func joinedRequests(_ changes: ServiceStatusChanges) -> AsyncStream<Void> {
+    let (joined, gate) = AsyncStream.makeStream(of: Void.self)
+    changes.testNotificationRequestDidJoin = { gate.yield() }
+    return joined
+  }
+
+  /// Returns once the next request has joined the pending announcement.
+  private static func nextJoin(_ joined: AsyncStream<Void>) async {
+    for await _ in joined { return }
+  }
+
   @Test
   func nilRevisionReadsCurrentOneAtOnce() async {
     let instance = UUID()
@@ -280,11 +292,11 @@ struct ServiceStatusChangesTests {
   @Test
   func requestWhileOneIsPendingJoinsIt() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
+    let joins = Self.joinedRequests(changes)
     async let first = changes.announceTestNotification()
     async let second = changes.announceTestNotification()
     let id = try #require(await Self.takeAnnouncement(changes))
-    // A joining request has no registration signal, so the report waits for it by time.
-    try await Task.sleep(nanoseconds: 50_000_000)
+    await Self.nextJoin(joins)
 
     #expect(changes.reportTestNotification(id, outcome: .shown))
     #expect(await first == .shown)
@@ -315,11 +327,11 @@ struct ServiceStatusChangesTests {
   @Test
   func requestKeepsAnnouncementWhileAnotherCallerStaysAfterOneLeaves() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
+    let joins = Self.joinedRequests(changes)
     let leaving = Task { await changes.announceTestNotification() }
     async let staying = changes.announceTestNotification()
     let id = try #require(await Self.takeAnnouncement(changes))
-    // A joining request has no registration signal, so the departure waits for it by time.
-    try await Task.sleep(nanoseconds: 50_000_000)
+    await Self.nextJoin(joins)
 
     leaving.cancel()
 
