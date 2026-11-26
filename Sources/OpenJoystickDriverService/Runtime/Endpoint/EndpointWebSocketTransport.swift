@@ -63,32 +63,57 @@ final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
       case .frame(let final, let opcode, let payload):
         switch opcode {
         case Opcode.close:
-          writeLock.withLock {
-            guard !closeSent else { return }
-            closeSent = true
-            _ = endpointSendAll(descriptor, Self.frame(Opcode.close, payload.prefix(2)))
-          }
+          replyToClose(payload)
           return .end
-        case Opcode.ping:
-          writeLock.withLock {
-            guard !closeSent else { return }
-            _ = endpointSendAll(descriptor, Self.frame(Opcode.pong, payload))
-          }
+        case Opcode.ping: replyToPing(payload)
         case Opcode.pong: continue
         case Opcode.text, Opcode.continuation:
-          guard (opcode == Opcode.text) == (message == nil) else {
-            return .invalid("A continuation frame must follow an unfinished text frame.")
+          if let result = Self.append(payload, to: &message, opcode: opcode, final: final) {
+            return result
           }
-          var joined = message ?? Data()
-          joined.append(payload)
-          guard joined.count <= EndpointServer.maximumLineBytes else { return .tooLong }
-          if final { return .message(joined) }
-          message = joined
         case Opcode.binary: return .invalid("Binary frames are not accepted; send text.")
         default: return .invalid("The frame has an unknown opcode.")
         }
       }
     }
+  }
+
+  /// Echoes the status of a close frame, once.
+  private func replyToClose(_ payload: Data) {
+    writeLock.withLock {
+      guard !closeSent else { return }
+      closeSent = true
+      _ = endpointSendAll(descriptor, Self.frame(Opcode.close, payload.prefix(2)))
+    }
+  }
+
+  /// Answers a ping frame with a pong that carries its payload, unless a close was sent.
+  private func replyToPing(_ payload: Data) {
+    writeLock.withLock {
+      guard !closeSent else { return }
+      _ = endpointSendAll(descriptor, Self.frame(Opcode.pong, payload))
+    }
+  }
+
+  /// Joins a text or continuation fragment onto `message`.
+  ///
+  /// Returns the read result when the fragment is invalid, too long or completes the message, and
+  /// nil when more fragments are expected.
+  private static func append(
+    _ payload: Data,
+    to message: inout Data?,
+    opcode: UInt8,
+    final: Bool
+  ) -> EndpointReadResult? {
+    guard (opcode == Opcode.text) == (message == nil) else {
+      return .invalid("A continuation frame must follow an unfinished text frame.")
+    }
+    var joined = message ?? Data()
+    joined.append(payload)
+    guard joined.count <= EndpointServer.maximumLineBytes else { return .tooLong }
+    if final { return .message(joined) }
+    message = joined
+    return nil
   }
 
   /// Writes `data` as one text frame; false when a close was sent or the peer is gone.
