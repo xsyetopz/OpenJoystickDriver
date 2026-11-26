@@ -208,6 +208,17 @@ func hexString(_ bytes: UnsafePointer<UInt8>?, count: Int) -> String {
   return (0..<count).map { unsafe String(format: "%02x", base[$0]) }.joined(separator: " ")
 }
 
+/// Whether `first` sorts before `second` by vendor ID, then by product ID.
+private func precedesByVendorAndProduct(_ first: IOHIDDevice, _ second: IOHIDDevice) -> Bool {
+  let firstKey =
+    intProp(first, kIOHIDVendorIDKey as String) * 0x1_0000
+    + intProp(first, kIOHIDProductIDKey as String)
+  let secondKey =
+    intProp(second, kIOHIDVendorIDKey as String) * 0x1_0000
+    + intProp(second, kIOHIDProductIDKey as String)
+  return firstKey < secondKey
+}
+
 /// Returns the HID devices that match `matching`, or every device when it is nil.
 func enumerateDevices(matching: [String: Any]?) -> [IOHIDDevice] {
   let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
@@ -225,15 +236,9 @@ func enumerateDevices(matching: [String: Any]?) -> [IOHIDDevice] {
   _ = IOHIDManagerOpen(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
   defer { IOHIDManagerClose(mgr, IOOptionBits(kIOHIDOptionsTypeNone)) }
   return Array(
-    ((IOHIDManagerCopyDevices(mgr) as? Set<IOHIDDevice>) ?? []).sorted {
-      let a =
-        intProp($0, kIOHIDVendorIDKey as String) * 0x1_0000
-        + intProp($0, kIOHIDProductIDKey as String)
-      let b =
-        intProp($1, kIOHIDVendorIDKey as String) * 0x1_0000
-        + intProp($1, kIOHIDProductIDKey as String)
-      return a < b
-    }
+    ((IOHIDManagerCopyDevices(mgr) as? Set<IOHIDDevice>) ?? []).sorted(
+      by: precedesByVendorAndProduct
+    )
   )
 }
 
@@ -248,15 +253,7 @@ func managerDevices(_ mgr: IOHIDManager) -> [IOHIDDevice] {
   return (0..<count).compactMap { idx in
     guard let value = unsafe values[idx] else { return nil }
     return unsafe unsafeBitCast(value, to: IOHIDDevice.self)
-  }.sorted {
-    let a =
-      intProp($0, kIOHIDVendorIDKey as String) * 0x1_0000
-      + intProp($0, kIOHIDProductIDKey as String)
-    let b =
-      intProp($1, kIOHIDVendorIDKey as String) * 0x1_0000
-      + intProp($1, kIOHIDProductIDKey as String)
-    return a < b
-  }
+  }.sorted(by: precedesByVendorAndProduct)
 }
 
 /// Returns the input elements of `dev`.

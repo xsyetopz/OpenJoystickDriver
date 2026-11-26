@@ -231,8 +231,14 @@ private func writeProbeStartupPackets(
   }
 }
 
-/// Writes one driver-produced write and prints it as a USB_TX line.
-private func writeProbe(_ write: PhysicalOutputWrite, session: any USBTransportSession) async throws
+/// Sends a USB write through `session`.
+///
+/// - Throws: ``USBTransportError/notSupported`` for a HID write, and any error of the session.
+private func sendUSBWrite(
+  _ write: PhysicalOutputWrite,
+  session: any USBTransportSession
+)
+  async throws
 {
   switch write {
   case .usb(let packet, _):
@@ -243,6 +249,12 @@ private func writeProbe(_ write: PhysicalOutputWrite, session: any USBTransportS
     )
   case .hidOutput, .hidFeature: throw USBTransportError.notSupported
   }
+}
+
+/// Writes one driver-produced write and prints it as a USB_TX line.
+private func writeProbe(_ write: PhysicalOutputWrite, session: any USBTransportSession) async throws
+{
+  try await sendUSBWrite(write, session: session)
   print("USB_TX endpoint=\(write.probeEndpoint) bytes=\(write.hexBytes)")
 }
 
@@ -270,15 +282,7 @@ private func monitorProbeInput(
       lastKeepAlive = now
       do {
         for write in driver.keepAliveWrites() {
-          switch write {
-          case .usb(let packet, _):
-            _ = try await session.write(
-              endpoint: packet.endpoint,
-              data: packet.bytes,
-              timeout: packet.timeoutMilliseconds
-            )
-          case .hidOutput, .hidFeature: throw USBTransportError.notSupported
-          }
+          try await sendUSBWrite(write, session: session)
           print("USB_KEEPALIVE result=sent")
         }
       } catch { print("USB_KEEPALIVE result=error detail=\(error.localizedDescription)") }
