@@ -48,8 +48,7 @@ extension DevicePipeline {
       return
     }
 
-    var openAttempt: Int = 0
-    var failedHandshakes = 0
+    var attempts = USBPipelineAttempts()
     while isCurrentUSBRun(generation) {
       let openResult = await openDeviceWithRetry(
         provider: provider,
@@ -60,119 +59,186 @@ extension DevicePipeline {
         if case .opened(let handle) = openResult { await handle.close() }
         return
       }
-      guard case .opened(let handle) = openResult else {
-        let ownership: HIDInputOwnership
-        var holder: USBExclusiveOwner?
-        switch openResult {
-        case .unavailable(.accessDenied): ownership = .accessDenied
-        case .unavailable(.ownedByAnotherClient(let owner)):
-          ownership = .ownedByAnotherClient
-          holder = owner.flatMap(USBExclusiveOwner.init(registryValue:))
-        default: ownership = .acquisitionFailed
-        }
-        let wasHeld = usbOwnedByAnotherClient
-        usbExclusiveOwner = holder
-        usbOwnedByAnotherClient = ownership == .ownedByAnotherClient
-        await reportUSBInputOwnership(ownership)
-        guard isCurrentUSBRun(generation) else { return }
-        usbSessionStartFailed = true
-        openAttempt += 1
-        if ownership == .ownedByAnotherClient {
-          // Another client reading the pad directly is a valid state: the pipeline does not
-          // request or seize the interface, and opens it when the owner lets go.
-          if !wasHeld {
-            print(
-              "[DevicePipeline] USB interface is used by \(holder?.name ?? "another client"); "
-                + "opening it when it is released: \(identifier)"
-            )
-          }
-          if await waitForUSBRelease(provider: provider, device: device) {
-            guard isCurrentUSBRun(generation) else { return }
-            print("[DevicePipeline] USB interface was released; opening it: \(identifier)")
-            continue
-          }
-        }
-        let delay: UInt64
-        if case .unavailable(.accessDenied) = openResult {
-          if openAttempt == 1 {
-            print(
-              "[DevicePipeline] USB device is exclusively owned by another process; waiting:"
-                + " \(identifier)"
-            )
-          }
-          delay = usbRecoveryPolicy.accessContentionDelayNanoseconds
-        } else {
-          print("[DevicePipeline] USB device unavailable; retrying: \(identifier)")
-          delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: openAttempt)
-        }
-        try? await Task.sleep(nanoseconds: delay)
-        continue
+      let step: USBPipelineStep
+      switch openResult {
+      case .unavailable(let error):
+        step = await waitAfterUnavailableUSBOpen(
+          error,
+          provider: provider,
+          device: device,
+          generation: generation,
+          attempts: &attempts
+        )
+      case .opened(let handle):
+        step = await runOpenedUSBSession(
+          handle,
+          provider: provider,
+          device: device,
+          generation: generation,
+          attempts: &attempts
+        )
       }
-      usbHandle = handle
-      usbOwnedByAnotherClient = false
-      usbExclusiveOwner = nil
-      consecutiveUSBIOErrors = 0
-      driver.resetProtocolState()
-      lastObservedInputReportNanoseconds = nil
-
-      // Linux reads the IN endpoint before it writes the first startup packet; a pad that sends
-      // its first report once, without an announce, sends it to that read.
-      let armedRead = plan.armsInputBeforeStartup ? await armInputRead(handle: handle) : nil
-
-      guard
-        await performUSBHandshake(handle: handle, device: device, runGeneration: generation)
-      else {
-        armedRead?.cancel()
-        guard isCurrentUSBRun(generation) else { return }
-        usbSessionStartFailed = true
-        failedHandshakes += 1
-        guard failedHandshakes < usbRecoveryPolicy.maximumHandshakeFailures else {
-          print("[DevicePipeline] Giving up the USB session start: \(identifier)")
-          return
-        }
-        await resetUSBDeviceIfUnresponsive(device, provider: provider)
-        // Try again while active, but slow down to avoid hot loops that launchd may kill
-        // as "inefficient".
-        openAttempt += 1
-        let delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: openAttempt)
-        try? await Task.sleep(nanoseconds: delay)
-        continue
-      }
-
-      guard isCurrentUSBRun(generation) else {
-        await handle.close()
-        if let current = usbHandle, ObjectIdentifier(current) == ObjectIdentifier(handle) {
-          usbHandle = nil
-        }
-        return
-      }
-
-      usbSessionStartFailed = false
-      let ownership = await handle.inputOwnership
-      guard isCurrentUSBRun(generation) else { return }
-      await reportUSBInputOwnership(ownership)
-      guard isCurrentUSBRun(generation) else { return }
-      openAttempt = 0
-      failedHandshakes = 0
-      if !requiresInputConnectionBeforeOutput(), sessionState == .active { await activateOutput() }
-
-      let recovery = await runUSBInputLoop(
-        handle: handle,
-        generation: generation,
-        armedRead: armedRead
-      )
-
-      guard isCurrentUSBRun(generation) else { return }
-
-      // Prevent immediate reopen loops.
-      openAttempt += 1
-      let delay: UInt64
-      switch recovery {
-      case .reconnect: delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: openAttempt)
-      case .accessDenied: delay = usbRecoveryPolicy.accessContentionDelayNanoseconds
-      }
-      try? await Task.sleep(nanoseconds: delay)
+      if step == .finish { return }
     }
+  }
+
+  /// The counters that the waits between USB session attempts grow with.
+  private struct USBPipelineAttempts {
+    var open = 0
+    var failedHandshakes = 0
+  }
+
+  /// Whether the USB session loop goes on or ends.
+  private enum USBPipelineStep {
+    case again
+    case finish
+  }
+
+  /// Reports who holds the USB interface, then waits for its release or for the backoff of the
+  /// recovery policy.
+  private func waitAfterUnavailableUSBOpen(
+    _ error: USBTransportError,
+    provider: any USBTransportProvider,
+    device: USBTransportDevice,
+    generation: UInt64,
+    attempts: inout USBPipelineAttempts
+  ) async -> USBPipelineStep {
+    let ownership: HIDInputOwnership
+    var holder: USBExclusiveOwner?
+    switch error {
+    case .accessDenied: ownership = .accessDenied
+    case .ownedByAnotherClient(let owner):
+      ownership = .ownedByAnotherClient
+      holder = owner.flatMap(USBExclusiveOwner.init(registryValue:))
+    default: ownership = .acquisitionFailed
+    }
+    let wasHeld = usbOwnedByAnotherClient
+    usbExclusiveOwner = holder
+    usbOwnedByAnotherClient = ownership == .ownedByAnotherClient
+    await reportUSBInputOwnership(ownership)
+    guard isCurrentUSBRun(generation) else { return .finish }
+    usbSessionStartFailed = true
+    attempts.open += 1
+    if ownership == .ownedByAnotherClient {
+      // Another client reading the pad directly is a valid state: the pipeline does not
+      // request or seize the interface, and opens it when the owner lets go.
+      if !wasHeld {
+        print(
+          "[DevicePipeline] USB interface is used by \(holder?.name ?? "another client"); "
+            + "opening it when it is released: \(identifier)"
+        )
+      }
+      if await waitForUSBRelease(provider: provider, device: device) {
+        guard isCurrentUSBRun(generation) else { return .finish }
+        print("[DevicePipeline] USB interface was released; opening it: \(identifier)")
+        return .again
+      }
+    }
+    let delay: UInt64
+    if error == .accessDenied {
+      if attempts.open == 1 {
+        print(
+          "[DevicePipeline] USB device is exclusively owned by another process; waiting:"
+            + " \(identifier)"
+        )
+      }
+      delay = usbRecoveryPolicy.accessContentionDelayNanoseconds
+    } else {
+      print("[DevicePipeline] USB device unavailable; retrying: \(identifier)")
+      delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: attempts.open)
+    }
+    try? await Task.sleep(nanoseconds: delay)
+    return .again
+  }
+
+  /// Handshakes with an opened session, runs its input loop, and waits before the next attempt.
+  private func runOpenedUSBSession(
+    _ handle: any USBTransportSession,
+    provider: any USBTransportProvider,
+    device: USBTransportDevice,
+    generation: UInt64,
+    attempts: inout USBPipelineAttempts
+  ) async -> USBPipelineStep {
+    usbHandle = handle
+    usbOwnedByAnotherClient = false
+    usbExclusiveOwner = nil
+    consecutiveUSBIOErrors = 0
+    driver.resetProtocolState()
+    lastObservedInputReportNanoseconds = nil
+
+    // Linux reads the IN endpoint before it writes the first startup packet; a pad that sends
+    // its first report once, without an announce, sends it to that read.
+    let armedRead = plan.armsInputBeforeStartup ? await armInputRead(handle: handle) : nil
+
+    guard
+      await performUSBHandshake(handle: handle, device: device, runGeneration: generation)
+    else {
+      armedRead?.cancel()
+      return await waitAfterFailedUSBHandshake(
+        provider: provider,
+        device: device,
+        generation: generation,
+        attempts: &attempts
+      )
+    }
+
+    guard isCurrentUSBRun(generation) else {
+      await handle.close()
+      if let current = usbHandle, ObjectIdentifier(current) == ObjectIdentifier(handle) {
+        usbHandle = nil
+      }
+      return .finish
+    }
+
+    usbSessionStartFailed = false
+    let ownership = await handle.inputOwnership
+    guard isCurrentUSBRun(generation) else { return .finish }
+    await reportUSBInputOwnership(ownership)
+    guard isCurrentUSBRun(generation) else { return .finish }
+    attempts = USBPipelineAttempts()
+    if !requiresInputConnectionBeforeOutput(), sessionState == .active { await activateOutput() }
+
+    let recovery = await runUSBInputLoop(
+      handle: handle,
+      generation: generation,
+      armedRead: armedRead
+    )
+
+    guard isCurrentUSBRun(generation) else { return .finish }
+
+    // Prevent immediate reopen loops.
+    attempts.open += 1
+    let delay: UInt64
+    switch recovery {
+    case .reconnect: delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: attempts.open)
+    case .accessDenied: delay = usbRecoveryPolicy.accessContentionDelayNanoseconds
+    }
+    try? await Task.sleep(nanoseconds: delay)
+    return .again
+  }
+
+  /// Counts a failed handshake, gives up after the policy's limit, and otherwise waits before the
+  /// next attempt.
+  private func waitAfterFailedUSBHandshake(
+    provider: any USBTransportProvider,
+    device: USBTransportDevice,
+    generation: UInt64,
+    attempts: inout USBPipelineAttempts
+  ) async -> USBPipelineStep {
+    guard isCurrentUSBRun(generation) else { return .finish }
+    usbSessionStartFailed = true
+    attempts.failedHandshakes += 1
+    guard attempts.failedHandshakes < usbRecoveryPolicy.maximumHandshakeFailures else {
+      print("[DevicePipeline] Giving up the USB session start: \(identifier)")
+      return .finish
+    }
+    await resetUSBDeviceIfUnresponsive(device, provider: provider)
+    // Try again while active, but slow down to avoid hot loops that launchd may kill
+    // as "inefficient".
+    attempts.open += 1
+    let delay = usbRecoveryPolicy.reconnectDelayNanoseconds(after: attempts.open)
+    try? await Task.sleep(nanoseconds: delay)
+    return .again
   }
 
   /// Starts the interrupt IN read that the input loop takes as its first read.
