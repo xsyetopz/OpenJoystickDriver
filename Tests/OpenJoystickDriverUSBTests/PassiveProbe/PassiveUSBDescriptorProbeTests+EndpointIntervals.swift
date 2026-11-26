@@ -118,7 +118,7 @@ extension PassiveUSBDescriptorProbeTests {
   }
 
   @Test
-  func isochronousUsageValuesAcceptZeroOneTwoAndRejectThree() throws {
+  func isochronousUsageValuesAccept0To2AndReject3() throws {
     func blob(_ attributes: UInt8) -> [UInt8] {
       [
         9, 2, 25, 0, 1, 1, 0, 0x80, 0x32, 9, 4, 0, 0, 1, 0xFF, 0x47, 0xD0, 0, 7, 5, 1, attributes,

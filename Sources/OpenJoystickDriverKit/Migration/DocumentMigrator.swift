@@ -152,7 +152,7 @@ public struct DocumentMigrator: Sendable {
       return entry(Self.lastUsedKind, .current)
     }
     guard let version = document["apiVersion"]?.string else {
-      return Self.isZeroFive(document, name: url.lastPathComponent)
+      return Self.isRelease05(document, name: url.lastPathComponent)
         ? entry(nil, .failed, "written by 0.5; re-create it")
         : entry(nil, .failed, "has no apiVersion")
     }
@@ -170,7 +170,7 @@ public struct DocumentMigrator: Sendable {
   }
 
   /// Whether `document`, a file without an `apiVersion`, is what OJD 0.5 wrote.
-  private static func isZeroFive(_ document: OrderedJSON, name: String) -> Bool {
+  private static func isRelease05(_ document: OrderedJSON, name: String) -> Bool {
     name == "RemappingProfiles.json" || document["$schema"] != nil || document["operation"] != nil
   }
 

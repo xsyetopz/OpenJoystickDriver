@@ -264,7 +264,7 @@ struct DocumentMigratorTests {
   }
 
   @Test
-  func zeroFiveDocumentFailsWithReason() throws {
+  func release05DocumentFailsWithReason() throws {
     try write(#"{"$schema": "x", "profiles": []}"#, "RemappingProfiles.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.failed])

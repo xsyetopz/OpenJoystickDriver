@@ -112,7 +112,7 @@ struct MigrateCommandTests {
   }
 
   @Test
-  func zeroFiveFileFailsWithE5009() async throws {
+  func release05FileFailsWithE5009() async throws {
     try write(#"{"$schema": "x", "profiles": []}"#, "RemappingProfiles.json")
 
     let result = await run([])

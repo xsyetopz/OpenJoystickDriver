@@ -94,7 +94,7 @@ struct GameCubeAdapterDriverTests {
   }
 
   @Test
-  func triggersRunFromFortyToTwoSixteen() throws {
+  func triggersRunFrom40To216() throws {
     let driver = try #require(GameCubeAdapterDriver(port: 0))
     let event = try driver.parseReport(AdapterReport.port0([7: 216, 8: 40]))
     #expect(event?.state == snapshot(.leftTrigger(1)))
