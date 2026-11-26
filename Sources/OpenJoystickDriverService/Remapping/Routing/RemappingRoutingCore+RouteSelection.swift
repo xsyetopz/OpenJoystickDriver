@@ -54,32 +54,66 @@ extension RemappingRoutingCore {
   ) async throws {
     _ = try requireOperationalPermit(proposedPermit)
     let oldRoute = routes[identifier]
-    if case .virtualGamepad = oldRoute?.selection, case .virtualGamepad = selection {
+    if try await refreshesInPlace(
+      from: oldRoute?.selection,
+      to: selection,
+      for: identifier,
+      requiring: proposedPermit
+    ) {
+      return
+    }
+    try await leave(oldRoute?.selection, for: identifier, requiring: proposedPermit)
+    // A profile switch keeps feeding the engine; any other route stops, so its baseline goes.
+    if selection.profile == nil { await engine.endSource(identifier) }
+    try await enter(selection, for: identifier, requiring: proposedPermit)
+  }
+
+  /// Handles a change that keeps the route in place and returns whether it did.
+  ///
+  /// A virtual gamepad to virtual gamepad change refreshes the route, and an unchanged profile
+  /// reconciles eligibility.
+  private func refreshesInPlace(
+    from oldSelection: RemappingSelectedRoute?,
+    to selection: RemappingSelectedRoute,
+    for identifier: LogicalControllerID,
+    requiring proposedPermit: RemappingEmissionPermit?
+  ) async throws -> Bool {
+    if case .virtualGamepad = oldSelection, case .virtualGamepad = selection {
       let route = virtualGamepadRoute()
       _ = try requireOperationalPermit(proposedPermit)
       routes[identifier] = route
-      return
+      return true
     }
-
-    if case .remapping(let oldProfile) = oldRoute?.selection,
+    if case .remapping(let oldProfile) = oldSelection,
       case .remapping(let newProfile) = selection, oldProfile == newProfile
     {
       try await reconcileEligibility(for: identifier, requiring: proposedPermit)
-      return
+      return true
     }
+    return false
+  }
 
-    if !profileTransactionState.blocksOutput, case .remapping(let profile) = oldRoute?.selection {
+  /// Releases the output of the route `oldSelection` that `identifier` leaves.
+  private func leave(
+    _ oldSelection: RemappingSelectedRoute?,
+    for identifier: LogicalControllerID,
+    requiring proposedPermit: RemappingEmissionPermit?
+  ) async throws {
+    if !profileTransactionState.blocksOutput, case .remapping(let profile) = oldSelection {
       try await releaseAndRetire(for: identifier, profile: profile, requiring: proposedPermit)
     }
-    if profileTransactionState.blocksOutput {
-      // The transaction entry already stopped the virtual gamepad output once.
-    } else if case .virtualGamepad = oldRoute?.selection, case .virtualGamepad = selection {
-    } else if case .virtualGamepad = oldRoute?.selection {
+    // The transaction entry already stopped the virtual gamepad output once.
+    if !profileTransactionState.blocksOutput, case .virtualGamepad = oldSelection {
       await notifyVirtualGamepadStop(identifier)
     }
-    // A profile switch keeps feeding the engine; any other route stops, so its baseline goes.
-    if selection.profile == nil { await engine.endSource(identifier) }
+  }
 
+  /// Applies the color and route of `selection` to `identifier`.
+  private func enter(
+    _ selection: RemappingSelectedRoute,
+    for identifier: LogicalControllerID,
+    requiring proposedPermit: RemappingEmissionPermit?
+  ) async throws {
     switch selection {
     case .virtualGamepad:
       let permit = try requireOperationalPermit(proposedPermit)
