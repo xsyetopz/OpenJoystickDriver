@@ -91,26 +91,23 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
       if lhs.count != rhs.count {
         return lhs.count < rhs.count ? .orderedAscending : .orderedDescending
       }
-      let comparison = lhs.compare(
-        rhs,
-        options: [],
-        range: nil,
-        locale: Locale(identifier: "en_US_POSIX")
-      )
-      if comparison == .orderedSame { return .orderedSame }
-      return comparison == .orderedAscending ? .orderedAscending : .orderedDescending
+      return Self.comparePOSIX(lhs, rhs)
     case (true, false): return .orderedAscending
     case (false, true): return .orderedDescending
-    case (false, false):
-      let comparison = lhs.compare(
-        rhs,
-        options: [],
-        range: nil,
-        locale: Locale(identifier: "en_US_POSIX")
-      )
-      if comparison == .orderedSame { return .orderedSame }
-      return comparison == .orderedAscending ? .orderedAscending : .orderedDescending
+    case (false, false): return Self.comparePOSIX(lhs, rhs)
     }
+  }
+
+  /// The ordering of `lhs` and `rhs` as text in the `en_US_POSIX` locale.
+  private static func comparePOSIX(_ lhs: String, _ rhs: String) -> ComparisonResult {
+    let comparison = lhs.compare(
+      rhs,
+      options: [],
+      range: nil,
+      locale: Locale(identifier: "en_US_POSIX")
+    )
+    if comparison == .orderedSame { return .orderedSame }
+    return comparison == .orderedAscending ? .orderedAscending : .orderedDescending
   }
 
   /// Whether `identifier` is a valid prerelease identifier.
