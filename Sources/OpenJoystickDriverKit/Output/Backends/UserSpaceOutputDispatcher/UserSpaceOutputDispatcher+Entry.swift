@@ -19,13 +19,17 @@ extension UserSpaceOutputDispatcher {
     private let streamTask: Task<Void, Never>?
 
     /// Creates an entry and attaches `backend` to a sender with a queue of `frameQueueCapacity`
-    /// frames.
+    /// frames; `deadlineTimer` lets a test replace the native send deadline timer.
     init(
       backend: any VirtualDeviceBackend,
       inputReportState: UserSpaceInputReportState,
-      frameQueueCapacity: Int = ControllerTuning.defaultFrameQueueCapacity
+      frameQueueCapacity: Int = ControllerTuning.defaultFrameQueueCapacity,
+      deadlineTimer: DeadlineTimer = .dispatch
     ) {
-      sender = UserSpaceReportSender(queueCapacity: frameQueueCapacity)
+      sender = UserSpaceReportSender(
+        queueCapacity: frameQueueCapacity,
+        deadlineTimer: deadlineTimer
+      )
       self.inputReportState = inputReportState
       sender.attach(backend)
       streamTask = Self.stream(sender: sender, inputReportState: inputReportState)

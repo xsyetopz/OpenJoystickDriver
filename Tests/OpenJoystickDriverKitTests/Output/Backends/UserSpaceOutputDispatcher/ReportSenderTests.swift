@@ -84,6 +84,7 @@ private final class CancellableReportBackend: VirtualDeviceBackend,
 
   func send(_: [UInt8]) async throws {
     await state.markEntered()
+    // A send that never completes on its own; only cancellation ends it.
     try await Task.sleep(nanoseconds: .max)
   }
 
@@ -275,7 +276,11 @@ struct ReportSenderTests {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
     let input = UserSpaceInputReportState(format: XboxOneGIPHIDReportFormat())
-    let entry = UserSpaceOutputDispatcher.Entry(backend: backend, inputReportState: input)
+    let entry = UserSpaceOutputDispatcher.Entry(
+      backend: backend,
+      inputReportState: input,
+      deadlineTimer: Self.idleTimer
+    )
     let outputs = OutputRecorder()
     let isOpen: @Sendable () -> Bool = { true }
     let handler = UserSpaceHostReportHandler(
@@ -309,7 +314,7 @@ struct ReportSenderTests {
     let capacity = 4
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
-    let sender = UserSpaceReportSender(queueCapacity: capacity)
+    let sender = UserSpaceReportSender(queueCapacity: capacity, deadlineTimer: Self.idleTimer)
     sender.attach(backend)
     let blocking = sender.submit(isFrame: true) { [[0]] }
     await gate.waitForEntry()
@@ -340,7 +345,7 @@ struct ReportSenderTests {
   func idleOnlyFrameYieldsToAWaitingSubmission() async throws {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
-    let sender = UserSpaceReportSender(queueCapacity: 1)
+    let sender = UserSpaceReportSender(queueCapacity: 1, deadlineTimer: Self.idleTimer)
     sender.attach(backend)
     let blocking = sender.submit(isFrame: true) { [[0]] }
     await gate.waitForEntry()
@@ -362,7 +367,7 @@ struct ReportSenderTests {
   func fullQueueNeverEvictsHostReplyAndFailsItWhenNoFrameCanYield() async throws {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
-    let sender = UserSpaceReportSender(queueCapacity: 2)
+    let sender = UserSpaceReportSender(queueCapacity: 2, deadlineTimer: Self.idleTimer)
     sender.attach(backend)
     let blocking = sender.submit { [[0]] }
     await gate.waitForEntry()
@@ -394,7 +399,7 @@ struct ReportSenderTests {
   func suppressionBetweenReportsSkipsRemainingReportAndCanResume() async throws {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
-    let sender = UserSpaceReportSender()
+    let sender = UserSpaceReportSender(deadlineTimer: Self.idleTimer)
     let activity = ActivityFlag()
     sender.attach(backend)
     let isActive: @Sendable () -> Bool = { activity.get() }
@@ -418,7 +423,11 @@ struct ReportSenderTests {
     let backend = OrderedReportBackend(gate: gate)
     let format = XboxOneGIPHIDReportFormat()
     let input = UserSpaceInputReportState(format: format)
-    let entry = UserSpaceOutputDispatcher.Entry(backend: backend, inputReportState: input)
+    let entry = UserSpaceOutputDispatcher.Entry(
+      backend: backend,
+      inputReportState: input,
+      deadlineTimer: Self.idleTimer
+    )
     let first = entry.sender.submit { [input] in [input.update { $0.buttons = 1 }] }
     await gate.waitForEntry()
     let second = entry.sender.submit { [input] in [input.update { $0.buttons = 2 }] }
@@ -455,7 +464,7 @@ struct ReportSenderTests {
   func closeRejectsQueuedWorkAndClosesBackendBeforeDrainingCurrentSend() async throws {
     let gate = ReportSendGate()
     let backend = OrderedReportBackend(gate: gate)
-    let sender = UserSpaceReportSender()
+    let sender = UserSpaceReportSender(deadlineTimer: Self.idleTimer)
     sender.attach(backend)
     let first = sender.submit { [[1]] }
     await gate.waitForEntry()
@@ -476,7 +485,7 @@ struct ReportSenderTests {
   @Test(.timeLimit(.minutes(1)))
   func closeCancelsStalledCurrentSend() async {
     let backend = CancellableReportBackend()
-    let sender = UserSpaceReportSender()
+    let sender = UserSpaceReportSender(deadlineTimer: Self.idleTimer)
     sender.attach(backend)
     _ = sender.submit { [[1]] }
     await backend.state.waitForEntry()
@@ -487,12 +496,17 @@ struct ReportSenderTests {
   @Test(.timeLimit(.minutes(1)))
   func closeCompletesWhenNativeSendIgnoresCancellation() async {
     let backend = NonCooperativeReportBackend()
-    let sender = UserSpaceReportSender()
+    let timer = ManualDeadlineTimer()
+    let sender = UserSpaceReportSender(deadlineTimer: timer.timer)
     sender.attach(backend)
     _ = sender.submit { [[1]] }
     await backend.gate.waitForEntry()
+    await timer.waitUntilScheduled()
 
-    await sender.beginClose().value
+    // Closing waits for the stuck send until the deadline ends it, so the test fires the deadline.
+    let closing = sender.beginClose()
+    timer.fireAll()
+    await closing.value
     #expect(backend.closeCount() == 1)
     await backend.gate.release()
   }
@@ -526,7 +540,7 @@ struct ReportSenderTests {
   @Test(.timeLimit(.minutes(1)))
   func backendThatStartsItsOwnSendDeliversInOrderWithoutAsyncSend() async throws {
     let backend = QueueSendBackend()
-    let sender = UserSpaceReportSender()
+    let sender = UserSpaceReportSender(deadlineTimer: Self.idleTimer)
     sender.attach(backend)
 
     try await sender.submit { [[1], [2]] }.value()
@@ -540,7 +554,7 @@ struct ReportSenderTests {
   @Test(.timeLimit(.minutes(1)))
   func blockingBackendDeliversInOrderThroughItsBlockingSend() async throws {
     let backend = BlockingReportBackend()
-    let sender = UserSpaceReportSender()
+    let sender = UserSpaceReportSender(deadlineTimer: Self.idleTimer)
     sender.attach(backend)
 
     try await sender.submit { [[1], [2]] }.value()
@@ -574,7 +588,7 @@ struct ReportSenderTests {
   @Test(.timeLimit(.minutes(1)))
   func closeCompletesOnlyAfterNativeDeviceHasBeenTornDown() async {
     let backend = SlowTeardownBackend()
-    let sender = UserSpaceReportSender()
+    let sender = UserSpaceReportSender(deadlineTimer: Self.idleTimer)
     sender.attach(backend)
     let finished = ActivityFlag()
     finished.set(false)
@@ -597,8 +611,8 @@ struct ReportSenderTests {
     let gate = ReportSendGate()
     let stalledBackend = OrderedReportBackend(gate: gate)
     let readyBackend = OrderedReportBackend()
-    let stalled = UserSpaceReportSender()
-    let ready = UserSpaceReportSender()
+    let stalled = UserSpaceReportSender(deadlineTimer: Self.idleTimer)
+    let ready = UserSpaceReportSender(deadlineTimer: Self.idleTimer)
     stalled.attach(stalledBackend)
     ready.attach(readyBackend)
 
@@ -612,6 +626,10 @@ struct ReportSenderTests {
     await stalled.beginClose().value
     await ready.beginClose().value
   }
+
+  /// A deadline timer that never fires, so a gated send is never expired by the real 20 s deadline
+  /// on a loaded machine.
+  private static let idleTimer = DeadlineTimer { _, _ in {} }
 
   /// An Xbox One GIP rumble report (ID 9) for the main motors, lasting the default 250 ms.
   private static func xboxRumble(_ left: UInt8, _ right: UInt8) -> [UInt8] {
