@@ -48,46 +48,75 @@ public enum HIDDescriptorContract {
       return .mixedReportNumbering
     }
     if parsed.containsInvalidInputSize { return .invalidFieldSize }
-    if let observed = layout?.reports?.first(where: { $0.kind == .input })?.maximumLengthBytes {
-      let lengths = parsed.inputReportIDs.map {
-        (parsed.payloadSizeBytesByReportID[$0] ?? 0) + ($0 == 0 ? 0 : 1)
-      }
-      guard (lengths.max() ?? 0) == Int(observed) else { return .reportLengthMismatch }
+    if let observed = layout?.reports?.first(where: { $0.kind == .input })?.maximumLengthBytes,
+      largestInputReportBytes(of: parsed) != Int(observed)
+    {
+      return .reportLengthMismatch
     }
-    // Controls beyond an item's explicit usage list have no field, so a repeat here
-    // is the same usage declared twice for distinct controls.
-    var usagesByReport: [UInt8: Set<HIDUsage>] = [:]
-    for field in parsed.fields where isStandardUsage(field) {
-      let usage = HIDUsage(usagePage: field.usagePage, usage: field.usage)
-      guard usagesByReport[field.reportID, default: []].insert(usage).inserted else {
-        return .duplicateUsage
-      }
-    }
-    let controllers = parsed.applicationCollections.indices.filter {
+    if hasDuplicateUsage(in: parsed) { return .duplicateUsage }
+    let controllers = controllerCollections(of: parsed)
+    guard !controllers.isEmpty else { return .missingControllerCollection }
+    let directional = controllers.filter { hasDirectionalInput(parsed, in: $0) }
+    if directional.contains(where: { hasButton(parsed, in: $0) }) { return nil }
+    return directional.isEmpty ? .missingDirectionalInput : .missingButtonInput
+  }
+
+  /// The indices of the Joystick, Game Pad, and Multi-axis Controller application collections.
+  private static func controllerCollections(of parsed: HIDParsedDescriptor) -> [Int] {
+    parsed.applicationCollections.indices.filter {
       parsed.applicationCollections[$0].usagePage == genericDesktopPage
         && controllerCollectionUsages.contains(parsed.applicationCollections[$0].usage)
     }
-    guard !controllers.isEmpty else { return .missingControllerCollection }
-    var hasDirectionalInput = false
-    for collection in controllers {
-      let fields = parsed.fields.filter {
-        $0.applicationCollection == collection && !$0.flags.isRelative
-      }
-      let desktopUsages = Set(fields.filter { $0.usagePage == genericDesktopPage }.map(\.usage))
-      guard desktopUsages.isSuperset(of: stickUsages) || desktopUsages.contains(hatUsage) else {
-        continue
-      }
-      hasDirectionalInput = true
-      let buttonArrays = parsed.arrays.filter {
-        $0.applicationCollection == collection && !$0.flags.isRelative
-      }
-      if fields.contains(where: isButton)
-        || buttonArrays.contains(where: { $0.usages.contains(where: isButton) })
-      {
-        return nil
-      }
+  }
+
+  /// The length of the largest input report, counting the report ID byte of a numbered report.
+  private static func largestInputReportBytes(of parsed: HIDParsedDescriptor) -> Int {
+    parsed.inputReportIDs.map {
+      (parsed.payloadSizeBytesByReportID[$0] ?? 0) + ($0 == 0 ? 0 : 1)
+    }.max() ?? 0
+  }
+
+  /// Whether one report declares the same standard usage twice.
+  ///
+  /// Controls beyond an item's explicit usage list have no field, so a repeat here is the same
+  /// usage declared twice for distinct controls.
+  private static func hasDuplicateUsage(in parsed: HIDParsedDescriptor) -> Bool {
+    var usagesByReport: [UInt8: Set<HIDUsage>] = [:]
+    for field in parsed.fields where isStandardUsage(field) {
+      let usage = HIDUsage(usagePage: field.usagePage, usage: field.usage)
+      if !usagesByReport[field.reportID, default: []].insert(usage).inserted { return true }
     }
-    return hasDirectionalInput ? .missingButtonInput : .missingDirectionalInput
+    return false
+  }
+
+  /// Whether the absolute fields of application collection `collection` hold an X/Y pair or a Hat
+  /// Switch.
+  private static func hasDirectionalInput(
+    _ parsed: HIDParsedDescriptor,
+    in collection: Int
+  ) -> Bool {
+    let desktopUsages = Set(
+      absoluteFields(parsed, in: collection).filter { $0.usagePage == genericDesktopPage }
+        .map(\.usage)
+    )
+    return desktopUsages.isSuperset(of: stickUsages) || desktopUsages.contains(hatUsage)
+  }
+
+  /// Whether the absolute fields or arrays of application collection `collection` hold a button.
+  private static func hasButton(_ parsed: HIDParsedDescriptor, in collection: Int) -> Bool {
+    absoluteFields(parsed, in: collection).contains(where: isButton)
+      || parsed.arrays.contains {
+        $0.applicationCollection == collection && !$0.flags.isRelative
+          && $0.usages.contains(where: isButton)
+      }
+  }
+
+  /// The non-relative fields of application collection `collection`.
+  private static func absoluteFields(
+    _ parsed: HIDParsedDescriptor,
+    in collection: Int
+  ) -> [HIDField] {
+    parsed.fields.filter { $0.applicationCollection == collection && !$0.flags.isRelative }
   }
 
   /// Whether `field` is a button, or a Generic Desktop axis or hat in the standard set.
