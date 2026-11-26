@@ -256,13 +256,54 @@ final class RuntimeViewModel: ObservableObject {
     permissionState = .loading
     postEventAccessState = .loading
     liveStatusError = nil
-    var loadedAny = false
-    var failureMessage: String?
 
+    guard
+      let status = await refreshStatus(
+        generation: generation,
+        statusGeneration: statusGeneration,
+        permissionGeneration: permissionGeneration
+      )
+    else { return }
+    guard
+      let remapping = await refreshRemapping(
+        generation: generation,
+        postEventGeneration: postEventGeneration
+      )
+    else { return }
+
+    guard generation == refreshGeneration else { return }
+    loadState =
+      status.loaded || remapping.loaded
+      ? .available
+      : .unavailable(
+        status.failure ?? remapping.failure
+          ?? OJDLocalized.string(
+            "ui.error.notAvailable"
+          )
+      )
+  }
+
+  /// What one read of a full refresh produced.
+  private struct RefreshOutcome {
+    /// Whether the read succeeded.
+    var loaded = false
+    /// The message of the failure, when the read failed.
+    var failure: String?
+  }
+
+  /// Reads the service status for the refresh `generation` and publishes it.
+  ///
+  /// Returns nil when a newer refresh or live status read superseded this one.
+  private func refreshStatus(
+    generation: Int,
+    statusGeneration: Int,
+    permissionGeneration: Int
+  ) async -> RefreshOutcome? {
+    var outcome = RefreshOutcome()
     do {
       let payload = try await gateway.status()
       guard generation == refreshGeneration, statusGeneration == liveStatusGeneration else {
-        return
+        return nil
       }
       let permissions: RuntimePermissionSummary
       if permissionGeneration == permissionRefreshGeneration {
@@ -283,19 +324,29 @@ final class RuntimeViewModel: ObservableObject {
       if permissionGeneration == permissionRefreshGeneration {
         permissionState = .available(permissions)
       }
-      loadedAny = true
+      outcome.loaded = true
     } catch {
-      guard generation == refreshGeneration else { return }
+      guard generation == refreshGeneration else { return nil }
       let message = statusFailureMessage(error)
       statusState =
         RuntimePresentation.isUnavailable(error) ? .unavailable(message) : .error(message)
       if permissionGeneration == permissionRefreshGeneration { permissionState = .error(message) }
-      failureMessage = message
+      outcome.failure = message
     }
+    return outcome
+  }
 
+  /// Reads the remapping snapshot for the refresh `generation` and publishes it.
+  ///
+  /// Returns nil when a newer refresh superseded this one.
+  private func refreshRemapping(
+    generation: Int,
+    postEventGeneration: Int
+  ) async -> RefreshOutcome? {
+    var outcome = RefreshOutcome()
     do {
       let snapshot = try await gateway.remappingSnapshot()
-      guard generation == refreshGeneration else { return }
+      guard generation == refreshGeneration else { return nil }
       remappingState = .available(snapshot)
       let postEventAccess: RemappingPostEventAccessState?
       if postEventGeneration == postEventAccessGeneration {
@@ -309,9 +360,9 @@ final class RuntimeViewModel: ObservableObject {
         postEventAccess = authoritativePostEventAccess
       }
       updateStatusRemappingSnapshot(snapshot, postEventAccess: postEventAccess)
-      loadedAny = true
+      outcome.loaded = true
     } catch {
-      guard generation == refreshGeneration else { return }
+      guard generation == refreshGeneration else { return nil }
       let message = RuntimePresentation.userFacingError(error)
       remappingState =
         RuntimePresentation.isUnavailable(error) ? .unavailable(message) : .error(message)
@@ -319,19 +370,9 @@ final class RuntimeViewModel: ObservableObject {
         postEventAccessState =
           RuntimePresentation.isUnavailable(error) ? .unavailable(message) : .error(message)
       }
-      failureMessage = failureMessage ?? message
+      outcome.failure = message
     }
-
-    guard generation == refreshGeneration else { return }
-    loadState =
-      loadedAny
-      ? .available
-      : .unavailable(
-        failureMessage
-          ?? OJDLocalized.string(
-            "ui.error.notAvailable"
-          )
-      )
+    return outcome
   }
 
   /// Reads the permissions from the service status again.
