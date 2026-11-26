@@ -100,6 +100,37 @@ public protocol VirtualHIDProfile: Sendable {
   ) -> ControllerOutputCommand?
 }
 
+/// A profile whose descriptor, input reports and consumer output all come from one report format.
+private protocol FormatBackedHIDProfile: VirtualHIDProfile {
+  associatedtype Format: VirtualGamepadReportFormat
+
+  /// The report format that supplies the descriptor and the reports.
+  var format: Format { get }
+}
+
+extension FormatBackedHIDProfile {
+  /// The identity of the persona.
+  var identity: VirtualDeviceProfile { id.identity }
+  /// The descriptor of the report format.
+  var descriptor: [UInt8] { format.descriptor }
+  /// The report format.
+  var reportFormat: any VirtualGamepadReportFormat { format }
+
+  /// The input report of `state` in the report format.
+  func inputReport(for state: ControllerState) -> [UInt8] {
+    ReportFormatCodec.inputReport(for: state, in: format)
+  }
+
+  /// Decodes an output report of the report format.
+  func consumerOutput(
+    type: VirtualHostReportType,
+    reportID: UInt32,
+    bytes: [UInt8]
+  ) -> ControllerOutputCommand? {
+    ReportFormatCodec.consumerOutput(type: type, reportID: reportID, bytes: bytes, in: format)
+  }
+}
+
 /// `SDLCompatible` as a hand-authored approximation, not a verified Microsoft ABI.
 ///
 /// The identity is the `SDLCompatible` `VirtualDevice` record's. The descriptor and input layout
@@ -108,35 +139,14 @@ public protocol VirtualHIDProfile: Sendable {
 /// Bluetooth reports that SDL 2 and Apple's GameController framework parse for this product ID.
 /// The d-pad is four state bits, and share is never set. The descriptor and codec are not
 /// byte-exact copies of a genuine capture.
-struct XboxOneGIPHIDProfile: VirtualHIDProfile {
+struct XboxOneGIPHIDProfile: FormatBackedHIDProfile {
   /// The persona the profile publishes.
   let id = VirtualHIDProfileID.sdlCompatible
   /// The report format that supplies the descriptor and the reports.
-  private let format: XboxOneGIPHIDReportFormat
+  let format: XboxOneGIPHIDReportFormat
 
   /// Creates the profile.
   init() { format = XboxOneGIPHIDReportFormat() }
-
-  /// The identity of the persona.
-  var identity: VirtualDeviceProfile { id.identity }
-  /// The descriptor of the report format.
-  var descriptor: [UInt8] { format.descriptor }
-  /// The report format.
-  var reportFormat: any VirtualGamepadReportFormat { format }
-
-  /// The input report of `state` in the report format.
-  func inputReport(for state: ControllerState) -> [UInt8] {
-    ReportFormatCodec.inputReport(for: state, in: format)
-  }
-
-  /// Decodes an output report of the report format.
-  func consumerOutput(
-    type: VirtualHostReportType,
-    reportID: UInt32,
-    bytes: [UInt8]
-  ) -> ControllerOutputCommand? {
-    ReportFormatCodec.consumerOutput(type: type, reportID: reportID, bytes: bytes, in: format)
-  }
 }
 
 /// `GameControllerCompatible` over the Xbox Series Bluetooth report layout.
@@ -145,32 +155,11 @@ struct XboxOneGIPHIDProfile: VirtualHIDProfile {
 /// input layout are `XboxSeriesBluetoothHIDReportFormat`'s, the layout Apple's GameController
 /// framework reads for an Xbox identity. SDL 2 reads them; SDL 3 reads them as GIP packets and
 /// misreads them.
-struct XboxSeriesBluetoothHIDProfile: VirtualHIDProfile {
+struct XboxSeriesBluetoothHIDProfile: FormatBackedHIDProfile {
   /// The persona the profile publishes.
   let id = VirtualHIDProfileID.gameControllerCompatible
   /// The report format that supplies the descriptor and the reports.
-  private let format = XboxSeriesBluetoothHIDReportFormat()
-
-  /// The identity of the persona.
-  var identity: VirtualDeviceProfile { id.identity }
-  /// The descriptor of the report format.
-  var descriptor: [UInt8] { format.descriptor }
-  /// The report format.
-  var reportFormat: any VirtualGamepadReportFormat { format }
-
-  /// The input report of `state` in the report format.
-  func inputReport(for state: ControllerState) -> [UInt8] {
-    ReportFormatCodec.inputReport(for: state, in: format)
-  }
-
-  /// Decodes an output report of the report format.
-  func consumerOutput(
-    type: VirtualHostReportType,
-    reportID: UInt32,
-    bytes: [UInt8]
-  ) -> ControllerOutputCommand? {
-    ReportFormatCodec.consumerOutput(type: type, reportID: reportID, bytes: bytes, in: format)
-  }
+  let format = XboxSeriesBluetoothHIDReportFormat()
 }
 
 /// `InControlCompatible` over the DualShock 4 USB report layout.
@@ -179,32 +168,11 @@ struct XboxSeriesBluetoothHIDProfile: VirtualHIDProfile {
 /// layout are `DualShock4USBHIDReportFormat`'s, which macOS publishes as a `GCDualShockGamepad`
 /// and which answers the DualShock 4 feature reports. The descriptor is the one a genuine
 /// controller reports over USB.
-struct DualShock4USBHIDProfile: VirtualHIDProfile {
+struct DualShock4USBHIDProfile: FormatBackedHIDProfile {
   /// The persona the profile publishes.
   let id = VirtualHIDProfileID.inControlCompatible
   /// The report format that supplies the descriptor and the reports.
-  private let format = DualShock4USBHIDReportFormat()
-
-  /// The identity of the persona.
-  var identity: VirtualDeviceProfile { id.identity }
-  /// The descriptor of the report format.
-  var descriptor: [UInt8] { format.descriptor }
-  /// The report format.
-  var reportFormat: any VirtualGamepadReportFormat { format }
-
-  /// The input report of `state` in the report format.
-  func inputReport(for state: ControllerState) -> [UInt8] {
-    ReportFormatCodec.inputReport(for: state, in: format)
-  }
-
-  /// Decodes an output report of the report format.
-  func consumerOutput(
-    type: VirtualHostReportType,
-    reportID: UInt32,
-    bytes: [UInt8]
-  ) -> ControllerOutputCommand? {
-    ReportFormatCodec.consumerOutput(type: type, reportID: reportID, bytes: bytes, in: format)
-  }
+  let format = DualShock4USBHIDReportFormat()
 }
 
 /// `Generic` over the OJD generic gamepad, an approximation of the specified ABI.
@@ -213,23 +181,11 @@ struct DualShock4USBHIDProfile: VirtualHIDProfile {
 /// descriptor is `OJDGenericGamepadFormat`'s input-only layout: 16 buttons with the d-pad as four
 /// of them, no hat, four stick axes and two trigger axes, and no output report, so the profile
 /// decodes no consumer output. pid.codes allocated the ID.
-struct OJDGenericHIDProfile: VirtualHIDProfile {
+struct OJDGenericHIDProfile: FormatBackedHIDProfile {
   /// The persona the profile publishes.
   let id = VirtualHIDProfileID.generic
   /// The report format that supplies the descriptor and the reports.
-  private let format = OJDGenericGamepadFormat()
-
-  /// The identity of the persona.
-  var identity: VirtualDeviceProfile { id.identity }
-  /// The descriptor of the report format.
-  var descriptor: [UInt8] { format.descriptor }
-  /// The report format.
-  var reportFormat: any VirtualGamepadReportFormat { format }
-
-  /// The input report of `state` in the report format.
-  func inputReport(for state: ControllerState) -> [UInt8] {
-    ReportFormatCodec.inputReport(for: state, in: format)
-  }
+  let format = OJDGenericGamepadFormat()
 
   /// Returns nil, because the generic report format has no output report.
   func consumerOutput(
