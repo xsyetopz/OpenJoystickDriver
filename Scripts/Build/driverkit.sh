@@ -473,18 +473,23 @@ PY
   swift package --package-path "$PROJECT_DIR" dump-package > "$package_dump"
   local swifterkit_source=pinned
   _swifterkit_is_local && swifterkit_source=local
-  python3 - "$package_dump" "$swifterkit_source" <<'PY'
+  python3 - "$package_dump" "$swifterkit_source" "$PROJECT_DIR" <<'PY'
 import json
+import os
 import sys
 
 package = json.load(open(sys.argv[1]))
 dependencies = package["dependencies"]
 local_swifterkit = sys.argv[2] == "local"
+project = os.path.realpath(sys.argv[3]) + os.sep
 if local_swifterkit:
+    # Packages inside the checkout, such as Tools/BridgeCore, ship with it; only an outside path
+    # can swap a pinned dependency.
     local = [
         dependency["fileSystem"][0]
         for dependency in dependencies
         if "fileSystem" in dependency
+        and not os.path.realpath(dependency["fileSystem"][0]["path"]).startswith(project)
     ]
     if [value.get("identity") for value in local] != ["swifterkit"]:
         raise SystemExit(f"expected only the local SwifterKit path dependency: {local!r}")
