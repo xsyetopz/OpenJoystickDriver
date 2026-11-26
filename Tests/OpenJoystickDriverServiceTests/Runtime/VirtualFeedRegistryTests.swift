@@ -168,6 +168,7 @@ struct VirtualFeedRegistryTests {
     await waitUntil("!device.sent.isEmpty") { !device.sent.isEmpty }
 
     #expect(await registry.close(token: session.token))
+    // Absence: the waiting frame is never sent after the close, and nothing signals that.
     try await Task.sleep(nanoseconds: 50_000_000)
     #expect(device.sent.count == 1)
     #expect(device.closeCount == 1)

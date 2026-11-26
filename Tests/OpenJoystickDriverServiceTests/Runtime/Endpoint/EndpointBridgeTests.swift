@@ -50,6 +50,7 @@ struct EndpointBridgeTests {
       let sentBefore = device.sent.count
       // Without a KeepAlive the endpoint closes the feed after 1 second; the bridge sends one
       // every 0.5 second while the peer sends no frame.
+      // Absence: the feed stays open past its idle time, and nothing signals that.
       try await Task.sleep(nanoseconds: 2_500_000_000)
 
       #expect(feeds.openFeedCount == 1)

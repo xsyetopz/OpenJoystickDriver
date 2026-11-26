@@ -176,6 +176,8 @@ struct ControllerRecordWatcherTests {
     #expect(applied == [1])
 
     try Data("not a property list".utf8).write(to: file, options: .atomic)
+    // Absence: the rejected rewrite is never applied, and nothing signals that; the window
+    // outlasts the watcher's change detection.
     try await Task.sleep(for: .seconds(1))
     #expect(applied == [1])
     #expect(changes == 0)

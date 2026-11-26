@@ -127,6 +127,7 @@ struct StreamBoundaryServiceTests {
       .setRumble(.off, duration: .held), .stopRumble, .setRumble(.off, duration: .held),
     ]
     for command in commands { device.receive(command) }
+    // Absence: nothing reaches the sink before feedback starts, and nothing signals that.
     try await Task.sleep(nanoseconds: 20_000_000)
     #expect(sink.commands.isEmpty)
 

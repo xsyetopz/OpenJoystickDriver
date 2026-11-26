@@ -78,6 +78,7 @@ struct VirtualOutputFeedbackGateTests {
 
     // Act: the host holds the cue for 60 ms while the first write is still busy.
     gate.submit(identifier: controller, command: Self.rumble(2))
+    // Injected latency the test is about: the host holds the rumble for a measured 60 ms.
     try await Task.sleep(for: .milliseconds(60))
     gate.submit(identifier: controller, command: .stopRumble)
     await firstWrite.open()

@@ -110,6 +110,7 @@ struct EndpointWebSocketTests {
         [0x81, 0x80 | 100, 0x12, 0x34, 0x56, 0x78] + [UInt8](repeating: 0, count: 6)
       for byte in bytes.prefix(EndpointServer.handshakeSeconds + 2) {
         await client.sendBytes(Data([byte]))
+        // Injected latency the test is about: the client sends one byte per second.
         try await Task.sleep(nanoseconds: 1_000_000_000)
       }
       while await client.readFrame() != nil {}
