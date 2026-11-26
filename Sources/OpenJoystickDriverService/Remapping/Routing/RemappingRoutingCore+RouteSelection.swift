@@ -240,50 +240,74 @@ extension RemappingRoutingCore {
       route.error = nil
       routes[identifier] = route
     case .remapping(let profile):
-      let eligibility = remappingEligibility(profile, for: identifier, environment: environment)
-      if eligibility != .eligible, route.eligibility == .eligible {
-        await engine.endSource(identifier)
-      }
-      do {
-        if eligibility == .eligible, applyOutputState {
-          let permit = try requireOperationalPermit(proposedPermit)
-          try await recoverEngineIfNeeded(for: route, requiring: permit)
-          try await engine.setProfile(profile, for: identifier, requiring: permit)
-        } else if applyOutputState {
-          let permit = try requireOperationalPermit(proposedPermit)
-          try await engine.releaseAll(for: identifier, requiring: permit)
-        }
-        _ = try requireOperationalPermit(proposedPermit)
-        guard routes[identifier]?.selection == route.selection else { return }
-        if remappingEligibility(profile, for: identifier, environment: environment) != eligibility {
-          try await reconcileEligibility(
-            for: identifier,
-            environment: environment,
-            requiring: proposedPermit,
-            forceOutputState: forceOutputState
-          )
-          return
-        }
-        route.eligibilitySnapshot = RemappingEligibilitySnapshot(
-          eligibility: eligibility,
-          environment: environment
-        )
-        route.error = nil
-        routes[identifier] = route
-      } catch let error as RemappingEventEngineError {
-        if error == .outputSuspended {
-          if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
-          return
-        }
-        recordEngineFailure(error)
-        throw RemappingOutputRoutingError.engine(error)
-      }
+      try await reconcileRemappingEligibility(
+        route,
+        profile: profile,
+        for: identifier,
+        environment: environment,
+        requiring: proposedPermit,
+        forceOutputState: forceOutputState,
+        applyOutputState: applyOutputState
+      )
     case .unavailable:
       route.eligibilitySnapshot = RemappingEligibilitySnapshot(
         eligibility: .unavailable,
         environment: environment
       )
       routes[identifier] = route
+    }
+  }
+
+  /// Reconciles the remapping `route` of `identifier` for `profile`: ends the engine source when
+  /// the route stops being eligible, sets or releases the profile when output state applies, and
+  /// records the eligibility, judging again when it changed meanwhile.
+  private func reconcileRemappingEligibility(
+    _ route: RemappingControllerRoute,
+    profile: RemappingProfile,
+    for identifier: LogicalControllerID,
+    environment: RemappingEligibilityEnvironment,
+    requiring proposedPermit: RemappingEmissionPermit?,
+    forceOutputState: Bool,
+    applyOutputState: Bool
+  ) async throws {
+    var route = route
+    let eligibility = remappingEligibility(profile, for: identifier, environment: environment)
+    if eligibility != .eligible, route.eligibility == .eligible {
+      await engine.endSource(identifier)
+    }
+    do {
+      if eligibility == .eligible, applyOutputState {
+        let permit = try requireOperationalPermit(proposedPermit)
+        try await recoverEngineIfNeeded(for: route, requiring: permit)
+        try await engine.setProfile(profile, for: identifier, requiring: permit)
+      } else if applyOutputState {
+        let permit = try requireOperationalPermit(proposedPermit)
+        try await engine.releaseAll(for: identifier, requiring: permit)
+      }
+      _ = try requireOperationalPermit(proposedPermit)
+      guard routes[identifier]?.selection == route.selection else { return }
+      if remappingEligibility(profile, for: identifier, environment: environment) != eligibility {
+        try await reconcileEligibility(
+          for: identifier,
+          environment: environment,
+          requiring: proposedPermit,
+          forceOutputState: forceOutputState
+        )
+        return
+      }
+      route.eligibilitySnapshot = RemappingEligibilitySnapshot(
+        eligibility: eligibility,
+        environment: environment
+      )
+      route.error = nil
+      routes[identifier] = route
+    } catch let error as RemappingEventEngineError {
+      if error == .outputSuspended {
+        if emissionBarrier.isTerminated { throw RemappingOutputRoutingError.shutDown }
+        return
+      }
+      recordEngineFailure(error)
+      throw RemappingOutputRoutingError.engine(error)
     }
   }
 
