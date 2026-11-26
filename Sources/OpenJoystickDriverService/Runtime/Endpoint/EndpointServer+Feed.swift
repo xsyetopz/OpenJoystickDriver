@@ -42,39 +42,59 @@ extension EndpointServer {
     connection.send(EndpointFeedSession(as: persona))
     feeds.startReturningFeedback(token: token)
 
+    while handleNextFeedMessage(connection, source: source) {}
+  }
+
+  /// Reads and handles one message of a feed; returns whether the feed continues.
+  private func handleNextFeedMessage(
+    _ connection: EndpointConnection,
+    source: EndpointFeedSource
+  ) -> Bool {
+    switch connection.readMessage() {
+    case .end: return false
+    case .tooLong:
+      connection.close(Self.invalid("A message is longer than \(Self.maximumLineBytes) bytes."))
+      return false
+    case .invalid(let reason):
+      connection.close(Self.invalid(reason))
+      return false
+    case .message(let data): return handleFeedLine(data, connection: connection, source: source)
+    }
+  }
+
+  /// Handles one message line of a feed; returns whether the feed continues.
+  private func handleFeedLine(
+    _ data: Data,
+    connection: EndpointConnection,
+    source: EndpointFeedSource
+  ) -> Bool {
+    switch Self.feedLine(data) {
+    case .success(.keepAlive): return source.keepAlive()
+    case .success(.drain):
+      let drained = (try? Self.waitFor(connection) { await source.drain() }) ?? false
+      guard drained else { return false }
+      connection.send(EndpointDrained())
+      return true
+    case .success(.frame(let frame)):
+      return submitFrame(frame, connection: connection, source: source)
+    case .failure(let refusal):
+      connection.close(refusal)
+      return false
+    }
+  }
+
+  /// Submits `frame` until the feed accepts it; returns false when the feed or the peer closed.
+  private func submitFrame(
+    _ frame: VirtualFeedFrame,
+    connection: EndpointConnection,
+    source: EndpointFeedSource
+  ) -> Bool {
     while true {
-      switch connection.readMessage() {
-      case .end: return
-      case .tooLong:
-        connection.close(Self.invalid("A message is longer than \(Self.maximumLineBytes) bytes."))
-        return
-      case .invalid(let reason):
-        connection.close(Self.invalid(reason))
-        return
-      case .message(let data):
-        let frame: VirtualFeedFrame
-        switch Self.feedLine(data) {
-        case .success(.keepAlive):
-          if !source.keepAlive() { return }
-          continue
-        case .success(.drain):
-          let drained = (try? Self.waitFor(connection) { await source.drain() }) ?? false
-          if !drained { return }
-          connection.send(EndpointDrained())
-          continue
-        case .success(.frame(let decoded)): frame = decoded
-        case .failure(let refusal):
-          connection.close(refusal)
-          return
-        }
-        while true {
-          let outcome = (try? Self.waitFor(connection) { await source.submit(frame) }) ?? .closed
-          if outcome == .closed { return }
-          if outcome == .accepted { break }
-          if connection.peerHungUp { return }
-          usleep(useconds_t(VirtualFeedExchangeResult.minimumFrameMilliseconds * 1_000))
-        }
-      }
+      let outcome = (try? Self.waitFor(connection) { await source.submit(frame) }) ?? .closed
+      if outcome == .closed { return false }
+      if outcome == .accepted { return true }
+      if connection.peerHungUp { return false }
+      usleep(useconds_t(VirtualFeedExchangeResult.minimumFrameMilliseconds * 1_000))
     }
   }
 
