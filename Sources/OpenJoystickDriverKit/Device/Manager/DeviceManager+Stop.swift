@@ -27,24 +27,10 @@ extension DeviceManager {
   func tearDownControllerSessions() async {
     lifecycleGeneration &+= 1
 
-    let pendingPermissionWatch = permissionWatchTask
-    permissionWatchTask = nil
-    pendingPermissionWatch?.cancel()
-
-    for task in hidPeriodicOutputTasks.values { task.cancel() }
-    hidPeriodicOutputTasks = [:]
-    for task in rumbleStopTasks.values { task.cancel() }
-    rumbleStopTasks = [:]
-    rumbleStopTokens.removeAll()
-    for task in detectionTasks { task.cancel() }
-    detectionTasks = []
-
+    let pendingPermissionWatch = cancelDetectionAndOutputTasks()
     await pendingPermissionWatch?.value
 
-    let pendingHIDInitializations = Array(hidInitializationTasks.values)
-    for initialization in pendingHIDInitializations { initialization.task.cancel() }
-    hidInitializationTasks = [:]
-    for initialization in pendingHIDInitializations { await initialization.task.value }
+    await cancelHIDInitializations()
     permissionWatchTask?.cancel()
     permissionWatchTask = nil
     for pipeline in pipelines.values { await pipeline.acceptOnlyTeardownOutput() }
@@ -64,6 +50,38 @@ extension DeviceManager {
     hidDetectionTask = nil
     pendingHIDDetection?.cancel()
     await pendingHIDDetection?.value
+    clearControllerState()
+    await drainRetiredOutputQueues()
+  }
+
+  /// Cancels the permission watch, the periodic output, the rumble stops and detection, and returns
+  /// the permission watch that was running.
+  private func cancelDetectionAndOutputTasks() -> Task<Void, Never>? {
+    let pendingPermissionWatch = permissionWatchTask
+    permissionWatchTask = nil
+    pendingPermissionWatch?.cancel()
+
+    for task in hidPeriodicOutputTasks.values { task.cancel() }
+    hidPeriodicOutputTasks = [:]
+    for task in rumbleStopTasks.values { task.cancel() }
+    rumbleStopTasks = [:]
+    rumbleStopTokens.removeAll()
+    for task in detectionTasks { task.cancel() }
+    detectionTasks = []
+    return pendingPermissionWatch
+  }
+
+  /// Cancels every pending HID initialization and waits for each to end.
+  func cancelHIDInitializations() async {
+    let pendingHIDInitializations = Array(hidInitializationTasks.values)
+    for initialization in pendingHIDInitializations { initialization.task.cancel() }
+    hidInitializationTasks = [:]
+    for initialization in pendingHIDInitializations { await initialization.task.value }
+  }
+
+  /// Drops every pipeline and every record of a connected, unbound or held device, and retires the
+  /// output queues, then reports the change when a device was known.
+  private func clearControllerState() {
     pipelines = [:]
     for task in rumbleStopTasks.values { task.cancel() }
     rumbleStopTasks = [:]
@@ -82,6 +100,10 @@ extension DeviceManager {
     physicalOutputOwnership.removeAll()
     lastPhysicalHIDOutputNanoseconds = [:]
     if hadDeviceInfo { notifyServiceStatusChanged() }
+  }
+
+  /// Waits for each retired output queue to drain and forgets it unless a newer one replaced it.
+  private func drainRetiredOutputQueues() async {
     // A drained retired queue has nothing left for a new queue to wait behind.
     for (identifier, queue) in retiredHIDOutputQueues {
       await queue.drain()
