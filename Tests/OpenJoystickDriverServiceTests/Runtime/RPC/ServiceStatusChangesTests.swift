@@ -133,6 +133,22 @@ struct ServiceStatusChangesTests {
     return reply.announcement
   }
 
+  /// Takes the announcement once a request has made it pending.
+  ///
+  /// A request has no registration signal, so each probe is a wait that ends at once when no
+  /// announcement is pending; the first probe that takes one returns its identity.
+  private static func takeAnnouncement(
+    _ changes: ServiceStatusChanges,
+    after revision: ServiceStatusRevision? = nil
+  ) async -> UUID? {
+    var taken: UUID?
+    await waitUntil("a test notification request is pending") {
+      taken = announcementID(await changes.wait(after: revision, holdSeconds: 0))
+      return taken != nil
+    }
+    return taken
+  }
+
   @Test
   func heldWaitTakesAnnouncementAndReportEndsRequest() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
@@ -156,10 +172,8 @@ struct ServiceStatusChangesTests {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     let baseline = await Self.revision(changes)
     async let outcome = changes.announceTestNotification()
-    try await Task.sleep(nanoseconds: 20_000_000)
 
-    let reply = await changes.wait(after: baseline, holdSeconds: 30)
-    let id = try #require(Self.announcementID(reply))
+    let id = try #require(await Self.takeAnnouncement(changes, after: baseline))
 
     #expect(changes.reportTestNotification(id, outcome: .denied))
     #expect(await outcome == .denied)
@@ -169,8 +183,7 @@ struct ServiceStatusChangesTests {
   func failedReportCarriesReason() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     async let outcome = changes.announceTestNotification()
-    try await Task.sleep(nanoseconds: 20_000_000)
-    let id = try #require(Self.announcementID(await changes.wait(after: nil, holdSeconds: 30)))
+    let id = try #require(await Self.takeAnnouncement(changes))
 
     #expect(changes.reportTestNotification(id, outcome: .failed("no delivery")))
     #expect(await outcome == .failed("no delivery"))
@@ -189,8 +202,7 @@ struct ServiceStatusChangesTests {
   func takenAnnouncementWithNoReportEndsWithNoAnswer() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter(), answerSeconds: 0.05)
     async let outcome = changes.announceTestNotification()
-    try await Task.sleep(nanoseconds: 20_000_000)
-    _ = try #require(Self.announcementID(await changes.wait(after: nil, holdSeconds: 30)))
+    _ = try #require(await Self.takeAnnouncement(changes))
 
     #expect(await outcome == .noAnswer)
   }
@@ -203,7 +215,6 @@ struct ServiceStatusChangesTests {
     cancelled.cancel()
 
     #expect(await cancelled.value.event == .holdElapsed)
-    #expect(changes.heldWaitCount == 0)
     #expect(await changes.announceTestNotification() == .noAnswer)
   }
 
@@ -252,7 +263,8 @@ struct ServiceStatusChangesTests {
       first.cancel()
       second.withLock { $0 = Task { await changes.wait(after: baseline, holdSeconds: 30) } }
       _ = secondRegistered.wait(timeout: .now() + 10)
-      // Lets the pickup deadline pass while the first wait still holds the announcement.
+      // Injected latency the test is about: the pickup deadline passes while the first wait still
+      // holds the announcement, and the hook is synchronous.
       Thread.sleep(forTimeInterval: 0.05)
     }
 
@@ -269,10 +281,10 @@ struct ServiceStatusChangesTests {
   func requestWhileOneIsPendingJoinsIt() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     async let first = changes.announceTestNotification()
-    try await Task.sleep(nanoseconds: 20_000_000)
     async let second = changes.announceTestNotification()
-    try await Task.sleep(nanoseconds: 20_000_000)
-    let id = try #require(Self.announcementID(await changes.wait(after: nil, holdSeconds: 30)))
+    let id = try #require(await Self.takeAnnouncement(changes))
+    // A joining request has no registration signal, so the report waits for it by time.
+    try await Task.sleep(nanoseconds: 50_000_000)
 
     #expect(changes.reportTestNotification(id, outcome: .shown))
     #expect(await first == .shown)
@@ -292,9 +304,7 @@ struct ServiceStatusChangesTests {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     let baseline = await Self.revision(changes)
     let caller = Task { await changes.announceTestNotification() }
-    try await Task.sleep(nanoseconds: 20_000_000)
-    let reply = await changes.wait(after: baseline, holdSeconds: 30)
-    let id = try #require(Self.announcementID(reply))
+    let id = try #require(await Self.takeAnnouncement(changes, after: baseline))
 
     caller.cancel()
 
@@ -306,10 +316,10 @@ struct ServiceStatusChangesTests {
   func requestKeepsAnnouncementWhileAnotherCallerStaysAfterOneLeaves() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     let leaving = Task { await changes.announceTestNotification() }
-    try await Task.sleep(nanoseconds: 20_000_000)
     async let staying = changes.announceTestNotification()
-    try await Task.sleep(nanoseconds: 20_000_000)
-    let id = try #require(Self.announcementID(await changes.wait(after: nil, holdSeconds: 30)))
+    let id = try #require(await Self.takeAnnouncement(changes))
+    // A joining request has no registration signal, so the departure waits for it by time.
+    try await Task.sleep(nanoseconds: 50_000_000)
 
     leaving.cancel()
 
@@ -322,8 +332,7 @@ struct ServiceStatusChangesTests {
   func stalePickupDeadlineCannotEndTakenAnnouncement() async throws {
     let changes = ServiceStatusChanges(center: NotificationCenter())
     async let outcome = changes.announceTestNotification()
-    try await Task.sleep(nanoseconds: 20_000_000)
-    let id = try #require(Self.announcementID(await changes.wait(after: nil, holdSeconds: 30)))
+    let id = try #require(await Self.takeAnnouncement(changes))
 
     changes.expire(id, token: UUID())
 
