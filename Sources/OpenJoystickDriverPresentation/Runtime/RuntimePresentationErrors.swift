@@ -211,37 +211,41 @@ extension RuntimePresentation {
 
   /// Returns the SF Symbol name of a key that has one, or nil.
   static func keyboardSystemSymbolName(_ key: RemappingKeyboardKey) -> String? {
-    switch key {
-    case .escape: return "escape"
-    case .tab: return "tab"
-    case .capsLock: return "capslock"
-    case .space: return "space"
-    case .returnKey: return "return"
-    case .deleteBackward: return "delete.left"
-    case .deleteForward: return "delete.forward"
-    case .arrowUp: return "arrow.up"
-    case .arrowDown: return "arrow.down"
-    case .arrowLeft: return "arrow.left"
-    case .arrowRight: return "arrow.right"
-    case .pageUp: return "arrow.up.to.line"
-    case .pageDown: return "arrow.down.to.line"
-    case .home: return "arrow.up.to.line.compact"
-    case .end: return "arrow.down.to.line.compact"
-    default: return nil
-    }
+    keyboardSystemSymbolNames[key]
   }
+
+  /// The SF Symbol name of each key that has one.
+  private static let keyboardSystemSymbolNames: [RemappingKeyboardKey: String] = [
+    .escape: "escape",
+    .tab: "tab",
+    .capsLock: "capslock",
+    .space: "space",
+    .returnKey: "return",
+    .deleteBackward: "delete.left",
+    .deleteForward: "delete.forward",
+    .arrowUp: "arrow.up",
+    .arrowDown: "arrow.down",
+    .arrowLeft: "arrow.left",
+    .arrowRight: "arrow.right",
+    .pageUp: "arrow.up.to.line",
+    .pageDown: "arrow.down.to.line",
+    .home: "arrow.up.to.line.compact",
+    .end: "arrow.down.to.line.compact",
+  ]
 
   /// Returns an alternative SF Symbol name to try when the preferred symbol does not exist on this
   /// macOS, or nil.
   static func keyboardSystemSymbolFallbackName(_ key: RemappingKeyboardKey) -> String? {
-    switch key {
-    case .deleteBackward: return "delete.backward"
-    case .deleteForward: return "delete.right"
-    case .returnKey: return "return.left"
-    case .capsLock: return "capslock.fill"
-    default: return nil
-    }
+    keyboardSystemSymbolFallbackNames[key]
   }
+
+  /// The SF Symbol name to try for each key whose preferred symbol a macOS may lack.
+  private static let keyboardSystemSymbolFallbackNames: [RemappingKeyboardKey: String] = [
+    .deleteBackward: "delete.backward",
+    .deleteForward: "delete.right",
+    .returnKey: "return.left",
+    .capsLock: "capslock.fill",
+  ]
 
   /// Returns the label of a key: its name for the special keys, otherwise its humanized raw value.
   static func keyboardKeyLabel(_ key: RemappingKeyboardKey) -> String {

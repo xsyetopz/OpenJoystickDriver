@@ -41,4 +41,30 @@ struct RuntimePresentationErrorsTests {
     #expect(RuntimePresentation.keyboardKeyLabel(.a) == "KeyA")
     #expect(RuntimePresentation.keyboardKeyLabel(.digit1) == "Digit1")
   }
+
+  @Test(arguments: [
+    (RemappingKeyboardKey.escape, "escape"),
+    (.returnKey, "return"),
+    (.deleteBackward, "delete.left"),
+    (.pageUp, "arrow.up.to.line"),
+    (.end, "arrow.down.to.line.compact"),
+  ])
+  func specialKeyShowsItsSymbol(_ key: RemappingKeyboardKey, _ symbol: String) {
+    #expect(RuntimePresentation.keyboardSystemSymbolName(key) == symbol)
+  }
+
+  @Test
+  func symbolFallbackCoversOnlyKeysWhoseSymbolVaries() {
+    #expect(
+      RuntimePresentation.keyboardSystemSymbolFallbackName(.deleteBackward) == "delete.backward"
+    )
+    #expect(RuntimePresentation.keyboardSystemSymbolFallbackName(.capsLock) == "capslock.fill")
+    #expect(RuntimePresentation.keyboardSystemSymbolFallbackName(.escape) == nil)
+  }
+
+  @Test
+  func letterKeyHasNoSymbol() {
+    #expect(RuntimePresentation.keyboardSystemSymbolName(.a) == nil)
+    #expect(RuntimePresentation.keyboardSystemSymbolFallbackName(.a) == nil)
+  }
 }
