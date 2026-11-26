@@ -68,33 +68,43 @@ extension DeviceManager {
         // Teardown sends at-rest and shutdown reports through this still-open session, then
         // cancels the task; returning here instead would close the session under those writes.
         guard !isStopping else { continue }
-        switch event {
-        case .connected(let connection, _) where connection.physicalDevice.nativePassThrough:
-          // A native connection binds inline, so a later sibling's initialization at its location
-          // cannot cancel it; it sends no startup output to wait on.
-          await handleHIDEvent(event)
-        case .connected(let connection, let ownership):
-          scheduleHIDDeviceInitialization(connection: connection, ownership: ownership)
-        case .disconnected(let connection):
-          let key = hidInitializationKey(for: connection)
-          if hidInitializationTasks[key]?.connection.connectionID == connection.connectionID {
-            hidInitializationTasks.removeValue(forKey: key)?.task.cancel()
-          }
-          await handleHIDEvent(event)
-        case .inputReport(let address, let connectionID, _, let data):
-          await routeHIDInputReport(
-            address: address,
-            connectionID: connectionID,
-            data: data,
-            laterReportQueued: followed.contains(index)
-          )
-        case .ownershipChanged, .inputValue: await handleHIDEvent(event)
-        case .accessFailure:
-          await handleHIDEvent(event)
-          return
-        }
+        guard await dispatchHIDDetectionEvent(event, laterReportQueued: followed.contains(index))
+        else { return }
       }
     }
+  }
+
+  /// Handles one event of the HID backend; false when detection ends with it.
+  private func dispatchHIDDetectionEvent(
+    _ event: HIDDeviceEvent,
+    laterReportQueued: Bool
+  ) async -> Bool {
+    switch event {
+    case .connected(let connection, _) where connection.physicalDevice.nativePassThrough:
+      // A native connection binds inline, so a later sibling's initialization at its location
+      // cannot cancel it; it sends no startup output to wait on.
+      await handleHIDEvent(event)
+    case .connected(let connection, let ownership):
+      scheduleHIDDeviceInitialization(connection: connection, ownership: ownership)
+    case .disconnected(let connection):
+      let key = hidInitializationKey(for: connection)
+      if hidInitializationTasks[key]?.connection.connectionID == connection.connectionID {
+        hidInitializationTasks.removeValue(forKey: key)?.task.cancel()
+      }
+      await handleHIDEvent(event)
+    case .inputReport(let address, let connectionID, _, let data):
+      await routeHIDInputReport(
+        address: address,
+        connectionID: connectionID,
+        data: data,
+        laterReportQueued: laterReportQueued
+      )
+    case .ownershipChanged, .inputValue: await handleHIDEvent(event)
+    case .accessFailure:
+      await handleHIDEvent(event)
+      return false
+    }
+    return true
   }
 
   /// The indices of the input reports in `batch` that a later report of the same connection
@@ -332,13 +342,21 @@ extension DeviceManager {
     clearUnboundHIDDevices()
     clearPassThroughDevices()
     hidRoleConnections.removeAll()
+    let candidates = hidTeardownCandidates()
+    await cancelHIDInitializations()
+
+    for candidate in candidates { await removeHIDPipeline(of: candidate) }
+  }
+
+  /// The HID controllers with a connection, a physical device and a pipeline or device information.
+  private func hidTeardownCandidates() -> [HIDTeardownCandidate] {
     let hidIdentifiers = Set(
       pipelines.keys.filter { deviceInfos[$0]?.discoverySource.requiresInputRead == true }
         + deviceInfos.keys.filter {
           deviceInfos[$0]?.discoverySource.requiresInputRead == true
         }
     )
-    let candidates = hidIdentifiers.compactMap { identifier -> HIDTeardownCandidate? in
+    return hidIdentifiers.compactMap { identifier -> HIDTeardownCandidate? in
       guard let info = deviceInfos[identifier], case .hid = info.discoverySource,
         let physicalDevice = info.physicalDevice, let connectionID = info.hidConnectionID
       else { return nil }
@@ -350,43 +368,41 @@ extension DeviceManager {
         pipeline: pipelines[identifier]
       )
     }
-    let pendingInitializations = Array(hidInitializationTasks.values)
-    for initialization in pendingInitializations { initialization.task.cancel() }
-    hidInitializationTasks = [:]
-    for initialization in pendingInitializations { await initialization.task.value }
+  }
 
-    for candidate in candidates {
-      let identifier = candidate.identifier
-      guard isCurrentHIDTeardownCandidate(candidate) else { continue }
-      // Only this connection's queue is removed below, never one a replacement has installed.
-      let outputQueue = physicalOutputQueue(for: identifier)
-      if let pipeline = candidate.pipeline, pipelines[identifier] === pipeline {
-        pipelines.removeValue(forKey: identifier)
-        hidPeriodicOutputTasks.removeValue(forKey: identifier)?.cancel()
-        // Pending output never reaches a disconnected controller; neutralization queues after.
-        hidOutputQueues[identifier]?.cancelAll()
-        await neutralizePhysicalOutputs(
-          for: identifier,
-          pipeline: pipeline,
-          detachedInfo: candidate.info
-        )
-        await pipeline.stop()
-      } else {
-        // A replacement can remove this pipeline while teardown awaits initialization. The
-        // matching DeviceInfo is still ours to clear if that replacement has since aborted.
-        await candidate.pipeline?.stop()
-      }
-      guard let key = hidInitializationKey(for: identifier, connectionID: candidate.connectionID),
-        isCurrentHIDTeardownInfo(candidate), pipelines[identifier] == nil,
-        hidInitializationTasks[key] == nil
-      else { continue }
+  /// Stops the pipeline of `candidate` and clears its device information, unless a replacement
+  /// changed the controller since the candidate was listed.
+  private func removeHIDPipeline(of candidate: HIDTeardownCandidate) async {
+    let identifier = candidate.identifier
+    guard isCurrentHIDTeardownCandidate(candidate) else { return }
+    // Only this connection's queue is removed below, never one a replacement has installed.
+    let outputQueue = physicalOutputQueue(for: identifier)
+    if let pipeline = candidate.pipeline, pipelines[identifier] === pipeline {
+      pipelines.removeValue(forKey: identifier)
       hidPeriodicOutputTasks.removeValue(forKey: identifier)?.cancel()
-      retireOutputQueue(for: identifier, expected: outputQueue)
-      discardPhysicalOutputs(for: identifier)
-      deviceInfos.removeValue(forKey: identifier)
-      lastPhysicalHIDOutputNanoseconds.removeValue(forKey: identifier)
-      print("[DeviceManager] HID pipeline removed: \(identifier)")
+      // Pending output never reaches a disconnected controller; neutralization queues after.
+      hidOutputQueues[identifier]?.cancelAll()
+      await neutralizePhysicalOutputs(
+        for: identifier,
+        pipeline: pipeline,
+        detachedInfo: candidate.info
+      )
+      await pipeline.stop()
+    } else {
+      // A replacement can remove this pipeline while teardown awaits initialization. The
+      // matching DeviceInfo is still ours to clear if that replacement has since aborted.
+      await candidate.pipeline?.stop()
     }
+    guard let key = hidInitializationKey(for: identifier, connectionID: candidate.connectionID),
+      isCurrentHIDTeardownInfo(candidate), pipelines[identifier] == nil,
+      hidInitializationTasks[key] == nil
+    else { return }
+    hidPeriodicOutputTasks.removeValue(forKey: identifier)?.cancel()
+    retireOutputQueue(for: identifier, expected: outputQueue)
+    discardPhysicalOutputs(for: identifier)
+    deviceInfos.removeValue(forKey: identifier)
+    lastPhysicalHIDOutputNanoseconds.removeValue(forKey: identifier)
+    print("[DeviceManager] HID pipeline removed: \(identifier)")
   }
 
   /// Whether `candidate` still matches the state it was listed with: its device information, no
