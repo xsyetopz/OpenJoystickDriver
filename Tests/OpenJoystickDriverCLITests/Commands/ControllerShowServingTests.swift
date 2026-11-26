@@ -76,6 +76,32 @@ struct ControllerShowServingTests {
   }
 
   @Test
+  func humanRowsFollowTheDocumentedOrder() async throws {
+    var device = ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    device.virtualHIDProfile = ApplicationServiceVirtualHIDProfileStatus(
+      profile: .sdlCompatible,
+      source: .override,
+      override: .sdlCompatible,
+      unavailable: false
+    )
+    let service = try FakeService(devices: [device])
+    let human = await service.run(["controller", "show", token("pad-1")])
+    #expect(human.code == 0, "\(human.standardError)")
+    let keys = [
+      "labelName", "labelId", "labelUnit", "labelIdentity", "labelConnection", "labelProtocol",
+      "labelSession", "labelOwnership", "labelServer", "labelServing", "labelPersona",
+      "labelRecord", "labelControls", "labelRumble", "labelLighting", "labelVirtual",
+    ]
+    let lines = human.standardOutput.split(separator: "\n").map(String.init)
+    let positions = keys.map { key in
+      let label = CLILocalized.text("cli.controller.show.\(key)")
+      return lines.firstIndex { $0.hasPrefix(label + " ") }
+    }
+    #expect(!positions.contains(nil), "\(positions)")
+    #expect(positions.compactMap { $0 } == positions.compactMap { $0 }.sorted(), "\(positions)")
+  }
+
+  @Test
   func everyRouteAppearsAcrossFixtures() {
     let ids = Set(ServingFixture.all.map(\.route.id))
     #expect(ids == ["NativePassThrough", "VirtualHID", "ExtensionOwned", "OutputDisabled"])

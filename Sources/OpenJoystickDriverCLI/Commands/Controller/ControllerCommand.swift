@@ -274,16 +274,28 @@ struct ControllerShowCommand: AsyncParsableCommand {
     }
   }
 
-  /// Prints the labelled rows of `controller show` for people.
-  private static func printHuman(_ detail: ControllerShowReport.Detail) {
-    let none = CLILocalized.text("cli.controller.show.none")
-    func list(_ values: [String]) -> String {
-      values.isEmpty ? none : values.joined(separator: ", ")
-    }
-    var rows: [(String, String)] = [
+  /// One labelled row of `controller show`.
+  private typealias ShowRow = (label: String, value: String)
+
+  /// The text for a list that may be empty.
+  private static func showList(_ values: [String]) -> String {
+    values.isEmpty ? CLILocalized.text("cli.controller.show.none") : values.joined(separator: ", ")
+  }
+
+  /// A kebab-case state followed by its kebab-case reason in parentheses, when there is one.
+  private static func stateWithReason(_ state: String, reason: String?) -> String {
+    CommandLineName.kebab(state) + (reason.map { " (\(CommandLineName.kebab($0)))" } ?? "")
+  }
+
+  /// The rows that name the controller and its link: name through session.
+  private static func identityRows(_ detail: ControllerShowReport.Detail) -> [ShowRow] {
+    [
       (CLILocalized.text("cli.controller.show.labelName"), detail.name),
       (CLILocalized.text("cli.controller.show.labelId"), detail.id),
-      (CLILocalized.text("cli.controller.show.labelUnit"), detail.unit ?? none),
+      (
+        CLILocalized.text("cli.controller.show.labelUnit"),
+        detail.unit ?? CLILocalized.text("cli.controller.show.none")
+      ),
       (
         CLILocalized.text("cli.controller.show.labelIdentity"),
         deviceIdentity(vendorID: detail.vendorID, productID: detail.productID)
@@ -298,13 +310,18 @@ struct ControllerShowCommand: AsyncParsableCommand {
         CommandLineName.kebab(detail.session)
       ),
     ]
+  }
+
+  /// The battery row and the Wii remote rows, for the hardware that reports them.
+  private static func hardwareRows(_ detail: ControllerShowReport.Detail) -> [ShowRow] {
+    var rows: [ShowRow] = []
     if let power = detail.power {
       let charging =
         power.charging == .unknown ? "" : " (\(CommandLineName.kebab(power.charging.rawValue)))"
       rows.append(
         (
           CLILocalized.text("cli.controller.show.labelBattery"),
-          (power.battery.percentageText ?? none) + charging
+          (power.battery.percentageText ?? CLILocalized.text("cli.controller.show.none")) + charging
         )
       )
     }
@@ -315,17 +332,26 @@ struct ControllerShowCommand: AsyncParsableCommand {
         (CLILocalized.text("cli.controller.show.labelMotionPlus"), wii.motionPlusText()),
       ]
     }
+    return rows
+  }
+
+  /// The input health row, absent while another client holds the controller.
+  private static func inputHealthRows(_ detail: ControllerShowReport.Detail) -> [ShowRow] {
     // A controller that another client holds runs no input session, so it has no input health.
-    if detail.ownership.hidInput != HIDInputOwnership.ownedByAnotherClient.rawValue {
-      rows.append(
-        (
-          CLILocalized.text("cli.controller.show.labelInput"),
-          CommandLineName.kebab(detail.inputHealth.state)
-            + (detail.inputHealth.failureReason.map { " (\(CommandLineName.kebab($0)))" } ?? "")
-        )
-      )
+    guard detail.ownership.hidInput != HIDInputOwnership.ownedByAnotherClient.rawValue else {
+      return []
     }
-    rows += [
+    return [
+      (
+        CLILocalized.text("cli.controller.show.labelInput"),
+        stateWithReason(detail.inputHealth.state, reason: detail.inputHealth.failureReason)
+      )
+    ]
+  }
+
+  /// The ownership, server, serving, persona, and record rows, plus the macOS serving note.
+  private static func servingRows(_ detail: ControllerShowReport.Detail) -> [ShowRow] {
+    var rows: [ShowRow] = [
       (
         CLILocalized.text("cli.controller.show.labelOwnership"),
         CLILocalized.format(
@@ -345,12 +371,12 @@ struct ControllerShowCommand: AsyncParsableCommand {
       ),
       (
         CLILocalized.text("cli.controller.show.labelServing"),
-        CommandLineName.kebab(detail.serving.route)
-          + (detail.serving.reason.map { " (\(CommandLineName.kebab($0)))" } ?? "")
+        stateWithReason(detail.serving.route, reason: detail.serving.reason)
       ),
       (
         CLILocalized.text("cli.controller.show.labelPersona"),
-        detail.serving.persona.map(CommandLineName.kebab) ?? none
+        detail.serving.persona.map(CommandLineName.kebab)
+          ?? CLILocalized.text("cli.controller.show.none")
       ),
       (CLILocalized.text("cli.controller.show.labelRecord"), recordText(detail.record)),
     ]
@@ -362,36 +388,50 @@ struct ControllerShowCommand: AsyncParsableCommand {
         )
       )
     }
-    if let mapping = detail.inputMapping {
+    return rows
+  }
+
+  /// The input mapping row and the unmapped-controls row.
+  private static func inputMappingRows(_ detail: ControllerShowReport.Detail) -> [ShowRow] {
+    guard let mapping = detail.inputMapping else { return [] }
+    var rows: [ShowRow] = [
+      (
+        CLILocalized.text("cli.controller.show.labelInputMapping"),
+        mapping.rowText(localize: CLILocalized.text)
+      )
+    ]
+    if !mapping.unmapped.isEmpty {
       rows.append(
         (
-          CLILocalized.text("cli.controller.show.labelInputMapping"),
-          mapping.rowText(localize: CLILocalized.text)
+          CLILocalized.text("cli.controller.show.labelUnmapped"),
+          mapping.unmapped.joined(separator: ", ")
         )
       )
-      if !mapping.unmapped.isEmpty {
-        rows.append(
-          (
-            CLILocalized.text("cli.controller.show.labelUnmapped"),
-            mapping.unmapped.joined(separator: ", ")
-          )
-        )
-      }
     }
-    rows += [
+    return rows
+  }
+
+  /// The controls, rumble, and lighting rows.
+  private static func capabilityRows(_ detail: ControllerShowReport.Detail) -> [ShowRow] {
+    [
       (
         CLILocalized.text("cli.controller.show.labelControls"),
-        list(detail.capabilities.controls.map(CommandLineName.kebab))
+        showList(detail.capabilities.controls.map(CommandLineName.kebab))
       ),
       (
         CLILocalized.text("cli.controller.show.labelRumble"),
-        list(detail.capabilities.rumbleMotors.map(CommandLineName.kebab))
+        showList(detail.capabilities.rumbleMotors.map(CommandLineName.kebab))
       ),
       (
         CLILocalized.text("cli.controller.show.labelLighting"),
-        list(detail.capabilities.lightingFeatures.map(CommandLineName.kebab))
+        showList(detail.capabilities.lightingFeatures.map(CommandLineName.kebab))
       ),
     ]
+  }
+
+  /// The exclusive owner, holders, and next-step rows.
+  private static func holderRows(_ detail: ControllerShowReport.Detail) -> [ShowRow] {
+    var rows: [ShowRow] = []
     if detail.ownership.hidInput == HIDInputOwnership.ownedByAnotherClient.rawValue {
       rows.append(
         (
@@ -403,7 +443,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
     rows.append(
       (
         CLILocalized.text("ui.controllers.holders"),
-        list(detail.ownership.holders.map { $0.label(localize: CLILocalized.text) })
+        showList(detail.ownership.holders.map { $0.label(localize: CLILocalized.text) })
       )
     )
     let nextStep = CLILocalized.text("cli.controller.show.labelNextStep")
@@ -418,6 +458,12 @@ struct ControllerShowCommand: AsyncParsableCommand {
     } else if detail.session == ControllerSessionState.suspended.rawValue {
       rows.append((nextStep, CLILocalized.format("cli.controller.show.resumeHint", detail.id)))
     }
+    return rows
+  }
+
+  /// The output owner, tuning, virtual device, and publication rows.
+  private static func deviceStateRows(_ detail: ControllerShowReport.Detail) -> [ShowRow] {
+    var rows: [ShowRow] = []
     // The output lists above hold only what macOS leaves undone, so say why.
     if detail.capabilities.outputOwner == ControllerServer.system.rawValue {
       rows.append(
@@ -432,22 +478,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
         (CLILocalized.text("cli.controller.show.labelTuning"), tuning.rows.joined(separator: ", "))
       )
     }
-    if let virtual = detail.virtual {
-      rows.append(
-        (
-          CLILocalized.text("cli.controller.show.labelVirtual"),
-          virtual.profile.map { profile in
-            let source = virtual.source.map { CommandLineName.kebab($0.rawValue) } ?? ""
-            return "\(CommandLineName.kebab(profile)) (\(source))"
-          } ?? none
-        )
-      )
-      if virtual.gameRumbleUnavailable,
-        let profile = virtual.profile.flatMap({ VirtualHIDProfileID(rawValue: $0) })
-      {
-        rows.append(("", noGameRumbleNote(profile)))
-      }
-    }
+    rows += virtualRows(detail.virtual)
     if let publication = detail.publication {
       rows.append(
         (
@@ -458,14 +489,48 @@ struct ControllerShowCommand: AsyncParsableCommand {
         )
       )
     }
-    let width = rows.map(\.0.count).max() ?? 0
+    return rows
+  }
+
+  /// The virtual device row and its no-game-rumble note.
+  private static func virtualRows(_ virtual: ControllerShowReport.Virtual?) -> [ShowRow] {
+    guard let virtual else { return [] }
+    var rows: [ShowRow] = [
+      (
+        CLILocalized.text("cli.controller.show.labelVirtual"),
+        virtual.profile.map { profile in
+          let source = virtual.source.map { CommandLineName.kebab($0.rawValue) } ?? ""
+          return "\(CommandLineName.kebab(profile)) (\(source))"
+        } ?? CLILocalized.text("cli.controller.show.none")
+      )
+    ]
+    if virtual.gameRumbleUnavailable,
+      let profile = virtual.profile.flatMap({ VirtualHIDProfileID(rawValue: $0) })
+    {
+      rows.append(("", noGameRumbleNote(profile)))
+    }
+    return rows
+  }
+
+  /// Prints the labelled rows of `controller show` for people.
+  private static func printHuman(_ detail: ControllerShowReport.Detail) {
+    let rows =
+      identityRows(detail) + hardwareRows(detail) + inputHealthRows(detail)
+      + servingRows(detail) + inputMappingRows(detail) + capabilityRows(detail)
+      + holderRows(detail) + deviceStateRows(detail)
+    let width = rows.map(\.label.count).max() ?? 0
     for (label, value) in rows {
       CLIOutput.stdout(label.padding(toLength: width, withPad: " ", startingAt: 0) + "  " + value)
     }
-    guard !detail.outputChecks.isEmpty else { return }
+    printOutputChecks(detail.outputChecks)
+  }
+
+  /// Prints the expected output of each output check under its own heading.
+  private static func printOutputChecks(_ checks: [ControllerShowReport.OutputCheck]) {
+    guard !checks.isEmpty else { return }
     CLIOutput.stdout("")
     CLIOutput.stdout(CLILocalized.text("cli.controller.show.labelOutputChecks"))
-    for check in detail.outputChecks {
+    for check in checks {
       CLIOutput.stdout("  \(check.command)")
       CLIOutput.stdout("    \(check.expected)")
     }
