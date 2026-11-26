@@ -146,55 +146,34 @@ extension DeviceManager {
     lifecycle: Bool,
     in _: PhysicalOutputQueueOperation
   ) async -> Bool {
-    // macOS owns a native controller's output; OJD writes only what its allowance names.
-    if let allowance = pipeline.macOSOwnedOutput,
-      reports.isEmpty || !reports.allSatisfy({ allowance.permits($0, kind: .output) })
-    {
-      return false
+    guard Self.allowsHIDOutput(reports, of: pipeline) else { return false }
+    func isCurrent() async -> Bool {
+      await isCurrentPhysicalHIDOutput(
+        identifier: identifier,
+        pipeline: pipeline,
+        startupConnection: startupConnection,
+        detachedInfo: detachedInfo
+      )
     }
     var succeeded = true
     for (index, report) in reports.enumerated() {
       if index > 0, intervalNanoseconds > 0 {
         do { try await Task.sleep(nanoseconds: intervalNanoseconds) } catch { return false }
       }
-      guard
-        await isCurrentPhysicalHIDOutput(
-          identifier: identifier,
-          pipeline: pipeline,
-          startupConnection: startupConnection,
-          detachedInfo: detachedInfo
-        )
-      else { return false }
+      guard await isCurrent() else { return false }
       if !lifecycle {
         do { try await enforcePhysicalHIDOutputInterval(for: identifier, pipeline: pipeline) } catch
         { return false }
       }
-      guard
-        await isCurrentPhysicalHIDOutput(
+      guard await isCurrent(),
+        let result = await writeHIDOutputReport(
+          report,
+          address: address,
           identifier: identifier,
           pipeline: pipeline,
-          startupConnection: startupConnection,
           detachedInfo: detachedInfo
         )
       else { return false }
-      let result: PhysicalHIDReportResult<Void>
-      if let detachedInfo {
-        guard
-          let connection = await currentDetachedHIDConnection(
-            identifier: identifier,
-            pipeline: pipeline,
-            detachedInfo: detachedInfo
-          )
-        else { return false }
-        result = await hidManager.setOutputReport(connection: connection, report: report)
-      } else if writesExactHIDConnection(identifier, pipeline: pipeline) {
-        guard let connection = currentHIDConnection(for: identifier, address: address) else {
-          return false
-        }
-        result = await hidManager.setOutputReport(connection: connection, report: report)
-      } else {
-        result = await hidManager.setOutputReport(address: address, report: report)
-      }
       if !result.succeeded {
         guard lifecycle else { return false }
         print(
@@ -203,16 +182,49 @@ extension DeviceManager {
         )
         succeeded = false
       }
-      guard
-        await isCurrentPhysicalHIDOutput(
-          identifier: identifier,
-          pipeline: pipeline,
-          startupConnection: startupConnection,
-          detachedInfo: detachedInfo
-        )
-      else { return false }
+      guard await isCurrent() else { return false }
     }
     return succeeded
+  }
+
+  /// Whether `pipeline` may write `reports`: macOS owns a native controller's output, so OJD
+  /// writes only a non-empty plan its allowance names in full.
+  private static func allowsHIDOutput(
+    _ reports: [PhysicalHIDOutputReport],
+    of pipeline: DevicePipeline
+  ) -> Bool {
+    guard let allowance = pipeline.macOSOwnedOutput else { return true }
+    return !reports.isEmpty && reports.allSatisfy { allowance.permits($0, kind: .output) }
+  }
+
+  /// Writes `report` to the connection the output of `identifier` targets: the detached
+  /// connection of `detachedInfo`, the exact HID connection, or the routing `address`.
+  ///
+  /// Returns nil when the targeted connection is gone.
+  private func writeHIDOutputReport(
+    _ report: PhysicalHIDOutputReport,
+    address: ControllerConnectionAddress,
+    identifier: LogicalControllerID,
+    pipeline: DevicePipeline,
+    detachedInfo: DeviceInfo?
+  ) async -> PhysicalHIDReportResult<Void>? {
+    if let detachedInfo {
+      guard
+        let connection = await currentDetachedHIDConnection(
+          identifier: identifier,
+          pipeline: pipeline,
+          detachedInfo: detachedInfo
+        )
+      else { return nil }
+      return await hidManager.setOutputReport(connection: connection, report: report)
+    }
+    if writesExactHIDConnection(identifier, pipeline: pipeline) {
+      guard let connection = currentHIDConnection(for: identifier, address: address) else {
+        return nil
+      }
+      return await hidManager.setOutputReport(connection: connection, report: report)
+    }
+    return await hidManager.setOutputReport(address: address, report: report)
   }
 
   /// The current backend snapshot of the HID connection that `detachedInfo` names, or nil when the
