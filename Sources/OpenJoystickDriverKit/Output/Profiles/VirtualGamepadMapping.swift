@@ -146,27 +146,13 @@ extension VirtualHIDProfileID {
       let changed = fields.filter {
         Self.value(of: $0.element, in: reports) != Self.value(of: $0.element, in: neutral)
       }
-      let changedOffsets = Set(changed.map(\.offset))
-      var binding: String?
-      let buttonIndex = buttons.firstIndex(where: changedOffsets.contains)
-      let axisIndex = axes.firstIndex(where: changedOffsets.contains)
-      // A trigger that also sets a digital bit, as the DualShock 4's L2 and R2 do, binds its axis
-      // so games read its pressure.
-      let prefersAxis = control == .leftTrigger || control == .rightTrigger
-      if let index = buttonIndex, !(prefersAxis && axisIndex != nil) {
-        binding = "b\(index)"
-      } else if let index = axisIndex {
-        let axis = parsed.fields[axes[index]]
-        let inverted =
-          Self.signedValue(of: axis, in: reports) < Self.signedValue(of: axis, in: neutral)
-        binding = "a\(index)" + (inverted ? "~" : "")
-      } else if let hat = changed.first(where: {
-        $0.element.usagePage == 1 && $0.element.usage == 0x39
-      })?.element {
-        let mask = [1: 1, 2: 3, 3: 2, 4: 6, 5: 4, 6: 12, 7: 8, 8: 9]
-        let raw = Self.value(of: hat, in: reports) - hat.logicalMin + 1
-        binding = "h0.\(mask[raw] ?? 0)"
-      }
+      let binding = Self.binding(
+        for: control,
+        changed: changed,
+        orders: (buttons: buttons, axes: axes),
+        fields: parsed.fields,
+        reports: (probe: reports, neutral: neutral)
+      )
       probes.append(
         .init(
           control: control,
@@ -176,6 +162,38 @@ extension VirtualHIDProfileID {
       )
     }
     return Self.assemble(self, identity: profile.identity, probes: probes)
+  }
+
+  /// Returns the SDL binding of a control from the fields that its probe changed: a button, an
+  /// axis, or a hat, in that order of preference.
+  private static func binding(
+    for control: Control,
+    changed: [(offset: Int, element: HIDField)],
+    orders: (buttons: [Int], axes: [Int]),
+    fields: [HIDField],
+    reports: (probe: [UInt8: [UInt8]], neutral: [UInt8: [UInt8]])
+  ) -> String? {
+    let changedOffsets = Set(changed.map(\.offset))
+    let buttonIndex = orders.buttons.firstIndex(where: changedOffsets.contains)
+    let axisIndex = orders.axes.firstIndex(where: changedOffsets.contains)
+    // A trigger that also sets a digital bit, as the DualShock 4's L2 and R2 do, binds its axis
+    // so games read its pressure.
+    let prefersAxis = control == .leftTrigger || control == .rightTrigger
+    if let index = buttonIndex, !(prefersAxis && axisIndex != nil) { return "b\(index)" }
+    if let index = axisIndex {
+      let axis = fields[orders.axes[index]]
+      let inverted =
+        Self.signedValue(of: axis, in: reports.probe)
+        < Self.signedValue(of: axis, in: reports.neutral)
+      return "a\(index)" + (inverted ? "~" : "")
+    }
+    guard
+      let hat = changed.first(where: { $0.element.usagePage == 1 && $0.element.usage == 0x39 })?
+        .element
+    else { return nil }
+    let mask = [1: 1, 2: 3, 3: 2, 4: 6, 5: 4, 6: 12, 7: 8, 8: 9]
+    let raw = Self.value(of: hat, in: reports.probe) - hat.logicalMin + 1
+    return "h0.\(mask[raw] ?? 0)"
   }
 
   /// Builds the mapping from the probes: the SDL line with the bindings in SDL's field order, the
