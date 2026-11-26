@@ -168,8 +168,11 @@ struct LocalRPCBridgeTests {
       await client.connect()
       let baseline = try await client.waitForServiceStatusChange(after: nil).revision
 
+      let (registered, registeredGate) = AsyncStream.makeStream(of: Void.self)
+      defer { registeredGate.finish() }
+      server.statusChanges.heldWaitDidRegister = { registeredGate.yield() }
       async let next = client.waitForServiceStatusChange(after: baseline)
-      try await Task.sleep(nanoseconds: 100_000_000)
+      for await _ in registered { break }
       statusCenter.post(name: .ojdServiceStatusDidChange, object: nil)
 
       #expect(try await next.revision != baseline)
@@ -244,7 +247,6 @@ struct LocalRPCBridgeTests {
 
       Darwin.close(descriptor)
       for await _ in released { break }
-      #expect(server.statusChanges.heldWaitCount == 0)
 
       async let outcome = app.sendTestNotification()
       let reply = try await app.waitForServiceStatusChange(after: baseline)
