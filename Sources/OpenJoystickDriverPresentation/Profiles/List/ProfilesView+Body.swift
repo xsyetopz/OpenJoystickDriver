@@ -96,151 +96,11 @@
       }
       // SwiftUI presents only the last of several sheets attached to one view, so each sheet
       // hangs off its own sibling background view.
-      .background(
-        EmptyView().sheet(isPresented: $screen.isCreatingProfile) {
-          ProfileNameSheet(
-            title: OJDLocalized.string("ui.profiles.new"),
-            context: ProfileCreationContext(
-              choices: ProfileControllerChoice.choices(
-                devices: connectedDevices,
-                profiles: profiles,
-                catalog: screen.catalogModels,
-                names: screen.catalogNames
-              ),
-              profiles: profiles,
-              isLoadingCatalog: screen.isLoadingCatalog,
-              unreadableRecordFiles: screen.unreadableRecordFiles
-            )
-          ) { createProfile($0) }
-        }
-      ).background(
-        EmptyView().sheet(item: $screen.duplicatingProfile) { source in
-          ProfileDuplicateSheet(source: source, profiles: profiles) { createProfile($0) }
-        }
-      ).background(
-        EmptyView().sheet(item: $screen.convertingProfile) { source in
-          ProfileConversionSheet(
-            source: source,
-            choices: ProfileControllerChoice.choices(
-              devices: connectedDevices,
-              profiles: profiles,
-              catalog: screen.catalogModels,
-              names: screen.catalogNames
-            ),
-            profiles: profiles,
-            isLoadingCatalog: screen.isLoadingCatalog
-          ) { convertProfile($0) }
-        }
-      ).background(
-        EmptyView().sheet(item: $screen.conversionReport) { report in
-          ProfileConversionReportSheet(report: report)
-        }
-      ).background(
-        EmptyView().sheet(item: $screen.pairingProfile) { profile in
-          ProfileJoyConPairSheet(profile: profile, devices: connectedDevices) { left, right in
-            Task { @MainActor in
-              screen.failProfileAction(
-                await viewModel.pairRemappingJoyCons(
-                  left: .session(left),
-                  right: .session(right),
-                  profileID: profile.id
-                ),
-                beside: .joyCon
-              )
-            }
-          }
-        }
-      ).background(
-        EmptyView().alert(item: $screen.fileValidation) { validation in
-          Alert(
-            title: Text(validation.title),
-            message: Text(validation.message),
-            dismissButton: .default(Text(OJDLocalized.string("action.dismiss")))
-          )
-        }
-      ).alert(item: $screen.activeAlert) { alert in
-        switch alert {
-        case .delete(let id):
-          Alert(
-            title: Text(OJDLocalized.string("ui.profiles.deleteTitle")),
-            message: Text(
-              OJDLocalized.string(
-                "ui.profiles.deleteMessage"
-              )
-            ),
-            primaryButton: .destructive(
-              Text(OJDLocalized.string("action.delete"))
-            ) { deleteProfile(id) },
-            secondaryButton: .cancel { activeAlert = nil }
-          )
-        case .discard:
-          Alert(
-            title: Text(
-              OJDLocalized.string("ui.settings.advanced.discardTitle")
-            ),
-            message: Text(
-              OJDLocalized.string(
-                "ui.profiles.discardMessage"
-              )
-            ),
-            primaryButton: .destructive(
-              Text(OJDLocalized.string("ui.settings.advanced.discardAction"))
-            ) {
-              guard let action = profileEditorTransition.discardPendingAction() else {
-                activeAlert = nil
-                return
-              }
-              setEditorDirty(false)
-              activeAlert = nil
-              performProfileAction(action)
-            },
-            secondaryButton: .cancel { cancelPendingProfileAction() }
-          )
-        case .deleteDamagedProfile(let issueID):
-          Alert(
-            title: Text(
-              OJDLocalized.string("ui.profiles.damagedProfile")
-            ),
-            message: Text(
-              OJDLocalized.string(
-                "ui.profiles.recoveryBackupMessage"
-              )
-            ),
-            primaryButton: .destructive(
-              Text(OJDLocalized.string("action.delete"))
-            ) { recoverProfileIssue(issueID, resetLibrary: false) },
-            secondaryButton: .cancel { activeAlert = nil }
-          )
-        case .resetLibrary(let issueID):
-          Alert(
-            title: Text(
-              OJDLocalized.string(
-                "ui.profiles.damagedLibrary"
-              )
-            ),
-            message: Text(
-              OJDLocalized.string(
-                "ui.profiles.recoveryBackupMessage"
-              )
-            ),
-            primaryButton: .destructive(
-              Text(OJDLocalized.string("ui.profiles.resetLibraryAction"))
-            ) { recoverProfileIssue(issueID, resetLibrary: true) },
-            secondaryButton: .cancel { activeAlert = nil }
-          )
-        }
-      }.onAppear {
-        if case .available(let snapshot) = viewModel.remappingState {
-          lastKnownSnapshot = snapshot
-          screen.reconcileSelection(with: snapshot)
-        }
-        if observedDiscardGeneration != navigation.discardGeneration {
-          profileEditorTransition.setDirty(false)
-          observedDiscardGeneration = navigation.discardGeneration
-        }
-        selectFirstProfileIfNeeded()
-        navigation.setProfilesEditorDirty(editorHasUnsavedChanges)
-        handleProfileMutation(library.mutationState)
+      .background(creationSheetHost).background(duplicationSheetHost)
+      .background(conversionSheetHost).background(conversionReportSheetHost)
+      .background(pairingSheetHost).background(fileValidationAlertHost)
+      .alert(item: $screen.activeAlert) { alert in profileAlert(alert) }.onAppear {
+        handleDetailAppear()
       }.onReceive(library.$mutationState) { handleProfileMutation($0) }.onReceive(
         screen.$chosenImportProfile.compactMap { $0 }
       ) { receiveChosenImportProfile($0) }.onReceive(
@@ -248,23 +108,195 @@
       ) { generation in
         observedDiscardGeneration = generation
         if editorHasUnsavedChanges { setEditorDirty(false) }
-      }.onReceive(viewModel.$remappingState) { state in
-        if case .available(let snapshot) = state {
-          if !editorHasUnsavedChanges, let selectedProfileID,
-            lastKnownSnapshot?.profiles.first(where: { $0.id == selectedProfileID })
-              != snapshot.profiles.first(where: { $0.id == selectedProfileID })
-          {
-            profileEditorGeneration += 1
+      }.onReceive(viewModel.$remappingState) { state in handleRemappingState(state) }
+    }
+
+    /// The controller choices for a new or converted profile.
+    private var controllerChoices: [ProfileControllerChoice] {
+      ProfileControllerChoice.choices(
+        devices: connectedDevices,
+        profiles: profiles,
+        catalog: screen.catalogModels,
+        names: screen.catalogNames
+      )
+    }
+
+    /// The host of the sheet that creates a profile.
+    private var creationSheetHost: some View {
+      EmptyView().sheet(isPresented: $screen.isCreatingProfile) {
+        ProfileNameSheet(
+          title: OJDLocalized.string("ui.profiles.new"),
+          context: ProfileCreationContext(
+            choices: controllerChoices,
+            profiles: profiles,
+            isLoadingCatalog: screen.isLoadingCatalog,
+            unreadableRecordFiles: screen.unreadableRecordFiles
+          )
+        ) { createProfile($0) }
+      }
+    }
+
+    /// The host of the sheet that duplicates a profile.
+    private var duplicationSheetHost: some View {
+      EmptyView().sheet(item: $screen.duplicatingProfile) { source in
+        ProfileDuplicateSheet(source: source, profiles: profiles) { createProfile($0) }
+      }
+    }
+
+    /// The host of the sheet that converts a profile to another controller.
+    private var conversionSheetHost: some View {
+      EmptyView().sheet(item: $screen.convertingProfile) { source in
+        ProfileConversionSheet(
+          source: source,
+          choices: controllerChoices,
+          profiles: profiles,
+          isLoadingCatalog: screen.isLoadingCatalog
+        ) { convertProfile($0) }
+      }
+    }
+
+    /// The host of the sheet that reports a conversion.
+    private var conversionReportSheetHost: some View {
+      EmptyView().sheet(item: $screen.conversionReport) { report in
+        ProfileConversionReportSheet(report: report)
+      }
+    }
+
+    /// The host of the sheet that pairs two Joy-Con controllers.
+    private var pairingSheetHost: some View {
+      EmptyView().sheet(item: $screen.pairingProfile) { profile in
+        ProfileJoyConPairSheet(profile: profile, devices: connectedDevices) { left, right in
+          Task { @MainActor in
+            screen.failProfileAction(
+              await viewModel.pairRemappingJoyCons(
+                left: .session(left),
+                right: .session(right),
+                profileID: profile.id
+              ),
+              beside: .joyCon
+            )
           }
-          if editorHasUnsavedChanges, let selectedProfileID,
-            !snapshot.profiles.contains(where: { $0.id == selectedProfileID }),
-            let previous = lastKnownSnapshot?.profiles.first(where: { $0.id == selectedProfileID })
-          {
-            preservedEditorProfile = previous
-          }
-          lastKnownSnapshot = snapshot
-          screen.reconcileSelection(with: snapshot)
         }
+      }
+    }
+
+    /// The host of the alert that reports a failed file validation.
+    private var fileValidationAlertHost: some View {
+      EmptyView().alert(item: $screen.fileValidation) { validation in
+        Alert(
+          title: Text(validation.title),
+          message: Text(validation.message),
+          dismissButton: .default(Text(OJDLocalized.string("action.dismiss")))
+        )
+      }
+    }
+
+    /// The confirmation alert for the pending ``activeAlert``.
+    private func profileAlert(_ alert: ProfilesAlert) -> Alert {
+      switch alert {
+      case .delete(let id):
+        Alert(
+          title: Text(OJDLocalized.string("ui.profiles.deleteTitle")),
+          message: Text(
+            OJDLocalized.string(
+              "ui.profiles.deleteMessage"
+            )
+          ),
+          primaryButton: .destructive(
+            Text(OJDLocalized.string("action.delete"))
+          ) { deleteProfile(id) },
+          secondaryButton: .cancel { activeAlert = nil }
+        )
+      case .discard:
+        Alert(
+          title: Text(
+            OJDLocalized.string("ui.settings.advanced.discardTitle")
+          ),
+          message: Text(
+            OJDLocalized.string(
+              "ui.profiles.discardMessage"
+            )
+          ),
+          primaryButton: .destructive(
+            Text(OJDLocalized.string("ui.settings.advanced.discardAction"))
+          ) {
+            guard let action = profileEditorTransition.discardPendingAction() else {
+              activeAlert = nil
+              return
+            }
+            setEditorDirty(false)
+            activeAlert = nil
+            performProfileAction(action)
+          },
+          secondaryButton: .cancel { cancelPendingProfileAction() }
+        )
+      case .deleteDamagedProfile(let issueID):
+        Alert(
+          title: Text(
+            OJDLocalized.string("ui.profiles.damagedProfile")
+          ),
+          message: Text(
+            OJDLocalized.string(
+              "ui.profiles.recoveryBackupMessage"
+            )
+          ),
+          primaryButton: .destructive(
+            Text(OJDLocalized.string("action.delete"))
+          ) { recoverProfileIssue(issueID, resetLibrary: false) },
+          secondaryButton: .cancel { activeAlert = nil }
+        )
+      case .resetLibrary(let issueID):
+        Alert(
+          title: Text(
+            OJDLocalized.string(
+              "ui.profiles.damagedLibrary"
+            )
+          ),
+          message: Text(
+            OJDLocalized.string(
+              "ui.profiles.recoveryBackupMessage"
+            )
+          ),
+          primaryButton: .destructive(
+            Text(OJDLocalized.string("ui.profiles.resetLibraryAction"))
+          ) { recoverProfileIssue(issueID, resetLibrary: true) },
+          secondaryButton: .cancel { activeAlert = nil }
+        )
+      }
+    }
+
+    /// Restores the selection and the editor state when the detail column appears.
+    private func handleDetailAppear() {
+      if case .available(let snapshot) = viewModel.remappingState {
+        lastKnownSnapshot = snapshot
+        screen.reconcileSelection(with: snapshot)
+      }
+      if observedDiscardGeneration != navigation.discardGeneration {
+        profileEditorTransition.setDirty(false)
+        observedDiscardGeneration = navigation.discardGeneration
+      }
+      selectFirstProfileIfNeeded()
+      navigation.setProfilesEditorDirty(editorHasUnsavedChanges)
+      handleProfileMutation(library.mutationState)
+    }
+
+    /// Tracks the snapshot that the editor reloads or preserves its profile from.
+    private func handleRemappingState(_ state: RuntimeRemappingState) {
+      if case .available(let snapshot) = state {
+        if !editorHasUnsavedChanges, let selectedProfileID,
+          lastKnownSnapshot?.profiles.first(where: { $0.id == selectedProfileID })
+            != snapshot.profiles.first(where: { $0.id == selectedProfileID })
+        {
+          profileEditorGeneration += 1
+        }
+        if editorHasUnsavedChanges, let selectedProfileID,
+          !snapshot.profiles.contains(where: { $0.id == selectedProfileID }),
+          let previous = lastKnownSnapshot?.profiles.first(where: { $0.id == selectedProfileID })
+        {
+          preservedEditorProfile = previous
+        }
+        lastKnownSnapshot = snapshot
+        screen.reconcileSelection(with: snapshot)
       }
     }
 
