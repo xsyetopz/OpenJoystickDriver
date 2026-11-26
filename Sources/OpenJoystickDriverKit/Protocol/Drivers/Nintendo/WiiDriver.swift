@@ -292,6 +292,18 @@ public final class WiiDriver: PhysicalProtocolDriver {
     default: modeChanged = reconcileIR(at: receivedAt)
     }
     if modeChanged { pendingWrites.append(reportModeWrite()) }
+    return dataEvent(bytes, id: id, receivedAt: receivedAt)
+  }
+
+  /// The event of a data report: the core buttons, and the accelerometer, extension and IR blocks
+  /// its report mode carries; nil for a mode without a `Buttons` block or a short report.
+  private func dataEvent(
+    _ bytes: [UInt8],
+    id: UInt8,
+    receivedAt: MonotonicTimestamp
+  )
+    -> ControllerEvent?
+  {
     guard let mode = wii.reportModes.first(where: { $0.id == id }),
       let buttons = mode.blocks.first(where: { $0.kind == .buttons }),
       bytes.count >= 1 + (mode.blocks.last.map { $0.offset + $0.length } ?? 0)
