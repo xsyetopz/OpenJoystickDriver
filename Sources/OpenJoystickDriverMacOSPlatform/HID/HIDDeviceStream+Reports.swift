@@ -5,6 +5,7 @@ import IOKit.hid
 package import OpenJoystickDriverKit
 
 extension HIDDeviceStream {
+  /// Sends an output report to the devices at `locationID`.
   package func setOutputReport(
     locationID: UInt32,
     report: PhysicalHIDOutputReport
@@ -67,21 +68,9 @@ extension HIDDeviceStream {
 
     var lastResult = kIOReturnNotFound
     for device in devices {
-      var bytes = [UInt8](repeating: 0, count: request.length)
-
-      var reportLength = request.length
-      let result = bytes.withUnsafeMutableBufferPointer { pointer in
-        guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-        return unsafe IOHIDDeviceGetReport(
-          device,
-          kIOHIDReportTypeFeature,
-          CFIndex(request.reportID),
-          baseAddress,
-          &reportLength
-        )
-      }
-      if result == kIOReturnSuccess { return .success(Data(bytes.prefix(reportLength))) }
-      lastResult = result
+      let read = Self.readFeature(device, request: request)
+      if read.result == kIOReturnSuccess { return .success(read.data) }
+      lastResult = read.result
     }
     print(
       "[HIDDeviceStream] Feature report read failed for loc=\(locationID)"
@@ -89,9 +78,6 @@ extension HIDDeviceStream {
     )
     return .failed(.init(ioReturn: lastResult))
   }
-
-  /// Replaces the seize of each device at a location with a shared open, so another client can
-  /// open the devices while input keeps flowing here.
 
   /// Sends `report` of the given IOHID report `type` to the devices at `locationID`.
   ///
@@ -109,18 +95,7 @@ extension HIDDeviceStream {
 
     var lastResult = kIOReturnNotFound
     for device in devices {
-      var bytes = report.bytes
-      let reportLength = bytes.count
-      let result = bytes.withUnsafeMutableBufferPointer { pointer in
-        guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-        return unsafe IOHIDDeviceSetReport(
-          device,
-          type,
-          CFIndex(report.reportID),
-          baseAddress,
-          reportLength
-        )
-      }
+      let result = Self.writeReport(device, report: report, type: type)
       if result == kIOReturnSuccess { return .success(()) }
       lastResult = result
     }
@@ -171,6 +146,17 @@ extension HIDDeviceStream {
     _ device: IOHIDDevice,
     request: PhysicalHIDFeatureReadRequest
   ) -> PhysicalHIDReportResult<Data> {
+    let read = readFeature(device, request: request)
+    guard read.result == kIOReturnSuccess else { return .failed(.init(ioReturn: read.result)) }
+    return .success(read.data)
+  }
+
+  /// Reads the feature report that `request` names from `device`, with the IOKit status and the
+  /// bytes the device returned.
+  private static func readFeature(
+    _ device: IOHIDDevice,
+    request: PhysicalHIDFeatureReadRequest
+  ) -> (result: IOReturn, data: Data) {
     var bytes = [UInt8](repeating: 0, count: request.length)
     var reportLength = request.length
     let result = bytes.withUnsafeMutableBufferPointer { pointer in
@@ -183,8 +169,27 @@ extension HIDDeviceStream {
         &reportLength
       )
     }
-    guard result == kIOReturnSuccess else { return .failed(.init(ioReturn: result)) }
-    return .success(Data(bytes.prefix(reportLength)))
+    return (result, Data(bytes.prefix(reportLength)))
+  }
+
+  /// Writes `report` to `device` as a report of IOHID report `type`.
+  private static func writeReport(
+    _ device: IOHIDDevice,
+    report: PhysicalHIDOutputReport,
+    type: IOHIDReportType
+  ) -> IOReturn {
+    var bytes = report.bytes
+    let reportLength = bytes.count
+    return bytes.withUnsafeMutableBufferPointer { pointer in
+      guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
+      return unsafe IOHIDDeviceSetReport(
+        device,
+        type,
+        CFIndex(report.reportID),
+        baseAddress,
+        reportLength
+      )
+    }
   }
 
   /// Sends `report` of the given IOHID report `type` to the device of `connection`.
@@ -196,18 +201,7 @@ extension HIDDeviceStream {
     label: String
   ) -> PhysicalHIDReportResult<Void> {
     guard let device = exactDevice(for: connection, type: type) else { return .unavailable }
-    var bytes = report.bytes
-    let reportLength = bytes.count
-    let result = bytes.withUnsafeMutableBufferPointer { pointer in
-      guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-      return unsafe IOHIDDeviceSetReport(
-        device,
-        type,
-        CFIndex(report.reportID),
-        baseAddress,
-        reportLength
-      )
-    }
+    let result = Self.writeReport(device, report: report, type: type)
     guard result == kIOReturnSuccess else {
       print(
         "[HIDDeviceStream] \(label) report failed for exact connection "

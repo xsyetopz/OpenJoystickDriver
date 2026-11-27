@@ -134,7 +134,8 @@ extension HIDDeviceStream {
     continuation.finish()
   }
 
-  /// Sends an output report to the devices at `locationID`.
+  /// Replaces the seize of each device at a location with a shared open, so another client can
+  /// open the devices while input keeps flowing here.
   package func releaseInputClaim(locationID: UInt32) -> PhysicalHIDClaimResult {
     seizeLock.withLock {
       guard let devices = seizedByLocation.removeValue(forKey: locationID), !devices.isEmpty else {
