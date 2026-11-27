@@ -90,10 +90,7 @@ struct BindingListCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let selector = profile
-      let (document, snapshot) = try await ServiceConnection.request {
-        try await selector.resolve(with: $0)
-      }
+      let (document, snapshot) = try await profile.resolveFromService()
       switch CLIContext.current.format {
       case .json:
         let summary = ProfileSummary(document, snapshot: snapshot)

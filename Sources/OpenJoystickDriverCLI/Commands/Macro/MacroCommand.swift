@@ -144,10 +144,7 @@ struct MacroListCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let selector = profile
-      let (document, snapshot) = try await ServiceConnection.request {
-        try await selector.resolve(with: $0)
-      }
+      let (document, snapshot) = try await profile.resolveFromService()
       let macros = document.macros.map(MacroSummary.init)
       switch CLIContext.current.format {
       case .json:
@@ -215,10 +212,8 @@ struct MacroShowCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, macroName) = (profile, name)
-      let (document, snapshot) = try await ServiceConnection.request {
-        try await selector.resolve(with: $0)
-      }
+      let macroName = name
+      let (document, snapshot) = try await profile.resolveFromService()
       try printMacro(
         MacroResult(
           profile: ProfileSummary(document, snapshot: snapshot),

@@ -59,9 +59,7 @@ func saveProfileChange(
   change: (RemappingProfile) throws -> RemappingProfile,
   message: (RemappingProfile) -> String
 ) async throws {
-  let (current, snapshot) = try await ServiceConnection.request {
-    try await selector.resolve(with: $0)
-  }
+  let (current, snapshot) = try await selector.resolveFromService()
   let edited = try change(current)
   guard edited != current else {
     try printProfile(
@@ -205,10 +203,7 @@ struct ProfileShowCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let selector = profile
-      let (document, snapshot) = try await ServiceConnection.request {
-        try await selector.resolve(with: $0)
-      }
+      let (document, snapshot) = try await profile.resolveFromService()
       let summary = ProfileSummary(document, snapshot: snapshot)
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(Result(profile: summary, document: document))

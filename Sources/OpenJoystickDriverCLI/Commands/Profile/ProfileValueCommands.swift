@@ -48,10 +48,7 @@ struct ProfileGetCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let selector = profile
-      let (document, _) = try await ServiceConnection.request {
-        try await selector.resolve(with: $0)
-      }
+      let (document, _) = try await profile.resolveFromService()
       guard let value = try ProfileValue(document).value(at: key.components[...]) else {
         throw CLIFailure(
           .notFound,

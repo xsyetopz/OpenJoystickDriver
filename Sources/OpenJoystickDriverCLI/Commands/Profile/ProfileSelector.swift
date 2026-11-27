@@ -12,6 +12,16 @@ extension ProfileSelector: ExpressibleByArgument {
     let snapshot = try await client.getRemappingSnapshot()
     return (try resolve(in: snapshot.profiles), snapshot)
   }
+
+  /// Connects to the service for one request and resolves this selector.
+  ///
+  /// - Throws: ``CLIFailure`` when the service is unreachable, or when no profile or several match.
+  func resolveFromService() async throws -> (
+    RemappingProfile, ApplicationServiceRemappingSnapshotPayload
+  ) {
+    let selector = self
+    return try await ServiceConnection.request { try await selector.resolve(with: $0) }
+  }
 }
 
 /// The shared `PROFILE` argument help.
