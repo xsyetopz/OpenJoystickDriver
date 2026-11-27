@@ -53,6 +53,32 @@ extension RemappingProfile {
     )
   }
 
+  /// Returns every field of this profile under another identity and name.
+  ///
+  /// The copy is not validated.
+  package func copy(id: UUID, name: String) -> Self {
+    Self(
+      id: id,
+      name: name,
+      device: device,
+      applicationScope: applicationScope,
+      outputPolicy: outputPolicy,
+      physicalColor: physicalColor,
+      motionTuning: motionTuning,
+      gyroOutput: gyroOutput,
+      joyConPair: joyConPair,
+      pointerSpeed: pointerSpeed,
+      stickMappings: stickMappings,
+      triggerMappings: triggerMappings,
+      touchMappings: touchMappings,
+      bindings: bindings,
+      chords: chords,
+      sequences: sequences,
+      layers: layers,
+      macros: macros
+    )
+  }
+
   /// Returns a copy without any binding, chord, sequence or layer.
   ///
   /// Stick, trigger, touch and motion settings stay. The copy is not validated.

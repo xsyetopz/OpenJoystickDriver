@@ -26,24 +26,6 @@ func duplicatedProfile(
   in profiles: [RemappingProfile]
 ) -> RemappingProfile? {
   guard !ProfileNaming.isTaken(name, in: profiles) else { return nil }
-  let copy = RemappingProfile(
-    name: ProfileNameValidation.trimmedName(name),
-    device: source.device,
-    applicationScope: source.applicationScope,
-    outputPolicy: source.outputPolicy,
-    physicalColor: source.physicalColor,
-    motionTuning: source.motionTuning,
-    gyroOutput: source.gyroOutput,
-    joyConPair: source.joyConPair,
-    pointerSpeed: source.pointerSpeed,
-    stickMappings: source.stickMappings,
-    triggerMappings: source.triggerMappings,
-    touchMappings: source.touchMappings,
-    bindings: source.bindings,
-    chords: source.chords,
-    sequences: source.sequences,
-    layers: source.layers,
-    macros: source.macros
-  )
+  let copy = source.copy(id: UUID(), name: ProfileNameValidation.trimmedName(name))
   return (try? copy.validate()) == nil ? nil : copy
 }

@@ -229,26 +229,7 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
 
   /// The profile with `scope` as its application scope.
   public func withApplicationScope(_ scope: RemappingApplicationScope) -> Self {
-    Self(
-      id: id,
-      name: name,
-      device: device,
-      applicationScope: scope,
-      outputPolicy: outputPolicy,
-      physicalColor: physicalColor,
-      motionTuning: motionTuning,
-      gyroOutput: gyroOutput,
-      joyConPair: joyConPair,
-      pointerSpeed: pointerSpeed,
-      stickMappings: stickMappings,
-      triggerMappings: triggerMappings,
-      touchMappings: touchMappings,
-      bindings: bindings,
-      chords: chords,
-      sequences: sequences,
-      layers: layers,
-      macros: macros
-    )
+    replacing(applicationScope: scope)
   }
 
   /// Decodes a profile from a profile document.

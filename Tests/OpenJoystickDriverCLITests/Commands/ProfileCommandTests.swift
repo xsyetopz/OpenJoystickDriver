@@ -147,6 +147,22 @@ struct ProfileCommandTests {
   }
 
   @Test
+  func duplicateKeepsMacrosOfOriginal() async throws {
+    let macro = RemappingMacro(name: "Combo", steps: [.tap(.keyboard(key: .a, modifiers: []))])
+    let binding = RemappingBinding(source: .button(.south), destination: .macro(macro.id))
+    let original = FakeProfileLibrary.profile("Pad", bindings: [binding], macros: [macro])
+    let library = FakeProfileLibrary([original])
+    let service = try Self.service(library)
+
+    let duplicate = await service.run(["profile", "duplicate", "Pad", "Pad Copy", "--json"])
+
+    #expect(duplicate.code == 0, "\(duplicate.standardError)")
+    let copy = try #require(library.stored.first { $0.name == "Pad Copy" })
+    #expect(copy.macros == [macro])
+    #expect(copy.bindings == [binding])
+  }
+
+  @Test
   func convertCreatesCopyForTargetModelAndListsWhatItLeavesOut() async throws {
     let kept = RemappingBinding(
       source: .button(.south),

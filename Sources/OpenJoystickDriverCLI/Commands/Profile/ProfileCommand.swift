@@ -215,28 +215,3 @@ struct ProfileShowCommand: AsyncParsableCommand {
     }
   }
 }
-
-extension RemappingProfile {
-  /// This profile under another identity and name.
-  func copy(id: UUID, name: String) -> Self {
-    Self(
-      id: id,
-      name: name,
-      device: device,
-      applicationScope: applicationScope,
-      outputPolicy: outputPolicy,
-      physicalColor: physicalColor,
-      motionTuning: motionTuning,
-      gyroOutput: gyroOutput,
-      joyConPair: joyConPair,
-      pointerSpeed: pointerSpeed,
-      stickMappings: stickMappings,
-      triggerMappings: triggerMappings,
-      touchMappings: touchMappings,
-      bindings: bindings,
-      chords: chords,
-      sequences: sequences,
-      layers: layers
-    )
-  }
-}
