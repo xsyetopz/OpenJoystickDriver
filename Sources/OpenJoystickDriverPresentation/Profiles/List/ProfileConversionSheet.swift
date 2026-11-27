@@ -45,12 +45,12 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }.help(OJDLocalized.string("ui.help.cancelSheet"))
+          }.keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.convert")) {
             guard let conversion else { return }
             onConvert(conversion)
             presentationMode.wrappedValue.dismiss()
-          }.disabled(conversion == nil)
+          }.keyboardShortcut(.defaultAction).disabled(conversion == nil)
             .help(OJDLocalized.string("ui.profiles.convertHelp"))
         }
       }.ojdSheet(.compact)

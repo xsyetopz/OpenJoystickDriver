@@ -3,7 +3,8 @@
 
   /// The Reset, Cancel and Save buttons of an analog profile sheet.
   ///
-  /// Optional buttons sit between Reset and Cancel, and Cancel dismisses the sheet.
+  /// Optional buttons sit between Reset and Cancel. Escape chooses Cancel, which dismisses the
+  /// sheet, and Return chooses Save.
   struct ProfileSheetButtonRow<Extra: View>: View {
     /// Restores the defaults of the edited fields.
     let reset: () -> Void
@@ -41,10 +42,9 @@
         Spacer()
         Button(OJDLocalized.string("action.cancel")) {
           presentationMode.wrappedValue.dismiss()
-        }.help(OJDLocalized.string("ui.help.cancelSheet"))
-        Button(OJDLocalized.string("action.save"), action: save).help(
-          OJDLocalized.string("ui.help.save")
-        )
+        }.keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.cancelSheet"))
+        Button(OJDLocalized.string("action.save"), action: save).keyboardShortcut(.defaultAction)
+          .help(OJDLocalized.string("ui.help.save"))
       }
     }
   }

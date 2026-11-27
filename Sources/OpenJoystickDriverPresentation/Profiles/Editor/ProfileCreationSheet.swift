@@ -161,12 +161,12 @@
         Spacer()
         Button(OJDLocalized.string("action.cancel")) {
           presentationMode.wrappedValue.dismiss()
-        }.help(OJDLocalized.string("ui.help.cancelSheet"))
+        }.keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.cancelSheet"))
         Button(OJDLocalized.string("action.create")) {
           guard let proposedProfile else { return }
           onCreate(proposedProfile)
           presentationMode.wrappedValue.dismiss()
-        }.disabled(proposedProfile == nil)
+        }.keyboardShortcut(.defaultAction).disabled(proposedProfile == nil)
           .help(OJDLocalized.string("ui.profiles.createHelp"))
       }
     }
@@ -221,12 +221,12 @@
           Spacer()
           Button(OJDLocalized.string("action.cancel")) {
             presentationMode.wrappedValue.dismiss()
-          }.help(OJDLocalized.string("ui.help.cancelSheet"))
+          }.keyboardShortcut(.cancelAction).help(OJDLocalized.string("ui.help.cancelSheet"))
           Button(OJDLocalized.string("action.duplicate")) {
             guard let duplicate else { return }
             onDuplicate(duplicate)
             presentationMode.wrappedValue.dismiss()
-          }.disabled(duplicate == nil)
+          }.keyboardShortcut(.defaultAction).disabled(duplicate == nil)
             .help(OJDLocalized.string("ui.profiles.duplicateHelp"))
         }
       }.ojdSheet(.compact)
