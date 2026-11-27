@@ -57,22 +57,7 @@
     }
 
     /// The localization key of the text that describes the driver extension state.
-    private var detailKey: String {
-      switch runtime.systemExtensionSetupState {
-      case .checking: return "status.checking"
-      case .active: return "ui.library.installed"
-      case .missingEmbedded: return "ui.setup.missingDetail"
-      case .invalid: return "ui.setup.invalidDetail"
-      case .unavailable: return "ui.setup.unavailableDetail"
-      case .running: return "ui.setup.runningDetail"
-      case .needsApproval:
-        return SystemSettingsMessage.driverApprovalDetail.localizationKey()
-      case .cancelled: return "ui.setup.cancelledDetail"
-      case .timedOut: return "ui.setup.timedOutDetail"
-      case .failed: return "ui.setup.failedDetail"
-      case .needsActivation, .replacementNeeded: return "ui.setup.repairDetail"
-      }
-    }
+    private var detailKey: String { runtime.systemExtensionSetupState.detailKey }
   }
 
 #endif

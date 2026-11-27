@@ -148,3 +148,22 @@ extension SystemExtensionSetupState {
     }
   }
 }
+
+extension SystemExtensionSetupState {
+  /// The catalog key of the text that explains this state below the driver status.
+  var detailKey: String {
+    switch self {
+    case .checking: "status.checking"
+    case .active: "ui.library.installed"
+    case .missingEmbedded: "ui.setup.missingDetail"
+    case .invalid: "ui.setup.invalidDetail"
+    case .unavailable: "ui.setup.unavailableDetail"
+    case .running: "ui.setup.runningDetail"
+    case .needsApproval: SystemSettingsMessage.driverApprovalDetail.localizationKey()
+    case .cancelled: "ui.setup.cancelledDetail"
+    case .timedOut: "ui.setup.timedOutDetail"
+    case .failed: "ui.setup.failedDetail"
+    case .needsActivation, .replacementNeeded: "ui.setup.repairDetail"
+    }
+  }
+}

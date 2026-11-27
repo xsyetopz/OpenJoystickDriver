@@ -55,20 +55,8 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     case .service, .virtualProfileStore: return nil
     case .liveUpdatesPolling(let failure): return failure.detailKey
     case .driver(let state, _):
-      switch state {
-      case .missingEmbedded: return "ui.setup.missingDetail"
-      case .invalid: return "ui.setup.invalidDetail"
-      case .unavailable: return "ui.setup.unavailableDetail"
-      case .running: return "ui.setup.runningDetail"
-      case .needsApproval:
-        return SystemSettingsMessage.driverApprovalDetail.localizationKey()
-      case .cancelled: return "ui.setup.cancelledDetail"
-      case .timedOut: return "ui.setup.timedOutDetail"
-      case .failed: return "ui.setup.failedDetail"
-      case .needsActivation, .replacementNeeded: return "ui.setup.repairDetail"
-      case .checking, .active:
-        preconditionFailure("A driver problem is never made for \(state)")
-      }
+      precondition(state != .checking && state != .active, "No driver problem for \(state)")
+      return state.detailKey
     case .accessMissing: return "platform.macos.ui.banner.access.detail"
     }
   }
