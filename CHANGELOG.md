@@ -29,6 +29,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- `ojd binding list` and `ojd profile show` name the macro and layer of every target, including long-hold, multi-tap, chord and sequence targets; they printed UUIDs.
 - Guide on the `SDLCompatible` and `GameControllerCompatible` virtual gamepads (`045E:0B13`) runs the Home Button Actions set in System Settings › Game Controllers, such as opening Games. Guide travels only in report 1, as on Xbox Series firmware 5.x. Before, OJD also sent it in report 2. WindowServer counted each press twice, so macOS ran no action. Checked on macOS 27.2 with `ojd virtual feed`: Games opens, a frontmost app that turns off the Home gesture gets one press and one release, SDL 2 reads Guide, and Firefox 159 and Safari 27.2 keep Guide at B16.
 - The SDL mapping and W3C description OJD builds for `SDLCompatible` bind Guide (`guide:b12`), the button-13 bit of report 1 that the profile sends.
 - OJD no longer aborts with "A session may not be invalidated prior to activation" when an alert closes while gamepads connect. AppKit ends its game controller navigation session when the last alert window is released, and GameController raised that error if the session hadn't finished activating. OJD holds one alert window from launch, so the session stays running. A probe app that loaded and released 3000 alerts while a virtual pad reconnected aborted in 4 of 4 runs without the held window, and in 0 of 4 with it.
