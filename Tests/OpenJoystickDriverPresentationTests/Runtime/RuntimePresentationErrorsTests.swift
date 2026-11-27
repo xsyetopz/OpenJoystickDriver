@@ -92,4 +92,17 @@ struct RuntimePresentationErrorsTests {
     #expect(RuntimePresentation.keyboardSystemSymbolName(.a) == nil)
     #expect(RuntimePresentation.keyboardSystemSymbolFallbackName(.a) == nil)
   }
+
+  @Test(arguments: [
+    RemappingStickMappingError.invalidField("inner_deadzone") as any Error,
+    RemappingTriggerMappingError.invalidField("soft_threshold"),
+    RemappingMotionTuningError.invalidField("pitch_sensitivity"),
+    RemappingGyroOutputError.invalidField("pointer_points_per_degree"),
+  ])
+  func unreadableAnalogFieldAsksForReviewInsteadOfGenericFailure(_ error: any Error) {
+    #expect(
+      RuntimePresentation.userFacingError(error)
+        == OJDLocalized.string("ui.error.reviewAssignments")
+    )
+  }
 }

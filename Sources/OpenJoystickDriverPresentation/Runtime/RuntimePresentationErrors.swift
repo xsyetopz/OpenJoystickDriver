@@ -56,7 +56,10 @@ extension RuntimePresentation {
     if let rpcError = error as? ApplicationServiceRemappingRPCError {
       return OJDLocalized.string(rpcMessageKeys[rpcError.code] ?? "ui.error.generic")
     }
-    if error is RuntimeProfileDraftError || error is RemappingValidationError {
+    if error is RuntimeProfileDraftError || error is RemappingValidationError
+      || error is RemappingStickMappingError || error is RemappingTriggerMappingError
+      || error is RemappingMotionTuningError || error is RemappingGyroOutputError
+    {
       return OJDLocalized.string(
         "ui.error.reviewAssignments"
       )
