@@ -396,7 +396,7 @@ enum RuntimePresentation {
     if let sample = state.touch.first(where: { $0.contacts.contains(where: \.isActive) }) {
       return .touchContact(RemappingTouchSurface(sample.surface))
     }
-    return detectedButton(pressed: state.pressed, dpad: dpadDirections(state.hat))
+    return detectedButton(pressed: state.pressed, dpad: state.hat.dpadDirections)
       ?? detectedAxis(in: state)
   }
 
@@ -417,7 +417,7 @@ enum RuntimePresentation {
     }
     if let source = detectedButton(
       pressed: current.pressed.subtracting(previous.pressed),
-      dpad: dpadDirections(current.hat).subtracting(dpadDirections(previous.hat))
+      dpad: current.hat.dpadDirections.subtracting(previous.hat.dpadDirections)
     ) {
       return source
     }
@@ -479,20 +479,4 @@ enum RuntimePresentation {
       }
     )
   }
-
-  /// Returns the D-pad directions that the hat direction presses.
-  static func dpadDirections(_ hat: HatDirection) -> Set<RemappingDpadDirection> {
-    switch hat {
-    case .neutral: []
-    case .north: [.up]
-    case .northEast: [.up, .right]
-    case .east: [.right]
-    case .southEast: [.down, .right]
-    case .south: [.down]
-    case .southWest: [.down, .left]
-    case .west: [.left]
-    case .northWest: [.up, .left]
-    }
-  }
-
 }

@@ -12,6 +12,24 @@ public enum RemappingDpadDirection: String, Codable, CaseIterable, Hashable, Sen
   case right = "DpadRight"
 }
 
+extension HatDirection {
+  /// The cardinal D-pad directions this hat direction holds: one for a cardinal, two for a
+  /// diagonal, none at rest.
+  package var dpadDirections: Set<RemappingDpadDirection> {
+    switch self {
+    case .neutral: []
+    case .north: [.up]
+    case .northEast: [.up, .right]
+    case .east: [.right]
+    case .southEast: [.down, .right]
+    case .south: [.down]
+    case .southWest: [.down, .left]
+    case .west: [.left]
+    case .northWest: [.up, .left]
+    }
+  }
+}
+
 /// A stick axis, a trigger or a pointer axis of the control vocabulary; the raw value is its
 /// control id.
 ///

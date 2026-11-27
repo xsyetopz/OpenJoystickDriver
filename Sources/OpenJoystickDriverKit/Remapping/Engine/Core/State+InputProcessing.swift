@@ -163,7 +163,7 @@ extension RemappingEngineState {
     at uptimeNanoseconds: UInt64
   ) -> [RemappingEngineAction] {
     guard var device = devices[identifier] else { return [] }
-    let nextDirections = Self.cardinalDirections(for: direction)
+    let nextDirections = direction.dpadDirections
     let removed = device.dpadDirections.subtracting(nextDirections)
     let added = nextDirections.subtracting(device.dpadDirections)
     device.dpadDirections = nextDirections
@@ -393,22 +393,6 @@ extension RemappingEngineState {
     actions += processChords(for: &device)
     actions += processSequences(for: &device, at: uptimeNanoseconds)
     return actions
-  }
-
-  /// Returns the cardinal d-pad directions that a hat direction holds.
-  private static func cardinalDirections(for direction: HatDirection) -> Set<RemappingDpadDirection>
-  {
-    switch direction {
-    case .neutral: []
-    case .north: [.up]
-    case .northEast: [.up, .right]
-    case .east: [.right]
-    case .southEast: [.down, .right]
-    case .south: [.down]
-    case .southWest: [.down, .left]
-    case .west: [.left]
-    case .northWest: [.up, .left]
-    }
   }
 
   /// Orders d-pad directions by their raw value.

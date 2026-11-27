@@ -125,7 +125,7 @@
     /// - Parameter hat: The direction of the hat switch.
     /// - Returns: The cluster.
     private func dpadCluster(hat: HatDirection) -> some View {
-      let directions = RuntimePresentation.dpadDirections(hat)
+      let directions = hat.dpadDirections
       return VStack(spacing: OJDSpacing.small) {
         dpadIndicator(.up, title: "ui.inputTest.dpadUp", active: directions.contains(.up))
         HStack(spacing: OJDSpacing.small) {
