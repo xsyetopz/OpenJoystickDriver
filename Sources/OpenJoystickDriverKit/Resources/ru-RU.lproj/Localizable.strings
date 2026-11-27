@@ -6679,3 +6679,160 @@
 
 /* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
 "ui.help.exportFormat" = "Выбрать формат файла экспортируемого сопоставления";
+
+/* Error when a profile breaks a rule: the mapping of this stick has an invalid field. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.invalidStickMapping" = "Проверьте настройки стика %@.";
+/* Error when a profile breaks a rule: two mappings read this stick. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.duplicateStickMapping" = "У стика %@ несколько сопоставлений режима. Оставьте одно.";
+/* Error when a profile breaks a rule: the mapping of this trigger has an invalid field. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.invalidTriggerMapping" = "Проверьте настройки двухступенчатого триггера %@.";
+/* Error when a profile breaks a rule: two mappings read this trigger. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.duplicateTriggerMapping" = "У триггера %@ несколько сопоставлений ступени. Оставьте одно.";
+/* Error when a profile breaks a rule: a binding reads a stage of this trigger, which has no dual-stage mapping. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.triggerStageWithoutMapping" = "Ступень триггера %@ требует сопоставления двухступенчатого триггера. Добавьте его.";
+/* Error when a profile breaks a rule: a binding reads a motion lean, but no motion tuning defines one. */
+"profile.validation.motionLeanWithoutMapping" = "Источники наклона по датчику движения требуют настроек наклона. Добавьте их или удалите источники.";
+/* Error when a profile breaks a rule: the touch mapping of this surface has an invalid field. %@ is the surface as the profile file spells it, kept as written. */
+"profile.validation.invalidTouchMapping" = "Проверьте непрерывное сопоставление для сенсорной поверхности %@.";
+/* Error when a profile breaks a rule: two touch mappings read this surface. %@ is the surface as the profile file spells it, kept as written. */
+"profile.validation.duplicateTouchMapping" = "У сенсорной поверхности %@ несколько непрерывных сопоставлений. Оставьте одно.";
+/* Error when a profile breaks a rule: a touch grid source has invalid dimensions or cell coordinates. */
+"profile.validation.invalidTouchGrid" = "У источника сенсорной сетки недопустимые размеры или координаты ячеек. Используйте от 1 до 16 строк и столбцов, а ячейки размещайте внутри сетки.";
+/* Error when a profile breaks a rule: a touch swipe source has an invalid minimum distance. */
+"profile.validation.invalidTouchSwipe" = "У источника сенсорного жеста смахивания недопустимое минимальное расстояние. Используйте значение от 0.01 до 1.";
+/* Error when a profile breaks a rule: a stick region has a radius, sector or hysteresis out of range. */
+"profile.validation.invalidStickRegion" = "Область стика требует 0 <= inner < outer <= 1, оба угла или ни одного, гистерезис от 0 до 0.25.";
+/* Error when a profile breaks a rule: a trigger band has a pressure or hysteresis out of range. */
+"profile.validation.invalidTriggerBand" = "Диапазон триггера требует 0 <= from < to <= 1 и гистерезис от 0 до 0.25.";
+/* Error when a profile breaks a rule: a touch area is empty or outside the surface. */
+"profile.validation.invalidTouchArea" = "Сенсорная область не должна быть пустой и должна находиться внутри поверхности. Измените её размер.";
+/* Error when a profile breaks a rule: a trigger has bands and a dual-stage mapping. %@ is the trigger as the profile file spells it, kept as written. */
+"profile.validation.triggerBandWithDualStage" = "У триггера %@ есть диапазоны и двухступенчатое сопоставление. Удалите одно из них.";
+/* Error when a profile breaks a rule: two regions of one stick, or two bands of one trigger, share a position. */
+"profile.validation.overlappingRegions" = "Области одного стика или диапазоны одного триггера не должны перекрываться. Сузьте или удалите одну из них.";
+/* Error when a profile breaks a rule: the pointer speed has a minimum or maximum scale that is not finite or not 0 to 10. */
+"profile.validation.invalidPointerSpeed" = "Масштабы скорости указателя должны быть конечными числами от 0 до 10.";
+/* Error when a profile breaks a rule: the pointer speed reads a trigger or stick that the controller does not report. */
+"profile.validation.unsupportedPointerSpeedDriver" = "Скорость указателя считывает триггер или стик, о которых контроллер не сообщает. Выберите источник, о котором контроллер сообщает.";
+/* Error when a profile breaks a rule: a Joy-Con pair profile does not target a left Joy-Con model. */
+"profile.validation.invalidJoyConPairDevice" = "Профили пары Joy-Con должны относиться к модели левого Joy-Con от Nintendo (057e:2006 или 057e:2067).";
+/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.bindingBehaviorConflict" = "Привязка %d использует поведение, несовместимое с её целью или настройками активации.";
+/* Error when a profile breaks a rule: the virtual gamepad cannot output this button. %@ is the button as the profile file spells it, kept as written. */
+"profile.validation.unsupportedGamepadButton" = "Виртуальный геймпад не может выдать %@. Выберите другую кнопку.";
+/* Error when a profile breaks a rule: the virtual gamepad cannot output this axis. %@ is the axis as the profile file spells it, kept as written. */
+"profile.validation.unsupportedGamepadAxis" = "Виртуальный геймпад не может выдать %@. Выберите другую ось.";
+/* Error when a profile breaks a rule: a virtual gamepad destination or stick output is used while the output policy has no virtual. */
+"profile.validation.virtualOutputRequired" = "Цели геймпада требуют вывода на виртуальный геймпад. Включите его или измените цель.";
+/* Error when a profile breaks a rule: a physical-controller output value is out of range. */
+"profile.validation.invalidPhysicalOutput" = "Недопустимое значение вывода физического контроллера. Выберите вывод, который поддерживает контроллер.";
+/* Error when a profile breaks a rule: the profile name is empty, too long, padded with whitespace or holds control characters. */
+"profile.validation.invalidProfileName" = "Имя профиля должно содержать от 1 до 80 печатаемых символов.";
+/* Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. */
+"profile.validation.tooManyBindings" = "Профиль переназначения не может содержать столько привязок: %d. Удалите часть; предел равен 512.";
+/* Error when a profile breaks a rule: two bindings, chords, sequences, actions or touch mappings share this identifier. %@ is an identifier (UUID). */
+"profile.validation.duplicateBindingID" = "Идентификатор привязки %@ повторяется.";
+/* Error when a profile breaks a rule: two layers share this identifier. %@ is an identifier (UUID). */
+"profile.validation.duplicateLayerID" = "Идентификатор слоя %@ повторяется.";
+/* Error when a profile breaks a rule: two bindings of one scope read this source. */
+"profile.validation.duplicateSource" = "Каждый источник контроллера может входить только в одну привязку. Удалите лишнюю привязку.";
+/* Error when a profile breaks a rule: the application bundle identifier is not valid; the value is the identifier. %@ is an application bundle identifier. */
+"profile.validation.invalidAppID" = "Идентификатор пакета целевого приложения недопустим: %@. Используйте от 3 до 255 ASCII-букв, цифр и дефисов в частях, разделённых точками, например com.example.app.";
+/* Error when a profile breaks a rule: an application scope lists no bundle identifier. */
+"profile.validation.noAppIDs" = "Для целевого приложения нужен хотя бы один идентификатор пакета.";
+/* Error when a profile breaks a rule: an application scope lists this bundle identifier more than once. %@ is an application bundle identifier. */
+"profile.validation.duplicateAppID" = "Идентификатор пакета целевого приложения указан дважды: %@. Удалите один.";
+/* Error when a profile breaks a rule: an axis source has no axis tuning. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.axisTuningRequired" = "Привязка %d требует настройки оси. Добавьте её.";
+/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.axisTuningNotApplicable" = "Привязка %d не может иметь настройки оси. Удалите её.";
+/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.incompatibleSourceAndDestination" = "Привязка %d сочетает несовместимые типы источника и цели. Измените один из них.";
+/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.nonFiniteTuning" = "Значение в поле %2$@ у привязки %1$d не является конечным числом. Введите конечное число.";
+/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.tuningOutOfRange" = "У привязки %1$d значение в поле %2$@ вне допустимого диапазона. Мёртвая зона: от 0 до 0.95, усиление: от 0.1 до 10, порог цифровой активации: от 0.01 до 1.";
+/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.turboNotSupported" = "Привязка %d использует турбо с непрерывной целью. Отключите турбо или измените цель.";
+/* Error when a profile breaks a rule: a turbo field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.nonFiniteTurbo" = "Значение в поле турбо %2$@ у привязки %1$d не является конечным числом. Введите конечное число.";
+/* Error when a profile breaks a rule: a turbo field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.turboOutOfRange" = "У привязки %1$d значение в поле турбо %2$@ вне допустимого диапазона. Частота повторения: от 1 до 60 Hz, коэффициент заполнения: от 0.05 до 0.95, начальная задержка: от 0 до 2500 ms, максимум повторов: от 1 до 500.";
+/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.longHoldNotSupported" = "Привязка %d использует долгое удержание с непрерывным источником или целью. Отключите долгое удержание или используйте кнопки в качестве источников и целей.";
+/* Error when a profile breaks a rule: a long-hold field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.nonFiniteLongHold" = "Значение в поле долгого удержания %2$@ у привязки %1$d не является конечным числом. Введите конечное число.";
+/* Error when a profile breaks a rule: a long-hold field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.longHoldOutOfRange" = "У привязки %1$d значение в поле долгого удержания %2$@ вне допустимого диапазона. Используйте от 100 до 5000 ms.";
+/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.nonFiniteMultiTap" = "Значение в поле многократного нажатия %2$@ у привязки %1$d не является конечным числом. Введите конечное число.";
+/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.multiTapOutOfRange" = "У привязки %1$d значение в поле многократного нажатия %2$@ вне допустимого диапазона. Используйте число нажатий от 2 до 5 и окно от 50 до 1000 ms.";
+/* Error when a profile breaks a rule: two multi-tap entries have the same count. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.duplicateMultiTapCount" = "У привязки %d две записи многократного нажатия с одинаковым числом нажатий. Задайте для каждой своё число.";
+/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.turboAndActivationConflict" = "Привязка %d не может сочетать турбо с долгим удержанием или многократным нажатием. Уберите одно из них.";
+/* Error when a profile breaks a rule: a chord window is out of range. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.chordWindowOutOfRange" = "У аккорда %d окно вне допустимого диапазона. Используйте от 1 до 1000 ms.";
+/* Error when a profile breaks a rule: a chord has fewer than two sources. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.chordTooFewSources" = "У аккорда %d должно быть не менее двух источников. Добавьте ещё один.";
+/* Error when a profile breaks a rule: a chord has an axis source. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.chordContinuousSource" = "Аккорд %d использует непрерывный источник (ось). Используйте кнопки в качестве источников.";
+/* Error when a profile breaks a rule: a chord has a continuous destination. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.chordContinuousDestination" = "Аккорд %d использует непрерывную цель. Выберите цель-кнопку.";
+/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.duplicateChordSources" = "Аккорд %d повторяет набор источников другого аккорда. Удалите один из них.";
+/* Error when a profile breaks a rule: a sequence has fewer than two sources. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.sequenceTooFewSources" = "У последовательности %d должно быть не менее двух источников. Добавьте ещё один.";
+/* Error when a profile breaks a rule: a sequence has an axis source. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.sequenceContinuousSource" = "Последовательность %d использует непрерывный источник (ось). Используйте кнопки в качестве источников.";
+/* Error when a profile breaks a rule: a sequence has a continuous destination. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.sequenceContinuousDestination" = "Последовательность %d использует непрерывную цель. Выберите цель-кнопку.";
+/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.sequenceWindowOutOfRange" = "У последовательности %d окно вне допустимого диапазона. Используйте от 200 до 10000 ms.";
+/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.duplicateSequenceSources" = "Последовательность %d повторяет порядок источников другой последовательности. Удалите одну из них.";
+/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.bindingRemarkInvalid" = "У привязки %d недопустимое примечание. Используйте от 1 до 200 символов.";
+/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %d is the position of the layer in its list, counted from 0. */
+"profile.validation.layerNameInvalid" = "У слоя %d недопустимое имя. Используйте от 1 до 40 символов.";
+/* Error when a profile breaks a rule: a layer activator is an axis. %d is the position of the layer in its list, counted from 0. */
+"profile.validation.layerActivatorNotDiscrete" = "У слоя %d активатором служит ось, а нужен дискретный. Используйте кнопку в качестве источника.";
+/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %d is the position of the layer in its list, counted from 0. */
+"profile.validation.duplicateLayerActivator" = "Слой %d повторяет активатор другого слоя. Выберите другой источник.";
+/* Error when a profile breaks a rule: a layer activator also has a binding. %d is the position of the layer in its list, counted from 0. */
+"profile.validation.layerActivatorAlsoBound" = "Активатор слоя %d также назначен как обычный источник. Удалите эту привязку или выберите другой активатор.";
+/* Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. */
+"profile.validation.tooManyMacros" = "Профиль переназначения не может содержать столько макросов: %d. Удалите часть; предел равен 16.";
+/* Error when a profile breaks a rule: two macros share this identifier. %@ is an identifier (UUID). */
+"profile.validation.duplicateMacroID" = "Идентификатор макроса %@ повторяется.";
+/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %d is the position of the macro in its list, counted from 0. */
+"profile.validation.duplicateMacroName" = "Макрос %d повторяет имя предыдущего макроса. Переименуйте его.";
+/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.invalidMacro" = "У макроса %1$d недопустимое значение в поле %2$@. Имя: от 1 до 40 символов, шаги: от 1 до 32, повтор: от 1 до 500, каждая задержка: от 0 до 5000 ms.";
+/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
+"profile.validation.invalidMacroStepDestination" = "У шага %1$d макроса %2$d цель, которую шаг макроса использовать не может. Используйте клавишу, кнопку указателя, кнопку геймпада или направление крестовины.";
+/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
+"profile.validation.macroNestingNotAllowed" = "Шаг %1$d макроса %2$d запускает макрос, а шаг макроса этого делать не может. Удалите шаг.";
+/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
+"profile.validation.macroRunTimeExceeded" = "Макрос %1$d выполняется дольше предела %2$@. Один проход занимает не более 30 секунд, а все повторы не более 300 секунд; сократите задержки или уменьшите число повторов.";
+/* Error when a profile breaks a rule: a destination runs a macro that the profile does not hold. %@ is an identifier (UUID). */
+"profile.validation.unknownMacro" = "Цель запускает макрос %@, которого не существует. Выберите существующий макрос.";
+/* Error when a profile breaks a rule: a system action destination has a value outside its limits; the value is the action name. %@ is the destination type as the profile file spells it, kept as written. */
+"profile.validation.invalidSystemAction" = "У цели %@ недопустимое значение. Проверьте значение.";
+/* Error when a profile breaks a rule: a destination sets a layer that the profile does not hold. %@ is an identifier (UUID). */
+"profile.validation.unknownLayer" = "Цель задаёт слой %@, которого не существует. Выберите существующий слой.";
+/* Error when a profile breaks a rule: a destination switches to a profile that does not exist. %@ is an identifier (UUID). */
+"profile.validation.unknownSwitchProfile" = "Цель переключает на профиль %@, которого не существует. Выберите существующий профиль.";
+/* Error when a profile breaks a rule: a destination switches to a profile for another controller model. %@ is an identifier (UUID). */
+"profile.validation.switchProfileForOtherModel" = "Цель переключает на профиль %@, предназначенный для другой модели. Выберите профиль для этой модели.";
+/* Error when a profile breaks a rule: a `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or. %@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.invalidSpeech" = "У цели «Произнести» недопустимое значение в поле %@. Текст: от 1 до 128 символов.";
+/* Error when a profile breaks a rule: a `Speak` destination names a voice that this Mac does not have. %@ is the name of a voice. */
+"profile.validation.unknownSpeechVoice" = "Цель «Произнести» указывает голос %@, которого нет на этом Mac. Выберите установленный голос или системный голос.";
+/* Error when a profile breaks a rule: a MIDI destination has a channel, note, controller or velocity out of range. */
+"profile.validation.invalidMIDIDestination" = "Цели MIDI нужен канал от 1 до 16, нота или контроллер от 0 до 127 и скорость от 1 до 127.";
+/* Error when a profile breaks a rule: the profile could not be encoded. */
+"profile.validation.encodingFailed" = "Не удалось закодировать профиль переназначения. Проверьте его значения.";
+/* Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. */
+"profile.validation.encodedSizeExceeded" = "Закодированный профиль переназначения слишком велик (%d байт). Он должен занимать менее 4 MiB.";

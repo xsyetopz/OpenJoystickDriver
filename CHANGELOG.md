@@ -29,6 +29,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- A profile that breaks a rule is reported in the app language: the 78 profile validation messages are in every localization; they were English only.
 - `ojd binding list` and `ojd profile show` name the macro and layer of every target, including long-hold, multi-tap, chord and sequence targets; they printed UUIDs.
 - Guide on the `SDLCompatible` and `GameControllerCompatible` virtual gamepads (`045E:0B13`) runs the Home Button Actions set in System Settings › Game Controllers, such as opening Games. Guide travels only in report 1, as on Xbox Series firmware 5.x. Before, OJD also sent it in report 2. WindowServer counted each press twice, so macOS ran no action. Checked on macOS 27.2 with `ojd virtual feed`: Games opens, a frontmost app that turns off the Home gesture gets one press and one release, SDL 2 reads Guide, and Firefox 159 and Safari 27.2 keep Guide at B16.
 - The SDL mapping and W3C description OJD builds for `SDLCompatible` bind Guide (`guide:b12`), the button-13 bit of report 1 that the profile sends.

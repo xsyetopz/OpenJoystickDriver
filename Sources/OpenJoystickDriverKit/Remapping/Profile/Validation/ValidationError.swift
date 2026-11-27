@@ -171,173 +171,145 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
 
   /// Message that tells the user what to review in the profile.
   public var errorDescription: String? {
-    switch self {
-    case .invalidStickMapping(let source): "Review the settings for the \(source.rawValue) stick."
+    let localized = Localization()
+    return switch self {
+    case .invalidStickMapping(let source):
+      localized.string("profile.validation.invalidStickMapping", source.rawValue)
     case .duplicateStickMapping(let source):
-      "The \(source.rawValue) stick has multiple mode mappings. Keep one."
+      localized.string("profile.validation.duplicateStickMapping", source.rawValue)
     case .invalidTriggerMapping(let source):
-      "Review the settings for the \(source.rawValue) dual-stage trigger."
+      localized.string("profile.validation.invalidTriggerMapping", source.rawValue)
     case .duplicateTriggerMapping(let source):
-      "The \(source.rawValue) trigger has multiple stage mappings. Keep one."
+      localized.string("profile.validation.duplicateTriggerMapping", source.rawValue)
     case .triggerStageWithoutMapping(let source):
-      "The \(source.rawValue) trigger stage requires a dual-stage trigger mapping. Add one."
-    case .motionLeanWithoutMapping:
-      "Motion lean sources require motion lean settings. Add them or remove the sources."
+      localized.string("profile.validation.triggerStageWithoutMapping", source.rawValue)
+    case .motionLeanWithoutMapping: localized.string("profile.validation.motionLeanWithoutMapping")
     case .invalidTouchMapping(let surface):
-      "Review the continuous mapping for the \(surface.rawValue) touch surface."
+      localized.string("profile.validation.invalidTouchMapping", surface.rawValue)
     case .duplicateTouchMapping(let surface):
-      "The \(surface.rawValue) touch surface has multiple continuous mappings. Keep one."
-    case .invalidTouchGrid:
-      "A touch grid source has invalid dimensions or cell coordinates. Use 1 to 16 rows and "
-        + "columns, and cells inside the grid."
-    case .invalidTouchSwipe:
-      "A touch swipe source has an invalid minimum distance. Use 0.01 to 1."
-    case .invalidStickRegion:
-      "A stick region needs 0 <= inner < outer <= 1, both angles or none, hysteresis 0 to 0.25."
-    case .invalidTriggerBand: "A trigger band needs 0 <= from < to <= 1 and hysteresis 0 to 0.25."
-    case .invalidTouchArea:
-      "A touch area must be nonempty and inside the surface. Resize it to fit."
+      localized.string("profile.validation.duplicateTouchMapping", surface.rawValue)
+    case .invalidTouchGrid: localized.string("profile.validation.invalidTouchGrid")
+    case .invalidTouchSwipe: localized.string("profile.validation.invalidTouchSwipe")
+    case .invalidStickRegion: localized.string("profile.validation.invalidStickRegion")
+    case .invalidTriggerBand: localized.string("profile.validation.invalidTriggerBand")
+    case .invalidTouchArea: localized.string("profile.validation.invalidTouchArea")
     case .triggerBandWithDualStage(let trigger):
-      "The \(trigger.rawValue) trigger has bands and a dual-stage mapping. Remove one."
-    case .overlappingRegions:
-      "Regions of one stick, or bands of one trigger, must not overlap. Narrow or remove one."
+      localized.string("profile.validation.triggerBandWithDualStage", trigger.rawValue)
+    case .overlappingRegions: localized.string("profile.validation.overlappingRegions")
     case .invalidMotionTuning(let error): error.localizedDescription
     case .invalidGyroOutput(let error): error.localizedDescription
-    case .invalidPointerSpeed: "Pointer speed scales must be finite numbers from 0 to 10."
+    case .invalidPointerSpeed: localized.string("profile.validation.invalidPointerSpeed")
     case .unsupportedPointerSpeedDriver:
-      "The pointer speed reads a trigger or stick that the controller does not report. "
-        + "Choose a driver the controller reports."
-    case .invalidJoyConPairDevice:
-      "Joy-Con pair profiles must target a Nintendo left Joy-Con model (057e:2006 or 057e:2067)."
+      localized.string("profile.validation.unsupportedPointerSpeedDriver")
+    case .invalidJoyConPairDevice: localized.string("profile.validation.invalidJoyConPairDevice")
     case .bindingBehaviorConflict(let index):
-      "Binding \(index) uses a behavior incompatible with its destination or activation settings."
+      localized.string("profile.validation.bindingBehaviorConflict", index)
     case .unsupportedGamepadButton(let button):
-      "The virtual controller cannot output \(button.rawValue). Choose another button."
+      localized.string("profile.validation.unsupportedGamepadButton", button.rawValue)
     case .unsupportedGamepadAxis(let axis):
-      "The virtual controller cannot output \(axis.rawValue). Choose another axis."
-    case .virtualOutputRequired:
-      "Gamepad destinations require virtual gamepad output. Turn it on or change the destination."
-    case .invalidPhysicalOutput:
-      "A physical-controller output value is invalid. Choose an output the controller supports."
-    case .invalidProfileName: "Profile names must contain 1 through 80 printable characters."
-    case .tooManyBindings(let count):
-      "A remapping profile cannot contain \(count) bindings. Remove some; the limit is 512."
-    case .duplicateBindingID(let id): "The binding identifier \(id.uuidString) is duplicated."
-    case .duplicateLayerID(let id): "The layer identifier \(id.uuidString) is duplicated."
-    case .duplicateSource:
-      "Each controller source can appear in only one binding. Remove the extra binding."
+      localized.string("profile.validation.unsupportedGamepadAxis", axis.rawValue)
+    case .virtualOutputRequired: localized.string("profile.validation.virtualOutputRequired")
+    case .invalidPhysicalOutput: localized.string("profile.validation.invalidPhysicalOutput")
+    case .invalidProfileName: localized.string("profile.validation.invalidProfileName")
+    case .tooManyBindings(let count): localized.string("profile.validation.tooManyBindings", count)
+    case .duplicateBindingID(let id):
+      localized.string("profile.validation.duplicateBindingID", id.uuidString)
+    case .duplicateLayerID(let id):
+      localized.string("profile.validation.duplicateLayerID", id.uuidString)
+    case .duplicateSource: localized.string("profile.validation.duplicateSource")
     case .invalidAppID(let identifier):
-      "The target application bundle identifier is invalid: \(identifier). Use 3 to 255 ASCII "
-        + "letters, digits and hyphens in dot-separated parts, such as com.example.app."
-    case .noAppIDs: "An application target needs at least one bundle identifier."
+      localized.string("profile.validation.invalidAppID", identifier)
+    case .noAppIDs: localized.string("profile.validation.noAppIDs")
     case .duplicateAppID(let identifier):
-      "The target application bundle identifier is listed twice: \(identifier). Remove one."
-    case .axisTuningRequired(let index): "Binding \(index) requires axis tuning. Add it."
+      localized.string("profile.validation.duplicateAppID", identifier)
+    case .axisTuningRequired(let index):
+      localized.string("profile.validation.axisTuningRequired", index)
     case .axisTuningNotApplicable(let index):
-      "Binding \(index) cannot have axis tuning. Remove it."
+      localized.string("profile.validation.axisTuningNotApplicable", index)
     case .incompatibleSourceAndDestination(let index):
-      "Binding \(index) combines incompatible source and destination types. Change one."
+      localized.string("profile.validation.incompatibleSourceAndDestination", index)
     case .nonFiniteTuning(let index, let field):
-      "Binding \(index) has a non-finite \(field). Enter a finite number."
+      localized.string("profile.validation.nonFiniteTuning", index, field)
     case .tuningOutOfRange(let index, let field):
-      "Binding \(index) has an out-of-range \(field). Deadzone is 0 to 0.95, gain 0.1 to 10, "
-        + "digital activation threshold 0.01 to 1."
+      localized.string("profile.validation.tuningOutOfRange", index, field)
     case .turboNotSupported(let index):
-      "Binding \(index) uses turbo with a continuous destination. Remove turbo or change the "
-        + "destination."
+      localized.string("profile.validation.turboNotSupported", index)
     case .nonFiniteTurbo(let index, let field):
-      "Binding \(index) has a non-finite turbo \(field). Enter a finite number."
+      localized.string("profile.validation.nonFiniteTurbo", index, field)
     case .turboOutOfRange(let index, let field):
-      "Binding \(index) has an out-of-range turbo \(field). Repeat rate is 1 to 60 Hz, "
-        + "duty cycle 0.05 to 0.95, initial delay 0 to 2500 ms, max repeats 1 to 500."
+      localized.string("profile.validation.turboOutOfRange", index, field)
     case .longHoldNotSupported(let index):
-      "Binding \(index) uses long-hold with a continuous source or destination. Remove long-hold "
-        + "or use button sources and destinations."
+      localized.string("profile.validation.longHoldNotSupported", index)
     case .nonFiniteLongHold(let index, let field):
-      "Binding \(index) has a non-finite long-hold \(field). Enter a finite number."
+      localized.string("profile.validation.nonFiniteLongHold", index, field)
     case .longHoldOutOfRange(let index, let field):
-      "Binding \(index) has an out-of-range long-hold \(field). Use 100 to 5000 ms."
+      localized.string("profile.validation.longHoldOutOfRange", index, field)
     case .nonFiniteMultiTap(let index, let field):
-      "Binding \(index) has a non-finite multi-tap \(field). Enter a finite number."
+      localized.string("profile.validation.nonFiniteMultiTap", index, field)
     case .multiTapOutOfRange(let index, let field):
-      "Binding \(index) has an out-of-range multi-tap \(field). Use a count of 2 to 5 and a "
-        + "window of 50 to 1000 ms."
+      localized.string("profile.validation.multiTapOutOfRange", index, field)
     case .duplicateMultiTapCount(let index):
-      "Binding \(index) has two multi-tap entries with the same count. Give each its own count."
+      localized.string("profile.validation.duplicateMultiTapCount", index)
     case .turboAndActivationConflict(let index):
-      "Binding \(index) cannot combine turbo with long-hold or multi-tap. Remove one."
+      localized.string("profile.validation.turboAndActivationConflict", index)
     case .chordWindowOutOfRange(let index):
-      "Chord \(index) has an out-of-range window. Use 1 to 1000 ms."
+      localized.string("profile.validation.chordWindowOutOfRange", index)
     case .chordTooFewSources(let index):
-      "Chord \(index) must have at least two sources. Add one."
+      localized.string("profile.validation.chordTooFewSources", index)
     case .chordContinuousSource(let index):
-      "Chord \(index) uses a continuous (axis) source. Use button sources."
+      localized.string("profile.validation.chordContinuousSource", index)
     case .chordContinuousDestination(let index):
-      "Chord \(index) uses a continuous destination. Choose a button destination."
+      localized.string("profile.validation.chordContinuousDestination", index)
     case .duplicateChordSources(let index):
-      "Chord \(index) duplicates another chord's source set. Remove one."
+      localized.string("profile.validation.duplicateChordSources", index)
     case .sequenceTooFewSources(let index):
-      "Sequence \(index) must have at least two sources. Add one."
+      localized.string("profile.validation.sequenceTooFewSources", index)
     case .sequenceContinuousSource(let index):
-      "Sequence \(index) uses a continuous (axis) source. Use button sources."
+      localized.string("profile.validation.sequenceContinuousSource", index)
     case .sequenceContinuousDestination(let index):
-      "Sequence \(index) uses a continuous destination. Choose a button destination."
+      localized.string("profile.validation.sequenceContinuousDestination", index)
     case .sequenceWindowOutOfRange(let index):
-      "Sequence \(index) has an out-of-range window. Use 200 to 10000 ms."
+      localized.string("profile.validation.sequenceWindowOutOfRange", index)
     case .duplicateSequenceSources(let index):
-      "Sequence \(index) duplicates another sequence's source ordering. Remove one."
+      localized.string("profile.validation.duplicateSequenceSources", index)
     case .bindingRemarkInvalid(let index):
-      "Binding \(index) has an invalid remark. Use 1 to 200 characters."
+      localized.string("profile.validation.bindingRemarkInvalid", index)
     case .layerNameInvalid(let index):
-      "Layer \(index) has an invalid name. Use 1 to 40 characters."
+      localized.string("profile.validation.layerNameInvalid", index)
     case .layerActivatorNotDiscrete(let index):
-      "Layer \(index) has a non-discrete (axis) activator. Use a button source."
+      localized.string("profile.validation.layerActivatorNotDiscrete", index)
     case .duplicateLayerActivator(let index):
-      "Layer \(index) duplicates another layer's activator. Choose a different source."
+      localized.string("profile.validation.duplicateLayerActivator", index)
     case .layerActivatorAlsoBound(let index):
-      "Layer \(index) activator is also bound as a regular source. Remove that binding or "
-        + "choose another activator."
-    case .tooManyMacros(let count):
-      "A remapping profile cannot contain \(count) macros. Remove some; the limit is 16."
-    case .duplicateMacroID(let id): "The macro identifier \(id.uuidString) is duplicated."
+      localized.string("profile.validation.layerActivatorAlsoBound", index)
+    case .tooManyMacros(let count): localized.string("profile.validation.tooManyMacros", count)
+    case .duplicateMacroID(let id):
+      localized.string("profile.validation.duplicateMacroID", id.uuidString)
     case .duplicateMacroName(let index):
-      "Macro \(index) repeats the name of an earlier macro. Rename it."
+      localized.string("profile.validation.duplicateMacroName", index)
     case .invalidMacro(let index, let field):
-      "Macro \(index) has an invalid \(field). Names are 1 to 40 characters, steps 1 to 32, "
-        + "repeat 1 to 500, and each delay 0 to 5000 ms."
+      localized.string("profile.validation.invalidMacro", index, field)
     case .invalidMacroStepDestination(let index, let step):
-      "Step \(step) of macro \(index) has a destination that a macro step cannot use. Use a key, "
-        + "pointer button, or gamepad button or d-pad direction."
+      localized.string("profile.validation.invalidMacroStepDestination", step, index)
     case .macroNestingNotAllowed(let index, let step):
-      "Step \(step) of macro \(index) runs a macro, which a macro step cannot do. Remove the step."
+      localized.string("profile.validation.macroNestingNotAllowed", step, index)
     case .macroRunTimeExceeded(let index, let limit):
-      "Macro \(index) runs longer than the \(limit) limit. One pass takes at most 30 seconds and "
-        + "all repeats at most 300 seconds; shorten delays or lower the repeat."
-    case .unknownMacro(let id):
-      "A destination runs the macro \(id.uuidString), which does not exist. "
-        + "Choose an existing macro."
+      localized.string("profile.validation.macroRunTimeExceeded", index, limit)
+    case .unknownMacro(let id): localized.string("profile.validation.unknownMacro", id.uuidString)
     case .invalidSystemAction(let action):
-      "The \(action) destination has an invalid value. Review the value."
-    case .unknownLayer(let id):
-      "A destination sets the layer \(id.uuidString), which does not exist. "
-        + "Choose an existing layer."
+      localized.string("profile.validation.invalidSystemAction", action)
+    case .unknownLayer(let id): localized.string("profile.validation.unknownLayer", id.uuidString)
     case .unknownSwitchProfile(let id):
-      "A destination switches to the profile \(id.uuidString), which does not exist. "
-        + "Choose an existing profile."
+      localized.string("profile.validation.unknownSwitchProfile", id.uuidString)
     case .switchProfileForOtherModel(let id):
-      "A destination switches to the profile \(id.uuidString), which is for another model. "
-        + "Choose a profile for this model."
-    case .invalidSpeech(let field):
-      "A Speak destination has an invalid \(field). Text is 1 to 128 characters."
+      localized.string("profile.validation.switchProfileForOtherModel", id.uuidString)
+    case .invalidSpeech(let field): localized.string("profile.validation.invalidSpeech", field)
     case .unknownSpeechVoice(let voice):
-      "A Speak destination names the voice \(voice), which this Mac does not have. "
-        + "Choose an installed voice or the system voice."
-    case .invalidMIDIDestination:
-      "A MIDI destination needs a channel of 1 to 16, a note or controller of 0 to 127, and a "
-        + "velocity of 1 to 127."
-    case .encodingFailed: "The remapping profile could not be encoded. Review its values."
+      localized.string("profile.validation.unknownSpeechVoice", voice)
+    case .invalidMIDIDestination: localized.string("profile.validation.invalidMIDIDestination")
+    case .encodingFailed: localized.string("profile.validation.encodingFailed")
     case .encodedSizeExceeded(let size):
-      "The encoded remapping profile is too large (\(size) bytes). Keep it under 4 MiB."
+      localized.string("profile.validation.encodedSizeExceeded", size)
     }
   }
 }

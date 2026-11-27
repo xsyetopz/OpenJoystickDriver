@@ -6679,3 +6679,160 @@
 
 /* Tooltip of the format popup of the export panel for a virtual gamepad mapping. */
 "ui.help.exportFormat" = "เลือกรูปแบบไฟล์ของการแมปที่ส่งออก";
+
+/* Error when a profile breaks a rule: the mapping of this stick has an invalid field. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.invalidStickMapping" = "ตรวจสอบการตั้งค่าของสติ๊ก %@";
+/* Error when a profile breaks a rule: two mappings read this stick. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.duplicateStickMapping" = "สติ๊ก %@ มีการแมปโหมดหลายรายการ เก็บไว้เพียงรายการเดียว";
+/* Error when a profile breaks a rule: the mapping of this trigger has an invalid field. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.invalidTriggerMapping" = "ตรวจสอบการตั้งค่าของทริกเกอร์สองขั้น %@";
+/* Error when a profile breaks a rule: two mappings read this trigger. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.duplicateTriggerMapping" = "ทริกเกอร์ %@ มีการแมปขั้นหลายรายการ เก็บไว้เพียงรายการเดียว";
+/* Error when a profile breaks a rule: a binding reads a stage of this trigger, which has no dual-stage mapping. %@ is the source as the profile file spells it, kept as written. */
+"profile.validation.triggerStageWithoutMapping" = "ขั้นของทริกเกอร์ %@ ต้องมีการแมปทริกเกอร์สองขั้น เพิ่มการแมปหนึ่งรายการ";
+/* Error when a profile breaks a rule: a binding reads a motion lean, but no motion tuning defines one. */
+"profile.validation.motionLeanWithoutMapping" = "แหล่งการเอียงตามการเคลื่อนไหวต้องมีการตั้งค่าการเอียงตามการเคลื่อนไหว เพิ่มการตั้งค่าหรือเอาแหล่งออก";
+/* Error when a profile breaks a rule: the touch mapping of this surface has an invalid field. %@ is the surface as the profile file spells it, kept as written. */
+"profile.validation.invalidTouchMapping" = "ตรวจสอบการแมปแบบต่อเนื่องของพื้นผิวสัมผัส %@";
+/* Error when a profile breaks a rule: two touch mappings read this surface. %@ is the surface as the profile file spells it, kept as written. */
+"profile.validation.duplicateTouchMapping" = "พื้นผิวสัมผัส %@ มีการแมปแบบต่อเนื่องหลายรายการ เก็บไว้เพียงรายการเดียว";
+/* Error when a profile breaks a rule: a touch grid source has invalid dimensions or cell coordinates. */
+"profile.validation.invalidTouchGrid" = "แหล่งกริดสัมผัสมีขนาดหรือพิกัดเซลล์ไม่ถูกต้อง ใช้แถวและคอลัมน์ 1 ถึง 16 และเซลล์ที่อยู่ในกริด";
+/* Error when a profile breaks a rule: a touch swipe source has an invalid minimum distance. */
+"profile.validation.invalidTouchSwipe" = "แหล่งการปัดสัมผัสมีระยะทางขั้นต่ำไม่ถูกต้อง ใช้ค่า 0.01 ถึง 1";
+/* Error when a profile breaks a rule: a stick region has a radius, sector or hysteresis out of range. */
+"profile.validation.invalidStickRegion" = "ภูมิภาคของสติ๊กต้องเป็น 0 <= inner < outer <= 1 มีมุมทั้งสองหรือไม่มีเลย และฮิสเทอรีซิส 0 ถึง 0.25";
+/* Error when a profile breaks a rule: a trigger band has a pressure or hysteresis out of range. */
+"profile.validation.invalidTriggerBand" = "ช่วงของทริกเกอร์ต้องเป็น 0 <= from < to <= 1 และฮิสเทอรีซิส 0 ถึง 0.25";
+/* Error when a profile breaks a rule: a touch area is empty or outside the surface. */
+"profile.validation.invalidTouchArea" = "พื้นที่สัมผัสต้องไม่ว่างและอยู่ภายในพื้นผิว ปรับขนาดให้พอดี";
+/* Error when a profile breaks a rule: a trigger has bands and a dual-stage mapping. %@ is the trigger as the profile file spells it, kept as written. */
+"profile.validation.triggerBandWithDualStage" = "ทริกเกอร์ %@ มีทั้งช่วงและการแมปสองขั้น เอาออกหนึ่งอย่าง";
+/* Error when a profile breaks a rule: two regions of one stick, or two bands of one trigger, share a position. */
+"profile.validation.overlappingRegions" = "ภูมิภาคของสติ๊กหนึ่งตัว หรือช่วงของทริกเกอร์หนึ่งตัว ต้องไม่ทับซ้อนกัน ลดขนาดหรือเอาออกหนึ่งรายการ";
+/* Error when a profile breaks a rule: the pointer speed has a minimum or maximum scale that is not finite or not 0 to 10. */
+"profile.validation.invalidPointerSpeed" = "สเกลความเร็วตัวชี้ต้องเป็นจำนวนจำกัดตั้งแต่ 0 ถึง 10";
+/* Error when a profile breaks a rule: the pointer speed reads a trigger or stick that the controller does not report. */
+"profile.validation.unsupportedPointerSpeedDriver" = "ความเร็วตัวชี้อ่านทริกเกอร์หรือสติ๊กที่คอนโทรลเลอร์ไม่รายงาน เลือกแหล่งที่คอนโทรลเลอร์รายงาน";
+/* Error when a profile breaks a rule: a Joy-Con pair profile does not target a left Joy-Con model. */
+"profile.validation.invalidJoyConPairDevice" = "โปรไฟล์คู่ Joy-Con ต้องกำหนดเป้าหมายเป็น Joy-Con ซ้ายรุ่นของ Nintendo (057e:2006 หรือ 057e:2067)";
+/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.bindingBehaviorConflict" = "การผูกปุ่ม %d ใช้พฤติกรรมที่เข้ากันไม่ได้กับปลายทางหรือการตั้งค่าการเปิดใช้งาน";
+/* Error when a profile breaks a rule: the virtual gamepad cannot output this button. %@ is the button as the profile file spells it, kept as written. */
+"profile.validation.unsupportedGamepadButton" = "เกมแพดเสมือนส่งออก %@ ไม่ได้ เลือกปุ่มอื่น";
+/* Error when a profile breaks a rule: the virtual gamepad cannot output this axis. %@ is the axis as the profile file spells it, kept as written. */
+"profile.validation.unsupportedGamepadAxis" = "เกมแพดเสมือนส่งออก %@ ไม่ได้ เลือกแกนอื่น";
+/* Error when a profile breaks a rule: a virtual gamepad destination or stick output is used while the output policy has no virtual. */
+"profile.validation.virtualOutputRequired" = "ปลายทางเกมแพดต้องใช้เอาต์พุตเกมแพดเสมือน เปิดเอาต์พุตนั้นหรือเปลี่ยนปลายทาง";
+/* Error when a profile breaks a rule: a physical-controller output value is out of range. */
+"profile.validation.invalidPhysicalOutput" = "ค่าเอาต์พุตของคอนโทรลเลอร์จริงไม่ถูกต้อง เลือกเอาต์พุตที่คอนโทรลเลอร์รองรับ";
+/* Error when a profile breaks a rule: the profile name is empty, too long, padded with whitespace or holds control characters. */
+"profile.validation.invalidProfileName" = "ชื่อโปรไฟล์ต้องมีอักขระที่พิมพ์ได้ 1 ถึง 80 ตัว";
+/* Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. */
+"profile.validation.tooManyBindings" = "โปรไฟล์การแมปใหม่มีการผูกปุ่ม %d รายการไม่ได้ เอาออกบางรายการ ขีดจำกัดคือ 512";
+/* Error when a profile breaks a rule: two bindings, chords, sequences, actions or touch mappings share this identifier. %@ is an identifier (UUID). */
+"profile.validation.duplicateBindingID" = "ตัวระบุการผูกปุ่ม %@ ซ้ำกัน";
+/* Error when a profile breaks a rule: two layers share this identifier. %@ is an identifier (UUID). */
+"profile.validation.duplicateLayerID" = "ตัวระบุเลเยอร์ %@ ซ้ำกัน";
+/* Error when a profile breaks a rule: two bindings of one scope read this source. */
+"profile.validation.duplicateSource" = "แหล่งของคอนโทรลเลอร์แต่ละแหล่งอยู่ในการผูกปุ่มได้เพียงรายการเดียว เอาการผูกปุ่มส่วนเกินออก";
+/* Error when a profile breaks a rule: the application bundle identifier is not valid; the value is the identifier. %@ is an application bundle identifier. */
+"profile.validation.invalidAppID" = "ตัวระบุบันเดิลของแอปเป้าหมายไม่ถูกต้อง: %@ ใช้ตัวอักษร ASCII ตัวเลข และขีดกลาง 3 ถึง 255 ตัวในส่วนที่คั่นด้วยจุด เช่น com.example.app";
+/* Error when a profile breaks a rule: an application scope lists no bundle identifier. */
+"profile.validation.noAppIDs" = "เป้าหมายแอปต้องมีตัวระบุบันเดิลอย่างน้อยหนึ่งรายการ";
+/* Error when a profile breaks a rule: an application scope lists this bundle identifier more than once. %@ is an application bundle identifier. */
+"profile.validation.duplicateAppID" = "ตัวระบุบันเดิลของแอปเป้าหมายอยู่ในรายการสองครั้ง: %@ เอาออกหนึ่งรายการ";
+/* Error when a profile breaks a rule: an axis source has no axis tuning. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.axisTuningRequired" = "การผูกปุ่ม %d ต้องมีการปรับแกน เพิ่มการปรับแกน";
+/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.axisTuningNotApplicable" = "การผูกปุ่ม %d มีการปรับแกนไม่ได้ เอาการปรับแกนออก";
+/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.incompatibleSourceAndDestination" = "การผูกปุ่ม %d ใช้แหล่งและปลายทางที่เข้ากันไม่ได้ เปลี่ยนหนึ่งอย่าง";
+/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.nonFiniteTuning" = "การผูกปุ่ม %1$d มี %2$@ ที่ไม่ใช่จำนวนจำกัด ป้อนจำนวนจำกัด";
+/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.tuningOutOfRange" = "การผูกปุ่ม %1$d มี %2$@ เกินช่วง เดดโซน 0 ถึง 0.95 เกน 0.1 ถึง 10 ค่าเริ่มต้นการเปิดใช้งานแบบดิจิทัล 0.01 ถึง 1";
+/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.turboNotSupported" = "การผูกปุ่ม %d ใช้เทอร์โบกับปลายทางแบบต่อเนื่อง เอาเทอร์โบออกหรือเปลี่ยนปลายทาง";
+/* Error when a profile breaks a rule: a turbo field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.nonFiniteTurbo" = "การผูกปุ่ม %1$d มี %2$@ ของเทอร์โบที่ไม่ใช่จำนวนจำกัด ป้อนจำนวนจำกัด";
+/* Error when a profile breaks a rule: a turbo field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.turboOutOfRange" = "การผูกปุ่ม %1$d มี %2$@ ของเทอร์โบเกินช่วง อัตราการทำซ้ำ 1 ถึง 60 Hz รอบหน้าที่ 0.05 ถึง 0.95 หน่วงเวลาเริ่มต้น 0 ถึง 2500 ms จำนวนการทำซ้ำสูงสุด 1 ถึง 500";
+/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.longHoldNotSupported" = "การผูกปุ่ม %d ใช้กดค้างนานกับแหล่งหรือปลายทางแบบต่อเนื่อง เอากดค้างนานออกหรือใช้แหล่งและปลายทางที่เป็นปุ่ม";
+/* Error when a profile breaks a rule: a long-hold field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.nonFiniteLongHold" = "การผูกปุ่ม %1$d มี %2$@ ของกดค้างนานที่ไม่ใช่จำนวนจำกัด ป้อนจำนวนจำกัด";
+/* Error when a profile breaks a rule: a long-hold field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.longHoldOutOfRange" = "การผูกปุ่ม %1$d มี %2$@ ของกดค้างนานเกินช่วง ใช้ 100 ถึง 5000 ms";
+/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.nonFiniteMultiTap" = "การผูกปุ่ม %1$d มี %2$@ ของแตะหลายครั้งที่ไม่ใช่จำนวนจำกัด ป้อนจำนวนจำกัด";
+/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.multiTapOutOfRange" = "การผูกปุ่ม %1$d มี %2$@ ของแตะหลายครั้งเกินช่วง ใช้จำนวน 2 ถึง 5 และช่วงเวลา 50 ถึง 1000 ms";
+/* Error when a profile breaks a rule: two multi-tap entries have the same count. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.duplicateMultiTapCount" = "การผูกปุ่ม %d มีรายการแตะหลายครั้งสองรายการที่มีจำนวนเท่ากัน กำหนดจำนวนที่ต่างกันให้แต่ละรายการ";
+/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.turboAndActivationConflict" = "การผูกปุ่ม %d รวมเทอร์โบกับกดค้างนานหรือแตะหลายครั้งไม่ได้ เอาออกหนึ่งอย่าง";
+/* Error when a profile breaks a rule: a chord window is out of range. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.chordWindowOutOfRange" = "ช่วงเวลาของการกดพร้อมกัน %d เกินช่วง ใช้ 1 ถึง 1000 ms";
+/* Error when a profile breaks a rule: a chord has fewer than two sources. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.chordTooFewSources" = "การกดพร้อมกัน %d ต้องมีแหล่งอย่างน้อยสองแหล่ง เพิ่มหนึ่งแหล่ง";
+/* Error when a profile breaks a rule: a chord has an axis source. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.chordContinuousSource" = "การกดพร้อมกัน %d ใช้แหล่งแบบต่อเนื่อง (แกน) ใช้แหล่งที่เป็นปุ่ม";
+/* Error when a profile breaks a rule: a chord has a continuous destination. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.chordContinuousDestination" = "การกดพร้อมกัน %d ใช้ปลายทางแบบต่อเนื่อง เลือกปลายทางที่เป็นปุ่ม";
+/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %d is the position of the chord in its list, counted from 0. */
+"profile.validation.duplicateChordSources" = "การกดพร้อมกัน %d มีชุดแหล่งซ้ำกับการกดพร้อมกันอื่น เอาออกหนึ่งรายการ";
+/* Error when a profile breaks a rule: a sequence has fewer than two sources. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.sequenceTooFewSources" = "ลำดับ %d ต้องมีแหล่งอย่างน้อยสองแหล่ง เพิ่มหนึ่งแหล่ง";
+/* Error when a profile breaks a rule: a sequence has an axis source. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.sequenceContinuousSource" = "ลำดับ %d ใช้แหล่งแบบต่อเนื่อง (แกน) ใช้แหล่งที่เป็นปุ่ม";
+/* Error when a profile breaks a rule: a sequence has a continuous destination. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.sequenceContinuousDestination" = "ลำดับ %d ใช้ปลายทางแบบต่อเนื่อง เลือกปลายทางที่เป็นปุ่ม";
+/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.sequenceWindowOutOfRange" = "ช่วงเวลาของลำดับ %d เกินช่วง ใช้ 200 ถึง 10000 ms";
+/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %d is the position of the sequence in its list, counted from 0. */
+"profile.validation.duplicateSequenceSources" = "ลำดับ %d มีลำดับแหล่งซ้ำกับลำดับอื่น เอาออกหนึ่งรายการ";
+/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %d is the position of the binding in its list, counted from 0. */
+"profile.validation.bindingRemarkInvalid" = "การผูกปุ่ม %d มีหมายเหตุไม่ถูกต้อง ใช้ 1 ถึง 200 ตัวอักษร";
+/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %d is the position of the layer in its list, counted from 0. */
+"profile.validation.layerNameInvalid" = "เลเยอร์ %d มีชื่อไม่ถูกต้อง ใช้ 1 ถึง 40 ตัวอักษร";
+/* Error when a profile breaks a rule: a layer activator is an axis. %d is the position of the layer in its list, counted from 0. */
+"profile.validation.layerActivatorNotDiscrete" = "เลเยอร์ %d มีตัวเปิดใช้งานที่ไม่ใช่แบบแยกค่า (แกน) ใช้แหล่งที่เป็นปุ่ม";
+/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %d is the position of the layer in its list, counted from 0. */
+"profile.validation.duplicateLayerActivator" = "เลเยอร์ %d มีตัวเปิดใช้งานซ้ำกับเลเยอร์อื่น เลือกแหล่งอื่น";
+/* Error when a profile breaks a rule: a layer activator also has a binding. %d is the position of the layer in its list, counted from 0. */
+"profile.validation.layerActivatorAlsoBound" = "ตัวเปิดใช้งานของเลเยอร์ %d ถูกผูกเป็นแหล่งปกติด้วย เอาการผูกปุ่มนั้นออกหรือเลือกตัวเปิดใช้งานอื่น";
+/* Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. */
+"profile.validation.tooManyMacros" = "โปรไฟล์การแมปใหม่มีมาโคร %d รายการไม่ได้ เอาออกบางรายการ ขีดจำกัดคือ 16";
+/* Error when a profile breaks a rule: two macros share this identifier. %@ is an identifier (UUID). */
+"profile.validation.duplicateMacroID" = "ตัวระบุมาโคร %@ ซ้ำกัน";
+/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %d is the position of the macro in its list, counted from 0. */
+"profile.validation.duplicateMacroName" = "มาโคร %d ใช้ชื่อซ้ำกับมาโครก่อนหน้า เปลี่ยนชื่อ";
+/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.invalidMacro" = "มาโคร %1$d มี %2$@ ไม่ถูกต้อง ชื่อ 1 ถึง 40 ตัวอักษร ขั้นตอน 1 ถึง 32 การทำซ้ำ 1 ถึง 500 และหน่วงเวลาแต่ละครั้ง 0 ถึง 5000 ms";
+/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
+"profile.validation.invalidMacroStepDestination" = "ขั้นตอน %1$d ของมาโคร %2$d มีปลายทางที่ขั้นตอนของมาโครใช้ไม่ได้ ใช้ปุ่มคีย์บอร์ด ปุ่มตัวชี้ ปุ่มเกมแพด หรือทิศทาง D-pad";
+/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
+"profile.validation.macroNestingNotAllowed" = "ขั้นตอน %1$d ของมาโคร %2$d เรียกใช้มาโคร ซึ่งขั้นตอนของมาโครทำไม่ได้ เอาขั้นตอนนั้นออก";
+/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
+"profile.validation.macroRunTimeExceeded" = "มาโคร %1$d ทำงานนานกว่าขีดจำกัด %2$@ หนึ่งรอบใช้เวลาไม่เกิน 30 วินาที และการทำซ้ำทั้งหมดไม่เกิน 300 วินาที ลดการหน่วงเวลาหรือลดการทำซ้ำ";
+/* Error when a profile breaks a rule: a destination runs a macro that the profile does not hold. %@ is an identifier (UUID). */
+"profile.validation.unknownMacro" = "ปลายทางหนึ่งเรียกใช้มาโคร %@ ซึ่งไม่มีอยู่ เลือกมาโครที่มีอยู่";
+/* Error when a profile breaks a rule: a system action destination has a value outside its limits; the value is the action name. %@ is the destination type as the profile file spells it, kept as written. */
+"profile.validation.invalidSystemAction" = "ปลายทาง %@ มีค่าไม่ถูกต้อง ตรวจสอบค่า";
+/* Error when a profile breaks a rule: a destination sets a layer that the profile does not hold. %@ is an identifier (UUID). */
+"profile.validation.unknownLayer" = "ปลายทางหนึ่งตั้งค่าเลเยอร์ %@ ซึ่งไม่มีอยู่ เลือกเลเยอร์ที่มีอยู่";
+/* Error when a profile breaks a rule: a destination switches to a profile that does not exist. %@ is an identifier (UUID). */
+"profile.validation.unknownSwitchProfile" = "ปลายทางหนึ่งสลับไปยังโปรไฟล์ %@ ซึ่งไม่มีอยู่ เลือกโปรไฟล์ที่มีอยู่";
+/* Error when a profile breaks a rule: a destination switches to a profile for another controller model. %@ is an identifier (UUID). */
+"profile.validation.switchProfileForOtherModel" = "ปลายทางหนึ่งสลับไปยังโปรไฟล์ %@ ซึ่งใช้กับรุ่นอื่น เลือกโปรไฟล์สำหรับรุ่นนี้";
+/* Error when a profile breaks a rule: a `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or. %@ is the name of the value as the profile file spells it, kept as written. */
+"profile.validation.invalidSpeech" = "ปลายทางพูดมี %@ ไม่ถูกต้อง ข้อความยาว 1 ถึง 128 ตัวอักษร";
+/* Error when a profile breaks a rule: a `Speak` destination names a voice that this Mac does not have. %@ is the name of a voice. */
+"profile.validation.unknownSpeechVoice" = "ปลายทางพูดระบุเสียง %@ ซึ่ง Mac เครื่องนี้ไม่มี เลือกเสียงที่ติดตั้งไว้หรือเสียงของระบบ";
+/* Error when a profile breaks a rule: a MIDI destination has a channel, note, controller or velocity out of range. */
+"profile.validation.invalidMIDIDestination" = "ปลายทาง MIDI ต้องมีแชนเนล 1 ถึง 16 โน้ตหรือคอนโทรลเลอร์ 0 ถึง 127 และเวโลซิตี 1 ถึง 127";
+/* Error when a profile breaks a rule: the profile could not be encoded. */
+"profile.validation.encodingFailed" = "เข้ารหัสโปรไฟล์การแมปใหม่ไม่ได้ ตรวจสอบค่าของโปรไฟล์";
+/* Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. */
+"profile.validation.encodedSizeExceeded" = "โปรไฟล์การแมปใหม่ที่เข้ารหัสแล้วมีขนาดใหญ่เกินไป (%d ไบต์) เก็บให้ต่ำกว่า 4 MiB";
