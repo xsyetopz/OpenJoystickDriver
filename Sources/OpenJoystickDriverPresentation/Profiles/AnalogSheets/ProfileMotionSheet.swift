@@ -191,23 +191,13 @@
 
     /// The Reset, Inherit, Cancel and Save buttons.
     private var buttonRow: some View {
-      HStack {
-        Button(OJDLocalized.string("action.reset")) { reset() }.help(
-          OJDLocalized.string("ui.help.reset")
-        )
+      ProfileSheetButtonRow(reset: reset, save: save) {
         if let onInherit {
           Button(OJDLocalized.string("ui.profiles.motion.inherit")) {
             onInherit()
             presentationMode.wrappedValue.dismiss()
           }.help(OJDLocalized.string("ui.profiles.motion.inheritHelp"))
         }
-        Spacer()
-        Button(OJDLocalized.string("action.cancel")) {
-          presentationMode.wrappedValue.dismiss()
-        }.help(OJDLocalized.string("ui.help.cancelSheet"))
-        Button(OJDLocalized.string("action.save")) { save() }.help(
-          OJDLocalized.string("ui.help.save")
-        )
       }
     }
 

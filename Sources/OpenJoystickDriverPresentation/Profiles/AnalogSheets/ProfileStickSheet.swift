@@ -67,30 +67,7 @@
           ProfileStickFields(draft: selected == .left ? $left : $right).padding(.trailing, 8)
         }
         if let errorMessage { Text(errorMessage).foregroundColor(.red) }
-        HStack {
-          Button(OJDLocalized.string("action.reset")) {
-            if selected == .left {
-              left = ProfileStickDraft(source: .left, mapping: nil)
-            } else {
-              right = ProfileStickDraft(source: .right, mapping: nil)
-            }
-            errorMessage = nil
-          }.help(OJDLocalized.string("ui.help.reset"))
-          Spacer()
-          Button(OJDLocalized.string("action.cancel")) {
-            presentationMode.wrappedValue.dismiss()
-          }.help(OJDLocalized.string("ui.help.cancelSheet"))
-          Button(OJDLocalized.string("action.save")) {
-            do {
-              let separator = Locale.current.decimalSeparator ?? "."
-              let mappings = try [left, right].compactMap {
-                try $0.validatedMapping(decimalSeparator: separator)
-              }
-              try onSave(mappings)
-              presentationMode.wrappedValue.dismiss()
-            } catch { errorMessage = RuntimePresentation.userFacingError(error) }
-          }.help(OJDLocalized.string("ui.help.save"))
-        }
+        ProfileSheetButtonRow(reset: reset, save: save)
       }.ojdSheet(.regular).frame(
         height: ProfilePresentationPolicy.optionalEditorHeight(
           enabled: selected == .left ? left.enabled : right.enabled,
@@ -98,6 +75,28 @@
           expanded: 600
         )
       )
+    }
+
+    /// Clears the selected stick and the error.
+    private func reset() {
+      if selected == .left {
+        left = ProfileStickDraft(source: .left, mapping: nil)
+      } else {
+        right = ProfileStickDraft(source: .right, mapping: nil)
+      }
+      errorMessage = nil
+    }
+
+    /// Saves both sticks and dismisses the sheet, or shows why validation failed.
+    private func save() {
+      do {
+        let separator = Locale.current.decimalSeparator ?? "."
+        let mappings = try [left, right].compactMap {
+          try $0.validatedMapping(decimalSeparator: separator)
+        }
+        try onSave(mappings)
+        presentationMode.wrappedValue.dismiss()
+      } catch { errorMessage = RuntimePresentation.userFacingError(error) }
     }
   }
 #endif
