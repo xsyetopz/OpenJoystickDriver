@@ -39,18 +39,7 @@
           }.ojdAccessibilityLabel(OJDLocalized.string("term.controller"))
             .help(OJDLocalized.string("ui.profiles.convertTargetHelp"))
           if isLoadingCatalog { ProgressView().controlSize(.small) }
-          TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
-            .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
-            .help(OJDLocalized.string("ui.profiles.nameHelp"))
-          if model.isNameTaken {
-            Text(OJDLocalized.string("ui.error.duplicateProfile"))
-              .foregroundColor(Color(NSColor.systemRed))
-          } else if !model.name.isEmpty,
-            ProfileNameValidation.trimmedName(model.name).isEmpty
-          {
-            Text(OJDLocalized.string("ui.capture.profileNameValidation"))
-              .foregroundColor(Color(NSColor.systemRed))
-          }
+          ProfileNameField(text: nameBinding, isTaken: model.isNameTaken)
         }
         HStack {
           Spacer()

@@ -7,6 +7,16 @@ enum ProfileNameValidation {
   static func trimmedName(_ name: String) -> String {
     name.trimmingCharacters(in: .whitespacesAndNewlines)
   }
+
+  /// The message about `name`: one for a name another profile has, one for a name that is empty
+  /// once trimmed, and nil for an acceptable or untouched empty name.
+  static func problem(of name: String, isTaken: Bool) -> String? {
+    if isTaken { return OJDLocalized.string("ui.error.duplicateProfile") }
+    if !name.isEmpty, trimmedName(name).isEmpty {
+      return OJDLocalized.string("ui.capture.profileNameValidation")
+    }
+    return nil
+  }
 }
 
 /// Returns the name that the Duplicate sheet starts with: the source's name followed by the copy

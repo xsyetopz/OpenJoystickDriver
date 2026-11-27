@@ -45,17 +45,8 @@
     }
 
     /// The name field and the message about the name.
-    @ViewBuilder
     private var nameFields: some View {
-      TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
-        .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
-        .help(OJDLocalized.string("ui.profiles.nameHelp"))
-      if let message = nameProblem {
-        Text(message).foregroundColor(Color(NSColor.systemRed)).fixedSize(
-          horizontal: false,
-          vertical: true
-        )
-      }
+      ProfileNameField(text: nameBinding, isTaken: fields.isNameTaken(in: context))
     }
 
     /// The controller picker and the notes about the controller list.
@@ -150,7 +141,12 @@
         ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
           .ojdInterfaceRow(ProfilesRow.outputPolicy)
       }
-      if fields.showsValidation(isValid: proposedProfile != nil), nameProblem == nil {
+      if fields.showsValidation(isValid: proposedProfile != nil),
+        ProfileNameValidation.problem(
+          of: fields.name(in: context),
+          isTaken: fields.isNameTaken(in: context)
+        ) == nil
+      {
         Text(OJDLocalized.string("ui.profiles.creationValidation"))
           .foregroundColor(Color(NSColor.systemRed)).fixedSize(
             horizontal: false,
@@ -177,17 +173,6 @@
 
     /// The profile the fields describe, or nil.
     private var proposedProfile: RemappingProfile? { fields.proposedProfile(in: context) }
-
-    /// The message about the name in the name field: a name another profile has, or one that is
-    /// empty once trimmed; nil when the name is acceptable.
-    private var nameProblem: String? {
-      let name = fields.name(in: context)
-      if fields.isNameTaken(in: context) { return OJDLocalized.string("ui.error.duplicateProfile") }
-      if !name.isEmpty, ProfileNameValidation.trimmedName(name).isEmpty {
-        return OJDLocalized.string("ui.capture.profileNameValidation")
-      }
-      return nil
-    }
 
     /// The name field's binding; typing sets the edited name.
     private var nameBinding: Binding<String> {
@@ -227,16 +212,10 @@
       VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("action.duplicate")).font(.headline)
         Form {
-          TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
-            .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
-            .help(OJDLocalized.string("ui.profiles.nameHelp"))
-          if ProfileNaming.isTaken(shownName, in: profiles) {
-            Text(OJDLocalized.string("ui.error.duplicateProfile"))
-              .foregroundColor(Color(NSColor.systemRed))
-          } else if !shownName.isEmpty, ProfileNameValidation.trimmedName(shownName).isEmpty {
-            Text(OJDLocalized.string("ui.capture.profileNameValidation"))
-              .foregroundColor(Color(NSColor.systemRed))
-          }
+          ProfileNameField(
+            text: nameBinding,
+            isTaken: ProfileNaming.isTaken(shownName, in: profiles)
+          )
         }
         HStack {
           Spacer()

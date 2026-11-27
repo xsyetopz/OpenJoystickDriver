@@ -36,6 +36,20 @@ struct ProfileListModelTests {
   }
 
   @Test
+  func nameProblemNamesTakenAndBlankNamesOnly() {
+    #expect(
+      ProfileNameValidation.problem(of: "Racing", isTaken: true)
+        == OJDLocalized.string("ui.error.duplicateProfile")
+    )
+    #expect(
+      ProfileNameValidation.problem(of: "   ", isTaken: false)
+        == OJDLocalized.string("ui.capture.profileNameValidation")
+    )
+    #expect(ProfileNameValidation.problem(of: "", isTaken: false) == nil)
+    #expect(ProfileNameValidation.problem(of: "Racing", isTaken: false) == nil)
+  }
+
+  @Test
   func defaultDuplicateNameIsFreeOfExistingNames() {
     let source = Self.profile(named: "Racing")
     let first = defaultDuplicateName(of: source, in: [source])
