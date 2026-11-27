@@ -6681,158 +6681,253 @@
 "ui.help.exportFormat" = "Chọn định dạng tệp của ánh xạ được xuất";
 
 /* Error when a profile breaks a rule: the mapping of this stick has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidStickMapping" = "Hãy xem lại cài đặt của cần analog %@.";
+"ui.profileValidation.invalidStickMapping" = "Hãy xem lại cài đặt của cần analog %@.";
 /* Error when a profile breaks a rule: two mappings read this stick. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateStickMapping" = "Cần analog %@ có nhiều ánh xạ chế độ. Hãy giữ lại một.";
+"ui.profileValidation.duplicateStickMapping" = "Cần analog %@ có nhiều ánh xạ chế độ. Hãy giữ lại một.";
 /* Error when a profile breaks a rule: the mapping of this trigger has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidTriggerMapping" = "Hãy xem lại cài đặt của cò hai nấc %@.";
+"ui.profileValidation.invalidTriggerMapping" = "Hãy xem lại cài đặt của cò hai nấc %@.";
 /* Error when a profile breaks a rule: two mappings read this trigger. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateTriggerMapping" = "Cò %@ có nhiều ánh xạ nấc. Hãy giữ lại một.";
+"ui.profileValidation.duplicateTriggerMapping" = "Cò %@ có nhiều ánh xạ nấc. Hãy giữ lại một.";
 /* Error when a profile breaks a rule: a binding reads a stage of this trigger, which has no dual-stage mapping. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.triggerStageWithoutMapping" = "Nấc của cò %@ cần có ánh xạ cò hai nấc. Hãy thêm một ánh xạ.";
+"ui.profileValidation.triggerStageWithoutMapping" = "Nấc của cò %@ cần có ánh xạ cò hai nấc. Hãy thêm một ánh xạ.";
 /* Error when a profile breaks a rule: a binding reads a motion lean, but no motion tuning defines one. */
-"profile.validation.motionLeanWithoutMapping" = "Nguồn nghiêng chuyển động cần có cài đặt nghiêng chuyển động. Hãy thêm cài đặt hoặc gỡ các nguồn.";
+"ui.profileValidation.motionLeanWithoutMapping" = "Nguồn nghiêng chuyển động cần có cài đặt nghiêng chuyển động. Hãy thêm cài đặt hoặc gỡ các nguồn.";
 /* Error when a profile breaks a rule: the touch mapping of this surface has an invalid field. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.invalidTouchMapping" = "Hãy xem lại ánh xạ liên tục của bề mặt cảm ứng %@.";
+"ui.profileValidation.invalidTouchMapping" = "Hãy xem lại ánh xạ liên tục của bề mặt cảm ứng %@.";
 /* Error when a profile breaks a rule: two touch mappings read this surface. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.duplicateTouchMapping" = "Bề mặt cảm ứng %@ có nhiều ánh xạ liên tục. Hãy giữ lại một.";
+"ui.profileValidation.duplicateTouchMapping" = "Bề mặt cảm ứng %@ có nhiều ánh xạ liên tục. Hãy giữ lại một.";
 /* Error when a profile breaks a rule: a touch grid source has invalid dimensions or cell coordinates. */
-"profile.validation.invalidTouchGrid" = "Nguồn lưới cảm ứng có kích thước hoặc tọa độ ô không hợp lệ. Hãy dùng 1 đến 16 hàng và cột, và các ô nằm trong lưới.";
+"ui.profileValidation.invalidTouchGrid" = "Nguồn lưới cảm ứng có kích thước hoặc tọa độ ô không hợp lệ. Hãy dùng 1 đến 16 hàng và cột, và các ô nằm trong lưới.";
 /* Error when a profile breaks a rule: a touch swipe source has an invalid minimum distance. */
-"profile.validation.invalidTouchSwipe" = "Nguồn vuốt cảm ứng có khoảng cách tối thiểu không hợp lệ. Hãy dùng giá trị từ 0.01 đến 1.";
+"ui.profileValidation.invalidTouchSwipe" = "Nguồn vuốt cảm ứng có khoảng cách tối thiểu không hợp lệ. Hãy dùng giá trị từ 0.01 đến 1.";
 /* Error when a profile breaks a rule: a stick region has a radius, sector or hysteresis out of range. */
-"profile.validation.invalidStickRegion" = "Vùng của cần analog cần 0 <= inner < outer <= 1, có cả hai góc hoặc không có góc nào, hysteresis từ 0 đến 0.25.";
+"ui.profileValidation.invalidStickRegion" = "Vùng của cần analog cần 0 <= inner < outer <= 1, có cả hai góc hoặc không có góc nào, hysteresis từ 0 đến 0.25.";
 /* Error when a profile breaks a rule: a trigger band has a pressure or hysteresis out of range. */
-"profile.validation.invalidTriggerBand" = "Dải của cò cần 0 <= from < to <= 1 và hysteresis từ 0 đến 0.25.";
+"ui.profileValidation.invalidTriggerBand" = "Dải của cò cần 0 <= from < to <= 1 và hysteresis từ 0 đến 0.25.";
 /* Error when a profile breaks a rule: a touch area is empty or outside the surface. */
-"profile.validation.invalidTouchArea" = "Vùng cảm ứng không được để trống và phải nằm trong bề mặt. Hãy đổi kích thước cho vừa.";
+"ui.profileValidation.invalidTouchArea" = "Vùng cảm ứng không được để trống và phải nằm trong bề mặt. Hãy đổi kích thước cho vừa.";
 /* Error when a profile breaks a rule: a trigger has bands and a dual-stage mapping. %@ is the trigger as the profile file spells it, kept as written. */
-"profile.validation.triggerBandWithDualStage" = "Cò %@ có cả dải và ánh xạ hai nấc. Hãy gỡ một trong hai.";
+"ui.profileValidation.triggerBandWithDualStage" = "Cò %@ có cả dải và ánh xạ hai nấc. Hãy gỡ một trong hai.";
 /* Error when a profile breaks a rule: two regions of one stick, or two bands of one trigger, share a position. */
-"profile.validation.overlappingRegions" = "Các vùng của một cần analog, hoặc các dải của một cò, không được chồng lên nhau. Hãy thu hẹp hoặc gỡ một.";
+"ui.profileValidation.overlappingRegions" = "Các vùng của một cần analog, hoặc các dải của một cò, không được chồng lên nhau. Hãy thu hẹp hoặc gỡ một.";
 /* Error when a profile breaks a rule: the pointer speed has a minimum or maximum scale that is not finite or not 0 to 10. */
-"profile.validation.invalidPointerSpeed" = "Hệ số tốc độ con trỏ phải là số hữu hạn từ 0 đến 10.";
+"ui.profileValidation.invalidPointerSpeed" = "Hệ số tốc độ con trỏ phải là số hữu hạn từ 0 đến 10.";
 /* Error when a profile breaks a rule: the pointer speed reads a trigger or stick that the controller does not report. */
-"profile.validation.unsupportedPointerSpeedDriver" = "Tốc độ con trỏ đọc một cò hoặc cần analog mà bộ điều khiển không báo cáo. Hãy chọn nguồn mà bộ điều khiển báo cáo.";
+"ui.profileValidation.unsupportedPointerSpeedDriver" = "Tốc độ con trỏ đọc một cò hoặc cần analog mà bộ điều khiển không báo cáo. Hãy chọn nguồn mà bộ điều khiển báo cáo.";
 /* Error when a profile breaks a rule: a Joy-Con pair profile does not target a left Joy-Con model. */
-"profile.validation.invalidJoyConPairDevice" = "Cấu hình cặp Joy-Con phải nhắm tới mẫu Joy-Con trái của Nintendo (057e:2006 hoặc 057e:2067).";
-/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingBehaviorConflict" = "Liên kết %d dùng một hành vi không phù hợp với đích hoặc cài đặt kích hoạt của nó.";
+"ui.profileValidation.invalidJoyConPairDevice" = "Cấu hình cặp Joy-Con phải nhắm tới mẫu Joy-Con trái của Nintendo (057e:2006 hoặc 057e:2067).";
+/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingBehaviorConflict" = "Liên kết %@ dùng một hành vi không phù hợp với đích hoặc cài đặt kích hoạt của nó.";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this button. %@ is the button as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadButton" = "Tay cầm ảo không thể xuất %@. Hãy chọn nút khác.";
+"ui.profileValidation.unsupportedGamepadButton" = "Tay cầm ảo không thể xuất %@. Hãy chọn nút khác.";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this axis. %@ is the axis as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadAxis" = "Tay cầm ảo không thể xuất %@. Hãy chọn trục khác.";
+"ui.profileValidation.unsupportedGamepadAxis" = "Tay cầm ảo không thể xuất %@. Hãy chọn trục khác.";
 /* Error when a profile breaks a rule: a virtual gamepad destination or stick output is used while the output policy has no virtual. */
-"profile.validation.virtualOutputRequired" = "Các đích tay cầm cần đầu ra tay cầm ảo. Hãy bật đầu ra đó hoặc đổi đích.";
+"ui.profileValidation.virtualOutputRequired" = "Các đích tay cầm cần đầu ra tay cầm ảo. Hãy bật đầu ra đó hoặc đổi đích.";
 /* Error when a profile breaks a rule: a physical-controller output value is out of range. */
-"profile.validation.invalidPhysicalOutput" = "Giá trị đầu ra của bộ điều khiển vật lý không hợp lệ. Hãy chọn đầu ra mà bộ điều khiển hỗ trợ.";
+"ui.profileValidation.invalidPhysicalOutput" = "Giá trị đầu ra của bộ điều khiển vật lý không hợp lệ. Hãy chọn đầu ra mà bộ điều khiển hỗ trợ.";
 /* Error when a profile breaks a rule: the profile name is empty, too long, padded with whitespace or holds control characters. */
-"profile.validation.invalidProfileName" = "Tên cấu hình phải gồm 1 đến 80 ký tự in được.";
-/* Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyBindings" = "Cấu hình ánh xạ lại không thể chứa %d liên kết. Hãy gỡ bớt; giới hạn là 512.";
+"ui.profileValidation.invalidProfileName" = "Tên cấu hình phải gồm 1 đến 80 ký tự in được.";
 /* Error when a profile breaks a rule: two bindings, chords, sequences, actions or touch mappings share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateBindingID" = "Mã định danh liên kết %@ bị trùng.";
+"ui.profileValidation.duplicateBindingID" = "Mã định danh liên kết %@ bị trùng.";
 /* Error when a profile breaks a rule: two layers share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateLayerID" = "Mã định danh lớp %@ bị trùng.";
+"ui.profileValidation.duplicateLayerID" = "Mã định danh lớp %@ bị trùng.";
 /* Error when a profile breaks a rule: two bindings of one scope read this source. */
-"profile.validation.duplicateSource" = "Mỗi nguồn của bộ điều khiển chỉ được xuất hiện trong một liên kết. Hãy gỡ liên kết thừa.";
+"ui.profileValidation.duplicateSource" = "Mỗi nguồn của bộ điều khiển chỉ được xuất hiện trong một liên kết. Hãy gỡ liên kết thừa.";
 /* Error when a profile breaks a rule: the application bundle identifier is not valid; the value is the identifier. %@ is an application bundle identifier. */
-"profile.validation.invalidAppID" = "Mã định danh gói của ứng dụng đích không hợp lệ: %@. Hãy dùng 3 đến 255 chữ cái ASCII, chữ số và dấu gạch nối trong các phần cách nhau bằng dấu chấm, chẳng hạn com.example.app.";
+"ui.profileValidation.invalidAppID" = "Mã định danh gói của ứng dụng đích không hợp lệ: %@. Hãy dùng 3 đến 255 chữ cái ASCII, chữ số và dấu gạch nối trong các phần cách nhau bằng dấu chấm, chẳng hạn com.example.app.";
 /* Error when a profile breaks a rule: an application scope lists no bundle identifier. */
-"profile.validation.noAppIDs" = "Ứng dụng đích cần có ít nhất một mã định danh gói.";
+"ui.profileValidation.noAppIDs" = "Ứng dụng đích cần có ít nhất một mã định danh gói.";
 /* Error when a profile breaks a rule: an application scope lists this bundle identifier more than once. %@ is an application bundle identifier. */
-"profile.validation.duplicateAppID" = "Mã định danh gói của ứng dụng đích bị liệt kê hai lần: %@. Hãy gỡ một.";
-/* Error when a profile breaks a rule: an axis source has no axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningRequired" = "Liên kết %d cần có tinh chỉnh trục. Hãy thêm tinh chỉnh.";
-/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningNotApplicable" = "Liên kết %d không thể có tinh chỉnh trục. Hãy gỡ tinh chỉnh.";
-/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.incompatibleSourceAndDestination" = "Liên kết %d kết hợp loại nguồn và đích không tương thích. Hãy đổi một trong hai.";
-/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTuning" = "Liên kết %1$d có %2$@ không hữu hạn. Hãy nhập một số hữu hạn.";
-/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.tuningOutOfRange" = "Liên kết %1$d có %2$@ nằm ngoài phạm vi. Vùng chết từ 0 đến 0.95, độ khuếch đại từ 0.1 đến 10, ngưỡng kích hoạt số từ 0.01 đến 1.";
-/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboNotSupported" = "Liên kết %d dùng turbo với đích liên tục. Hãy gỡ turbo hoặc đổi đích.";
-/* Error when a profile breaks a rule: a turbo field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTurbo" = "Liên kết %1$d có %2$@ của turbo không hữu hạn. Hãy nhập một số hữu hạn.";
-/* Error when a profile breaks a rule: a turbo field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.turboOutOfRange" = "Liên kết %1$d có %2$@ của turbo nằm ngoài phạm vi. Tốc độ lặp từ 1 đến 60 Hz, chu kỳ làm việc từ 0.05 đến 0.95, độ trễ ban đầu từ 0 đến 2500 ms, số lần lặp tối đa từ 1 đến 500.";
-/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.longHoldNotSupported" = "Liên kết %d dùng giữ lâu với nguồn hoặc đích liên tục. Hãy gỡ giữ lâu hoặc dùng nguồn và đích là nút.";
-/* Error when a profile breaks a rule: a long-hold field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteLongHold" = "Liên kết %1$d có %2$@ của giữ lâu không hữu hạn. Hãy nhập một số hữu hạn.";
-/* Error when a profile breaks a rule: a long-hold field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.longHoldOutOfRange" = "Liên kết %1$d có %2$@ của giữ lâu nằm ngoài phạm vi. Hãy dùng 100 đến 5000 ms.";
-/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteMultiTap" = "Liên kết %1$d có %2$@ của chạm nhiều lần không hữu hạn. Hãy nhập một số hữu hạn.";
-/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.multiTapOutOfRange" = "Liên kết %1$d có %2$@ của chạm nhiều lần nằm ngoài phạm vi. Hãy dùng số lần từ 2 đến 5 và khoảng thời gian từ 50 đến 1000 ms.";
-/* Error when a profile breaks a rule: two multi-tap entries have the same count. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.duplicateMultiTapCount" = "Liên kết %d có hai mục chạm nhiều lần với cùng số lần. Hãy đặt số lần riêng cho từng mục.";
-/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboAndActivationConflict" = "Liên kết %d không thể kết hợp turbo với giữ lâu hoặc chạm nhiều lần. Hãy gỡ một trong hai.";
-/* Error when a profile breaks a rule: a chord window is out of range. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordWindowOutOfRange" = "Khoảng thời gian của tổ hợp nút %d nằm ngoài phạm vi. Hãy dùng 1 đến 1000 ms.";
-/* Error when a profile breaks a rule: a chord has fewer than two sources. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordTooFewSources" = "Tổ hợp nút %d phải có ít nhất hai nguồn. Hãy thêm một nguồn.";
-/* Error when a profile breaks a rule: a chord has an axis source. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousSource" = "Tổ hợp nút %d dùng nguồn liên tục (trục). Hãy dùng nguồn là nút.";
-/* Error when a profile breaks a rule: a chord has a continuous destination. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousDestination" = "Tổ hợp nút %d dùng đích liên tục. Hãy chọn đích là nút.";
-/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.duplicateChordSources" = "Tổ hợp nút %d trùng tập nguồn với một tổ hợp nút khác. Hãy gỡ một.";
-/* Error when a profile breaks a rule: a sequence has fewer than two sources. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceTooFewSources" = "Chuỗi nút %d phải có ít nhất hai nguồn. Hãy thêm một nguồn.";
-/* Error when a profile breaks a rule: a sequence has an axis source. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousSource" = "Chuỗi nút %d dùng nguồn liên tục (trục). Hãy dùng nguồn là nút.";
-/* Error when a profile breaks a rule: a sequence has a continuous destination. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousDestination" = "Chuỗi nút %d dùng đích liên tục. Hãy chọn đích là nút.";
-/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceWindowOutOfRange" = "Khoảng thời gian của chuỗi nút %d nằm ngoài phạm vi. Hãy dùng 200 đến 10000 ms.";
-/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.duplicateSequenceSources" = "Chuỗi nút %d trùng thứ tự nguồn với một chuỗi nút khác. Hãy gỡ một.";
-/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingRemarkInvalid" = "Liên kết %d có ghi chú không hợp lệ. Hãy dùng 1 đến 200 ký tự.";
-/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerNameInvalid" = "Lớp %d có tên không hợp lệ. Hãy dùng 1 đến 40 ký tự.";
-/* Error when a profile breaks a rule: a layer activator is an axis. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorNotDiscrete" = "Lớp %d có bộ kích hoạt không rời rạc (trục). Hãy dùng nguồn là nút.";
-/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.duplicateLayerActivator" = "Lớp %d trùng bộ kích hoạt với một lớp khác. Hãy chọn nguồn khác.";
-/* Error when a profile breaks a rule: a layer activator also has a binding. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorAlsoBound" = "Bộ kích hoạt của lớp %d cũng được liên kết như một nguồn thông thường. Hãy gỡ liên kết đó hoặc chọn bộ kích hoạt khác.";
-/* Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyMacros" = "Cấu hình ánh xạ lại không thể chứa %d macro. Hãy gỡ bớt; giới hạn là 16.";
+"ui.profileValidation.duplicateAppID" = "Mã định danh gói của ứng dụng đích bị liệt kê hai lần: %@. Hãy gỡ một.";
+/* Error when a profile breaks a rule: an axis source has no axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningRequired" = "Liên kết %@ cần có tinh chỉnh trục. Hãy thêm tinh chỉnh.";
+/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningNotApplicable" = "Liên kết %@ không thể có tinh chỉnh trục. Hãy gỡ tinh chỉnh.";
+/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.incompatibleSourceAndDestination" = "Liên kết %@ kết hợp loại nguồn và đích không tương thích. Hãy đổi một trong hai.";
+/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTuning" = "Liên kết %1$@ có %2$@ không hữu hạn. Hãy nhập một số hữu hạn.";
+/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.tuningOutOfRange" = "Liên kết %1$@ có %2$@ nằm ngoài phạm vi. Vùng chết từ 0 đến 0.95, độ khuếch đại từ 0.1 đến 10, ngưỡng kích hoạt số từ 0.01 đến 1.";
+/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboNotSupported" = "Liên kết %@ dùng turbo với đích liên tục. Hãy gỡ turbo hoặc đổi đích.";
+/* Error when a profile breaks a rule: a turbo field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTurbo" = "Liên kết %1$@ có %2$@ của turbo không hữu hạn. Hãy nhập một số hữu hạn.";
+/* Error when a profile breaks a rule: a turbo field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.turboOutOfRange" = "Liên kết %1$@ có %2$@ của turbo nằm ngoài phạm vi. Tốc độ lặp từ 1 đến 60 Hz, chu kỳ làm việc từ 0.05 đến 0.95, độ trễ ban đầu từ 0 đến 2500 ms, số lần lặp tối đa từ 1 đến 500.";
+/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.longHoldNotSupported" = "Liên kết %@ dùng giữ lâu với nguồn hoặc đích liên tục. Hãy gỡ giữ lâu hoặc dùng nguồn và đích là nút.";
+/* Error when a profile breaks a rule: a long-hold field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteLongHold" = "Liên kết %1$@ có %2$@ của giữ lâu không hữu hạn. Hãy nhập một số hữu hạn.";
+/* Error when a profile breaks a rule: a long-hold field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.longHoldOutOfRange" = "Liên kết %1$@ có %2$@ của giữ lâu nằm ngoài phạm vi. Hãy dùng 100 đến 5000 ms.";
+/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteMultiTap" = "Liên kết %1$@ có %2$@ của chạm nhiều lần không hữu hạn. Hãy nhập một số hữu hạn.";
+/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.multiTapOutOfRange" = "Liên kết %1$@ có %2$@ của chạm nhiều lần nằm ngoài phạm vi. Hãy dùng số lần từ 2 đến 5 và khoảng thời gian từ 50 đến 1000 ms.";
+/* Error when a profile breaks a rule: two multi-tap entries have the same count. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.duplicateMultiTapCount" = "Liên kết %@ có hai mục chạm nhiều lần với cùng số lần. Hãy đặt số lần riêng cho từng mục.";
+/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboAndActivationConflict" = "Liên kết %@ không thể kết hợp turbo với giữ lâu hoặc chạm nhiều lần. Hãy gỡ một trong hai.";
+/* Error when a profile breaks a rule: a chord window is out of range. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordWindowOutOfRange" = "Khoảng thời gian của tổ hợp nút %@ nằm ngoài phạm vi. Hãy dùng 1 đến 1000 ms.";
+/* Error when a profile breaks a rule: a chord has fewer than two sources. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordTooFewSources" = "Tổ hợp nút %@ phải có ít nhất hai nguồn. Hãy thêm một nguồn.";
+/* Error when a profile breaks a rule: a chord has an axis source. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousSource" = "Tổ hợp nút %@ dùng nguồn liên tục (trục). Hãy dùng nguồn là nút.";
+/* Error when a profile breaks a rule: a chord has a continuous destination. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousDestination" = "Tổ hợp nút %@ dùng đích liên tục. Hãy chọn đích là nút.";
+/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.duplicateChordSources" = "Tổ hợp nút %@ trùng tập nguồn với một tổ hợp nút khác. Hãy gỡ một.";
+/* Error when a profile breaks a rule: a sequence has fewer than two sources. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceTooFewSources" = "Chuỗi nút %@ phải có ít nhất hai nguồn. Hãy thêm một nguồn.";
+/* Error when a profile breaks a rule: a sequence has an axis source. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousSource" = "Chuỗi nút %@ dùng nguồn liên tục (trục). Hãy dùng nguồn là nút.";
+/* Error when a profile breaks a rule: a sequence has a continuous destination. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousDestination" = "Chuỗi nút %@ dùng đích liên tục. Hãy chọn đích là nút.";
+/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceWindowOutOfRange" = "Khoảng thời gian của chuỗi nút %@ nằm ngoài phạm vi. Hãy dùng 200 đến 10000 ms.";
+/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.duplicateSequenceSources" = "Chuỗi nút %@ trùng thứ tự nguồn với một chuỗi nút khác. Hãy gỡ một.";
+/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingRemarkInvalid" = "Liên kết %@ có ghi chú không hợp lệ. Hãy dùng 1 đến 200 ký tự.";
+/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerNameInvalid" = "Lớp %@ có tên không hợp lệ. Hãy dùng 1 đến 40 ký tự.";
+/* Error when a profile breaks a rule: a layer activator is an axis. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorNotDiscrete" = "Lớp %@ có bộ kích hoạt không rời rạc (trục). Hãy dùng nguồn là nút.";
+/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.duplicateLayerActivator" = "Lớp %@ trùng bộ kích hoạt với một lớp khác. Hãy chọn nguồn khác.";
+/* Error when a profile breaks a rule: a layer activator also has a binding. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorAlsoBound" = "Bộ kích hoạt của lớp %@ cũng được liên kết như một nguồn thông thường. Hãy gỡ liên kết đó hoặc chọn bộ kích hoạt khác.";
 /* Error when a profile breaks a rule: two macros share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateMacroID" = "Mã định danh macro %@ bị trùng.";
-/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %d is the position of the macro in its list, counted from 0. */
-"profile.validation.duplicateMacroName" = "Macro %d trùng tên với một macro trước đó. Hãy đổi tên.";
-/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidMacro" = "Macro %1$d có %2$@ không hợp lệ. Tên dài 1 đến 40 ký tự, bước từ 1 đến 32, số lần lặp từ 1 đến 500, và mỗi độ trễ từ 0 đến 5000 ms.";
-/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.invalidMacroStepDestination" = "Bước %1$d của macro %2$d có đích mà bước macro không thể dùng. Hãy dùng phím, nút con trỏ, nút tay cầm hoặc hướng D-pad.";
-/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.macroNestingNotAllowed" = "Bước %1$d của macro %2$d chạy một macro, điều mà bước macro không thể làm. Hãy gỡ bước đó.";
-/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
-"profile.validation.macroRunTimeExceeded" = "Macro %1$d chạy lâu hơn giới hạn %2$@. Một lượt chạy tối đa 30 giây và tất cả các lần lặp tối đa 300 giây; hãy rút ngắn độ trễ hoặc giảm số lần lặp.";
+"ui.profileValidation.duplicateMacroID" = "Mã định danh macro %@ bị trùng.";
+/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.duplicateMacroName" = "Macro %@ trùng tên với một macro trước đó. Hãy đổi tên.";
+/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.invalidMacro" = "Macro %1$@ có %2$@ không hợp lệ. Tên dài 1 đến 40 ký tự, bước từ 1 đến 32, số lần lặp từ 1 đến 500, và mỗi độ trễ từ 0 đến 5000 ms.";
+/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.invalidMacroStepDestination" = "Bước %1$@ của macro %2$@ có đích mà bước macro không thể dùng. Hãy dùng phím, nút con trỏ, nút tay cầm hoặc hướng D-pad.";
+/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.macroNestingNotAllowed" = "Bước %1$@ của macro %2$@ chạy một macro, điều mà bước macro không thể làm. Hãy gỡ bước đó.";
+/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
+"ui.profileValidation.macroRunTimeExceeded" = "Macro %1$@ chạy lâu hơn giới hạn %2$@. Một lượt chạy tối đa 30 giây và tất cả các lần lặp tối đa 300 giây; hãy rút ngắn độ trễ hoặc giảm số lần lặp.";
 /* Error when a profile breaks a rule: a destination runs a macro that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownMacro" = "Một đích chạy macro %@, nhưng macro này không tồn tại. Hãy chọn macro có sẵn.";
+"ui.profileValidation.unknownMacro" = "Một đích chạy macro %@, nhưng macro này không tồn tại. Hãy chọn macro có sẵn.";
 /* Error when a profile breaks a rule: a system action destination has a value outside its limits; the value is the action name. %@ is the destination type as the profile file spells it, kept as written. */
-"profile.validation.invalidSystemAction" = "Đích %@ có giá trị không hợp lệ. Hãy xem lại giá trị.";
+"ui.profileValidation.invalidSystemAction" = "Đích %@ có giá trị không hợp lệ. Hãy xem lại giá trị.";
 /* Error when a profile breaks a rule: a destination sets a layer that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownLayer" = "Một đích đặt lớp %@, nhưng lớp này không tồn tại. Hãy chọn lớp có sẵn.";
+"ui.profileValidation.unknownLayer" = "Một đích đặt lớp %@, nhưng lớp này không tồn tại. Hãy chọn lớp có sẵn.";
 /* Error when a profile breaks a rule: a destination switches to a profile that does not exist. %@ is an identifier (UUID). */
-"profile.validation.unknownSwitchProfile" = "Một đích chuyển sang cấu hình %@, nhưng cấu hình này không tồn tại. Hãy chọn cấu hình có sẵn.";
+"ui.profileValidation.unknownSwitchProfile" = "Một đích chuyển sang cấu hình %@, nhưng cấu hình này không tồn tại. Hãy chọn cấu hình có sẵn.";
 /* Error when a profile breaks a rule: a destination switches to a profile for another controller model. %@ is an identifier (UUID). */
-"profile.validation.switchProfileForOtherModel" = "Một đích chuyển sang cấu hình %@, vốn dành cho mẫu khác. Hãy chọn cấu hình dành cho mẫu này.";
+"ui.profileValidation.switchProfileForOtherModel" = "Một đích chuyển sang cấu hình %@, vốn dành cho mẫu khác. Hãy chọn cấu hình dành cho mẫu này.";
 /* Error when a profile breaks a rule: a `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or. %@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidSpeech" = "Đích Đọc to có %@ không hợp lệ. Văn bản dài 1 đến 128 ký tự.";
+"ui.profileValidation.invalidSpeech" = "Đích Đọc to có %@ không hợp lệ. Văn bản dài 1 đến 128 ký tự.";
 /* Error when a profile breaks a rule: a `Speak` destination names a voice that this Mac does not have. %@ is the name of a voice. */
-"profile.validation.unknownSpeechVoice" = "Đích Đọc to chỉ định giọng nói %@, mà Mac này không có. Hãy chọn giọng nói đã cài đặt hoặc giọng nói hệ thống.";
+"platform.macos.profileValidation.unknownSpeechVoice" = "Đích Đọc to chỉ định giọng nói %@, mà Mac này không có. Hãy chọn giọng nói đã cài đặt hoặc giọng nói hệ thống.";
 /* Error when a profile breaks a rule: a MIDI destination has a channel, note, controller or velocity out of range. */
-"profile.validation.invalidMIDIDestination" = "Đích MIDI cần kênh từ 1 đến 16, nốt hoặc bộ điều khiển từ 0 đến 127, và cường độ từ 1 đến 127.";
+"ui.profileValidation.invalidMIDIDestination" = "Đích MIDI cần kênh từ 1 đến 16, nốt hoặc bộ điều khiển từ 0 đến 127, và cường độ từ 1 đến 127.";
 /* Error when a profile breaks a rule: the profile could not be encoded. */
-"profile.validation.encodingFailed" = "Không thể mã hóa cấu hình ánh xạ lại. Hãy xem lại các giá trị của cấu hình.";
-/* Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. */
-"profile.validation.encodedSizeExceeded" = "Cấu hình ánh xạ lại đã mã hóa quá lớn (%d byte). Hãy giữ dưới 4 MiB.";
+"ui.profileValidation.encodingFailed" = "Không thể mã hóa cấu hình ánh xạ lại. Hãy xem lại các giá trị của cấu hình.";
+
+/* Error when the service's profile library refuses a request: the profile file or the active profile list is damaged. */
+"ui.profileLibrary.corruptLibrary" = "Danh sách cấu hình đang hoạt động bị hỏng.";
+/* Error when the service's profile library refuses a request: a profile with the name already exists. %@ is the name of a profile. */
+"ui.profileLibrary.duplicateName" = "Đã có cấu hình tên %@.";
+/* Error when the service's profile library refuses a request: a profile with the ID already exists. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileAlreadyExists" = "Cấu hình %@ đã tồn tại.";
+/* Error when the service's profile library refuses a request: no profile has the ID. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileNotFound" = "Cấu hình %@ không tồn tại.";
+/* Error when the service's profile library refuses a request: a Joy-Con pair profile starts only with an explicit pair session. */
+"ui.profileLibrary.pairProfileRequiresExplicitSession" = "Cấu hình cặp Joy-Con chỉ được khởi động bằng một phiên cặp rõ ràng.";
+/* Error when the service's profile library refuses a request: the profile produces no output; activating it needs `allowEmpty`. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileProducesNoOutput" = "Cấu hình %@ không tạo đầu ra; để kích hoạt cần có allowEmpty.";
+/* Error when the service's profile library refuses a request: the profile changed since the caller read it. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileUpdateConflict" = "Cấu hình %@ đã thay đổi kể từ lúc được đọc.";
+/* Error when the service's profile library refuses a request: a profile file could not be read. */
+"ui.profileLibrary.unreadableLibrary" = "Không thể đọc một tệp cấu hình.";
+/* Error when the service's profile library refuses a request: a profile file could not be written. */
+"ui.profileLibrary.unwritableLibrary" = "Không thể ghi một tệp cấu hình.";
+/* Error when the service's profile library refuses a request: the damaged profile files need repair before a change. */
+"ui.profileLibrary.profileRecoveryRequired" = "Hãy sửa hoặc xóa các tệp cấu hình bị hỏng trước khi thay đổi cấu hình.";
+/* Error when the service's profile library refuses a request: no damaged-file issue has the ID. */
+"ui.profileLibrary.profileIssueNotFound" = "Cấu hình bị hỏng đã chọn không còn là bản hiện tại.";
+/* Error when the service's profile library refuses a request: the profile comes from a package and cannot be changed. */
+"ui.profileLibrary.packageProfileReadOnly" = "Không thể thay đổi cấu hình đến từ một gói đã cài. Hãy nhân bản cấu hình rồi thay đổi bản sao.";
+/* Error when remapping output cannot apply a profile change: both the profile library and the event engine failed. %1$@ is the message of the profile library error and %2$@ the message of the event engine error, each a full sentence; keep the order the language reads naturally. */
+"ui.remappingRoute.libraryAndEngine" = "%1$@ %2$@";
+/* Error when remapping output cannot apply a profile change: a profile transaction is already active. */
+"ui.remappingRoute.profileTransactionAlreadyActive" = "Đã có một giao dịch cấu hình đang hoạt động.";
+/* Error when remapping output cannot apply a profile change: a profile transaction could not be reconciled, with the detail; output stays suspended. %@ is the reason the system gives, in English. */
+"ui.remappingRoute.profileTransactionUnreconciled" = "Đầu ra ánh xạ lại vẫn bị tạm dừng vì không thể đối soát một giao dịch cấu hình. %@";
+/* Error when remapping output cannot apply a profile change: the transaction token is not the active one. */
+"ui.remappingRoute.profileTransactionViolation" = "Mã thông báo giao dịch cấu hình không hợp lệ.";
+/* Error when remapping output cannot apply a profile change: the router has shut down. */
+"ui.remappingRoute.shutDown" = "Bộ định tuyến đầu ra ánh xạ lại đã tắt.";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con is not connected. */
+"ui.joyConPair.controllerUnavailable" = "Cả hai Joy-Con đã chọn phải được kết nối.";
+/* Error when two Joy-Cons cannot start a paired session: the selection is not one left and one right Joy-Con. */
+"ui.joyConPair.invalidControllerSide" = "Hãy chọn một Joy-Con trái và một Joy-Con phải.";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con already belongs to a pair. */
+"ui.joyConPair.memberAlreadyPaired" = "Một Joy-Con đã chọn đã thuộc một phiên cặp.";
+/* Error when two Joy-Cons cannot start a paired session: the profile is not configured for paired Joy-Cons. */
+"ui.joyConPair.profileNotPairable" = "Cấu hình đã chọn chưa được thiết lập cho cặp Joy-Con.";
+/* Error when two Joy-Cons cannot start a paired session: the pair session does not exist. */
+"ui.joyConPair.sessionUnavailable" = "Phiên cặp Joy-Con không còn khả dụng.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.timeout" = "Quá thời gian chờ khi truyền USB.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.disconnected" = "Thiết bị USB đã ngắt kết nối.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.inputOutput" = "Truyền USB thất bại do lỗi đầu vào/đầu ra.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.accessDenied" = "Hệ thống đã từ chối quyền truy cập thiết bị USB.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notFound" = "Không tìm thấy thiết bị, giao diện hoặc điểm cuối USB.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notSupported" = "Kết nối USB không hỗ trợ thao tác này.";
+/* Error when a USB transfer to a controller fails. %1$@ is the error code of the platform, a signed decimal number kept as written; %2$@ is the message of the platform, in English. */
+"ui.usbTransport.platform" = "Lỗi nền tảng USB %1$@: %2$@";
+/* Error when the service cannot open a virtual feed: the name is not a virtual gamepad kind. %@ is the name of a virtual gamepad kind, kept as written. */
+"ui.virtualFeed.unknownProfile" = "Loại tay cầm ảo không xác định: %@.";
+/* Error when the service cannot open a virtual feed: the service is stopping. */
+"ui.virtualFeed.serviceStopped" = "Dịch vụ đang dừng.";
+/* Error when the service cannot open a virtual feed: the virtual controller did not start, with the reason. %@ is the reason the system gives, in English. */
+"ui.virtualFeed.activationFailed" = "Tay cầm ảo không khởi động được: %@.";
+/* Error when a remapping cannot post keyboard or pointer input: post-event access is not granted. */
+"platform.macos.systemInput.postEventAccessNotGranted" = "Chưa được cấp quyền gửi sự kiện bàn phím và con trỏ.";
+/* Error when a remapping cannot post keyboard or pointer input: the profile key has no macOS virtual key. %@ is the key as the profile file spells it, kept as written. */
+"platform.macos.systemInput.unsupportedKeyboardKey" = "macOS không hỗ trợ phím bàn phím “%@”.";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not create the event. */
+"platform.macos.systemInput.eventPreparationFailed" = "CoreGraphics không thể chuẩn bị một sự kiện nhập của hệ thống.";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not post the event. */
+"platform.macos.systemInput.eventPostingFailed" = "CoreGraphics không thể gửi một sự kiện nhập của hệ thống.";
+/* Error when a remapping action does not reach keyboard or pointer input: the engine is suspended until sink recovery succeeds. */
+"ui.remappingSink.faulted" = "Ánh xạ lại đầu vào hệ thống bị tạm dừng cho đến khi khôi phục bộ nhận thành công.";
+/* Error when a remapping action does not reach keyboard or pointer input: routing admission refuses output. */
+"ui.remappingSink.outputSuspended" = "Ánh xạ lại đầu vào hệ thống bị tạm dừng bởi bước chấp nhận định tuyến.";
+/* Error when a remapping action does not reach keyboard or pointer input: a sink rejected an action or is missing. */
+"ui.remappingSink.sinkUnavailable" = "Bộ nhận đầu vào hệ thống đã từ chối một hành động ánh xạ lại.";
+/* Error when a virtual gamepad frame is not published: the queue holds only host replies, and one more arrived. */
+"ui.outputPublication.queueOverflow" = "Hàng đợi phát hành tay cầm ảo bị tràn.";
+/* Error when a virtual gamepad frame is not published: the native send exceeded its deadline. */
+"ui.outputPublication.sendTimedOut" = "Quá thời gian chờ khi phát hành tay cầm ảo.";
+/* Error when a virtual gamepad frame is not published: a newer frame took the place of this one in a full queue. */
+"ui.outputPublication.superseded" = "Khung tay cầm ảo đã bị khung mới hơn thay thế.";
+/* Error when a command-line source or target cannot be read: the source operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidSource" = "Nguồn “%@” không hợp lệ.";
+/* Error when a command-line source or target cannot be read: the target operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidDestination" = "Đích “%@” không hợp lệ.";
+/* Error when the record probe refuses a controller: the record names an 8BitDo bootloader identity, which OJD sends nothing. */
+"ui.recordProbe.bootloaderIdentity" = "Bộ dò bản ghi không gửi gì đến bộ điều khiển đang ở chế độ bootloader.";
+/* Error when the record probe refuses a controller: the record's protocol is one the probe cannot drive; the value names it. %@ is the name of a controller protocol, kept as written. */
+"ui.recordProbe.unsupportedProtocol" = "Bộ dò bản ghi không cần ký không hỗ trợ giao thức %@.";
+/* Error when a profile breaks a rule: a field is outside its valid range. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.motionTuningField" = "Trường tinh chỉnh chuyển động “%@” nằm ngoài phạm vi hợp lệ.";
+/* Error when a profile breaks a rule: a field is outside its valid range or inconsistent with the others. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.gyroOutputField" = "Trường đầu ra con quay hồi chuyển “%@” nằm ngoài phạm vi hợp lệ.";
+/* Error when a USB transfer to a controller fails: another client, which the system does not name, holds the USB interface. */
+"ui.usbTransport.ownedByAnotherClient" = "Một ứng dụng khách khác đang giữ giao diện USB.";
+/* Error when a USB transfer to a controller fails: another client holds the USB interface. %@ is the name of that client as the system reports it. */
+"ui.usbTransport.ownedByNamedClient" = "Một ứng dụng khách khác đang giữ giao diện USB (%@).";

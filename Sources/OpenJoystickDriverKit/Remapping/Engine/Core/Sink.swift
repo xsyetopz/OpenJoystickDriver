@@ -342,10 +342,11 @@ public enum RemappingEventEngineError: Error, Equatable, LocalizedError, Sendabl
 
   /// Message that says why remapping output is suspended or a sink failed.
   public var errorDescription: String? {
-    switch self {
-    case .faulted: "System-input remapping is suspended until sink recovery succeeds."
-    case .outputSuspended: "System-input remapping is suspended by routing admission."
-    case .sinkUnavailable: "The system-input sink rejected a remapping action."
+    let localized = Localization()
+    return switch self {
+    case .faulted: localized.string("ui.remappingSink.faulted")
+    case .outputSuspended: localized.string("ui.remappingSink.outputSuspended")
+    case .sinkUnavailable: localized.string("ui.remappingSink.sinkUnavailable")
     }
   }
 }

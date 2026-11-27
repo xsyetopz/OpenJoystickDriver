@@ -280,5 +280,130 @@
 			<string>%d verborgen instellingen zijn gewijzigd</string>
 		</dict>
 	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyBindings</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Een hertoewijzingsprofiel mag niet %d koppeling bevatten. Verwijder die; de limiet is 512.</string>
+			<key>zero</key>
+			<string>Een hertoewijzingsprofiel mag niet %d koppelingen bevatten. Verwijder er een paar; de limiet is 512.</string>
+			<key>two</key>
+			<string>Een hertoewijzingsprofiel mag niet %d koppelingen bevatten. Verwijder er een paar; de limiet is 512.</string>
+			<key>few</key>
+			<string>Een hertoewijzingsprofiel mag niet %d koppelingen bevatten. Verwijder er een paar; de limiet is 512.</string>
+			<key>many</key>
+			<string>Een hertoewijzingsprofiel mag niet %d koppelingen bevatten. Verwijder er een paar; de limiet is 512.</string>
+			<key>other</key>
+			<string>Een hertoewijzingsprofiel mag niet %d koppelingen bevatten. Verwijder er een paar; de limiet is 512.</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyMacros</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Een hertoewijzingsprofiel mag niet %d macro bevatten. Verwijder die; de limiet is 16.</string>
+			<key>zero</key>
+			<string>Een hertoewijzingsprofiel mag niet %d macro’s bevatten. Verwijder er een paar; de limiet is 16.</string>
+			<key>two</key>
+			<string>Een hertoewijzingsprofiel mag niet %d macro’s bevatten. Verwijder er een paar; de limiet is 16.</string>
+			<key>few</key>
+			<string>Een hertoewijzingsprofiel mag niet %d macro’s bevatten. Verwijder er een paar; de limiet is 16.</string>
+			<key>many</key>
+			<string>Een hertoewijzingsprofiel mag niet %d macro’s bevatten. Verwijder er een paar; de limiet is 16.</string>
+			<key>other</key>
+			<string>Een hertoewijzingsprofiel mag niet %d macro’s bevatten. Verwijder er een paar; de limiet is 16.</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. -->
+	<key>ui.profileValidation.encodedSizeExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Het gecodeerde hertoewijzingsprofiel is te groot (%d byte). Houd het onder 4 MiB.</string>
+			<key>zero</key>
+			<string>Het gecodeerde hertoewijzingsprofiel is te groot (%d bytes). Houd het onder 4 MiB.</string>
+			<key>two</key>
+			<string>Het gecodeerde hertoewijzingsprofiel is te groot (%d bytes). Houd het onder 4 MiB.</string>
+			<key>few</key>
+			<string>Het gecodeerde hertoewijzingsprofiel is te groot (%d bytes). Houd het onder 4 MiB.</string>
+			<key>many</key>
+			<string>Het gecodeerde hertoewijzingsprofiel is te groot (%d bytes). Houd het onder 4 MiB.</string>
+			<key>other</key>
+			<string>Het gecodeerde hertoewijzingsprofiel is te groot (%d bytes). Houd het onder 4 MiB.</string>
+		</dict>
+	</dict>
+	<!-- Error when the service's profile library refuses a request: the library would hold more profiles than the limit allows, with the count. %d is the number of profiles. -->
+	<key>ui.profileLibrary.profileCountExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Er kan niet %d profiel zijn.</string>
+			<key>zero</key>
+			<string>Er kunnen niet %d profielen zijn.</string>
+			<key>two</key>
+			<string>Er kunnen niet %d profielen zijn.</string>
+			<key>few</key>
+			<string>Er kunnen niet %d profielen zijn.</string>
+			<key>many</key>
+			<string>Er kunnen niet %d profielen zijn.</string>
+			<key>other</key>
+			<string>Er kunnen niet %d profielen zijn.</string>
+		</dict>
+	</dict>
+	<!-- Error when the service cannot open a virtual feed: the pool already holds the most feeds, with that limit. %d is the largest number of virtual feeds. -->
+	<key>ui.virtualFeed.tooManyFeeds</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>De service voert al %d virtueel gamepad uit.</string>
+			<key>zero</key>
+			<string>De service voert al %d virtuele gamepads uit.</string>
+			<key>two</key>
+			<string>De service voert al %d virtuele gamepads uit.</string>
+			<key>few</key>
+			<string>De service voert al %d virtuele gamepads uit.</string>
+			<key>many</key>
+			<string>De service voert al %d virtuele gamepads uit.</string>
+			<key>other</key>
+			<string>De service voert al %d virtuele gamepads uit.</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

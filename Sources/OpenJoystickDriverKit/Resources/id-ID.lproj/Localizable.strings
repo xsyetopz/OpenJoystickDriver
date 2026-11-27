@@ -6681,158 +6681,253 @@
 "ui.help.exportFormat" = "Pilih format file pemetaan yang diekspor";
 
 /* Error when a profile breaks a rule: the mapping of this stick has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidStickMapping" = "Periksa pengaturan stik %@.";
+"ui.profileValidation.invalidStickMapping" = "Periksa pengaturan stik %@.";
 /* Error when a profile breaks a rule: two mappings read this stick. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateStickMapping" = "Stik %@ memiliki beberapa pemetaan mode. Simpan satu.";
+"ui.profileValidation.duplicateStickMapping" = "Stik %@ memiliki beberapa pemetaan mode. Simpan satu.";
 /* Error when a profile breaks a rule: the mapping of this trigger has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidTriggerMapping" = "Periksa pengaturan pemicu dua tahap %@.";
+"ui.profileValidation.invalidTriggerMapping" = "Periksa pengaturan pemicu dua tahap %@.";
 /* Error when a profile breaks a rule: two mappings read this trigger. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateTriggerMapping" = "Pemicu %@ memiliki beberapa pemetaan tahap. Simpan satu.";
+"ui.profileValidation.duplicateTriggerMapping" = "Pemicu %@ memiliki beberapa pemetaan tahap. Simpan satu.";
 /* Error when a profile breaks a rule: a binding reads a stage of this trigger, which has no dual-stage mapping. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.triggerStageWithoutMapping" = "Tahap pemicu %@ memerlukan pemetaan pemicu dua tahap. Tambahkan satu.";
+"ui.profileValidation.triggerStageWithoutMapping" = "Tahap pemicu %@ memerlukan pemetaan pemicu dua tahap. Tambahkan satu.";
 /* Error when a profile breaks a rule: a binding reads a motion lean, but no motion tuning defines one. */
-"profile.validation.motionLeanWithoutMapping" = "Sumber kemiringan gerak memerlukan pengaturan kemiringan gerak. Tambahkan pengaturannya atau hapus sumbernya.";
+"ui.profileValidation.motionLeanWithoutMapping" = "Sumber kemiringan gerak memerlukan pengaturan kemiringan gerak. Tambahkan pengaturannya atau hapus sumbernya.";
 /* Error when a profile breaks a rule: the touch mapping of this surface has an invalid field. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.invalidTouchMapping" = "Periksa pemetaan kontinu untuk permukaan sentuh %@.";
+"ui.profileValidation.invalidTouchMapping" = "Periksa pemetaan kontinu untuk permukaan sentuh %@.";
 /* Error when a profile breaks a rule: two touch mappings read this surface. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.duplicateTouchMapping" = "Permukaan sentuh %@ memiliki beberapa pemetaan kontinu. Simpan satu.";
+"ui.profileValidation.duplicateTouchMapping" = "Permukaan sentuh %@ memiliki beberapa pemetaan kontinu. Simpan satu.";
 /* Error when a profile breaks a rule: a touch grid source has invalid dimensions or cell coordinates. */
-"profile.validation.invalidTouchGrid" = "Sumber grid sentuh memiliki dimensi atau koordinat sel yang tidak valid. Gunakan 1 sampai 16 baris dan kolom, serta sel di dalam grid.";
+"ui.profileValidation.invalidTouchGrid" = "Sumber grid sentuh memiliki dimensi atau koordinat sel yang tidak valid. Gunakan 1 sampai 16 baris dan kolom, serta sel di dalam grid.";
 /* Error when a profile breaks a rule: a touch swipe source has an invalid minimum distance. */
-"profile.validation.invalidTouchSwipe" = "Sumber gesek sentuh memiliki jarak minimum yang tidak valid. Gunakan 0.01 sampai 1.";
+"ui.profileValidation.invalidTouchSwipe" = "Sumber gesek sentuh memiliki jarak minimum yang tidak valid. Gunakan 0.01 sampai 1.";
 /* Error when a profile breaks a rule: a stick region has a radius, sector or hysteresis out of range. */
-"profile.validation.invalidStickRegion" = "Wilayah stik memerlukan 0 <= inner < outer <= 1, kedua sudut atau tanpa sudut, serta histeresis 0 sampai 0.25.";
+"ui.profileValidation.invalidStickRegion" = "Wilayah stik memerlukan 0 <= inner < outer <= 1, kedua sudut atau tanpa sudut, serta histeresis 0 sampai 0.25.";
 /* Error when a profile breaks a rule: a trigger band has a pressure or hysteresis out of range. */
-"profile.validation.invalidTriggerBand" = "Rentang pemicu memerlukan 0 <= from < to <= 1 serta histeresis 0 sampai 0.25.";
+"ui.profileValidation.invalidTriggerBand" = "Rentang pemicu memerlukan 0 <= from < to <= 1 serta histeresis 0 sampai 0.25.";
 /* Error when a profile breaks a rule: a touch area is empty or outside the surface. */
-"profile.validation.invalidTouchArea" = "Area sentuh tidak boleh kosong dan harus berada di dalam permukaan. Ubah ukurannya agar muat.";
+"ui.profileValidation.invalidTouchArea" = "Area sentuh tidak boleh kosong dan harus berada di dalam permukaan. Ubah ukurannya agar muat.";
 /* Error when a profile breaks a rule: a trigger has bands and a dual-stage mapping. %@ is the trigger as the profile file spells it, kept as written. */
-"profile.validation.triggerBandWithDualStage" = "Pemicu %@ memiliki rentang dan pemetaan dua tahap. Hapus salah satunya.";
+"ui.profileValidation.triggerBandWithDualStage" = "Pemicu %@ memiliki rentang dan pemetaan dua tahap. Hapus salah satunya.";
 /* Error when a profile breaks a rule: two regions of one stick, or two bands of one trigger, share a position. */
-"profile.validation.overlappingRegions" = "Wilayah satu stik, atau rentang satu pemicu, tidak boleh tumpang tindih. Persempit atau hapus salah satunya.";
+"ui.profileValidation.overlappingRegions" = "Wilayah satu stik, atau rentang satu pemicu, tidak boleh tumpang tindih. Persempit atau hapus salah satunya.";
 /* Error when a profile breaks a rule: the pointer speed has a minimum or maximum scale that is not finite or not 0 to 10. */
-"profile.validation.invalidPointerSpeed" = "Skala kecepatan penunjuk harus berupa angka terhingga dari 0 sampai 10.";
+"ui.profileValidation.invalidPointerSpeed" = "Skala kecepatan penunjuk harus berupa angka terhingga dari 0 sampai 10.";
 /* Error when a profile breaks a rule: the pointer speed reads a trigger or stick that the controller does not report. */
-"profile.validation.unsupportedPointerSpeedDriver" = "Kecepatan penunjuk membaca pemicu atau stik yang tidak dilaporkan oleh pengontrol. Pilih sumber yang dilaporkan oleh pengontrol.";
+"ui.profileValidation.unsupportedPointerSpeedDriver" = "Kecepatan penunjuk membaca pemicu atau stik yang tidak dilaporkan oleh pengontrol. Pilih sumber yang dilaporkan oleh pengontrol.";
 /* Error when a profile breaks a rule: a Joy-Con pair profile does not target a left Joy-Con model. */
-"profile.validation.invalidJoyConPairDevice" = "Profil pasangan Joy-Con harus menargetkan model Joy-Con kiri Nintendo (057e:2006 atau 057e:2067).";
-/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingBehaviorConflict" = "Pengikatan %d menggunakan perilaku yang tidak cocok dengan tujuan atau pengaturan aktivasinya.";
+"ui.profileValidation.invalidJoyConPairDevice" = "Profil pasangan Joy-Con harus menargetkan model Joy-Con kiri Nintendo (057e:2006 atau 057e:2067).";
+/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingBehaviorConflict" = "Pengikatan %@ menggunakan perilaku yang tidak cocok dengan tujuan atau pengaturan aktivasinya.";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this button. %@ is the button as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadButton" = "Gamepad virtual tidak dapat mengeluarkan %@. Pilih tombol lain.";
+"ui.profileValidation.unsupportedGamepadButton" = "Gamepad virtual tidak dapat mengeluarkan %@. Pilih tombol lain.";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this axis. %@ is the axis as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadAxis" = "Gamepad virtual tidak dapat mengeluarkan %@. Pilih sumbu lain.";
+"ui.profileValidation.unsupportedGamepadAxis" = "Gamepad virtual tidak dapat mengeluarkan %@. Pilih sumbu lain.";
 /* Error when a profile breaks a rule: a virtual gamepad destination or stick output is used while the output policy has no virtual. */
-"profile.validation.virtualOutputRequired" = "Tujuan gamepad memerlukan output gamepad virtual. Aktifkan output tersebut atau ubah tujuannya.";
+"ui.profileValidation.virtualOutputRequired" = "Tujuan gamepad memerlukan output gamepad virtual. Aktifkan output tersebut atau ubah tujuannya.";
 /* Error when a profile breaks a rule: a physical-controller output value is out of range. */
-"profile.validation.invalidPhysicalOutput" = "Nilai output pengontrol fisik tidak valid. Pilih output yang didukung pengontrol.";
+"ui.profileValidation.invalidPhysicalOutput" = "Nilai output pengontrol fisik tidak valid. Pilih output yang didukung pengontrol.";
 /* Error when a profile breaks a rule: the profile name is empty, too long, padded with whitespace or holds control characters. */
-"profile.validation.invalidProfileName" = "Nama profil harus terdiri dari 1 sampai 80 karakter yang dapat dicetak.";
-/* Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyBindings" = "Profil pemetaan ulang tidak boleh berisi %d pengikatan. Hapus beberapa; batasnya 512.";
+"ui.profileValidation.invalidProfileName" = "Nama profil harus terdiri dari 1 sampai 80 karakter yang dapat dicetak.";
 /* Error when a profile breaks a rule: two bindings, chords, sequences, actions or touch mappings share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateBindingID" = "ID pengikatan %@ duplikat.";
+"ui.profileValidation.duplicateBindingID" = "ID pengikatan %@ duplikat.";
 /* Error when a profile breaks a rule: two layers share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateLayerID" = "ID lapisan %@ duplikat.";
+"ui.profileValidation.duplicateLayerID" = "ID lapisan %@ duplikat.";
 /* Error when a profile breaks a rule: two bindings of one scope read this source. */
-"profile.validation.duplicateSource" = "Setiap sumber pengontrol hanya boleh muncul di satu pengikatan. Hapus pengikatan yang berlebih.";
+"ui.profileValidation.duplicateSource" = "Setiap sumber pengontrol hanya boleh muncul di satu pengikatan. Hapus pengikatan yang berlebih.";
 /* Error when a profile breaks a rule: the application bundle identifier is not valid; the value is the identifier. %@ is an application bundle identifier. */
-"profile.validation.invalidAppID" = "ID bundel aplikasi target tidak valid: %@. Gunakan 3 sampai 255 huruf ASCII, angka, dan tanda hubung dalam bagian yang dipisahkan titik, seperti com.example.app.";
+"ui.profileValidation.invalidAppID" = "ID bundel aplikasi target tidak valid: %@. Gunakan 3 sampai 255 huruf ASCII, angka, dan tanda hubung dalam bagian yang dipisahkan titik, seperti com.example.app.";
 /* Error when a profile breaks a rule: an application scope lists no bundle identifier. */
-"profile.validation.noAppIDs" = "Target aplikasi memerlukan setidaknya satu ID bundel.";
+"ui.profileValidation.noAppIDs" = "Target aplikasi memerlukan setidaknya satu ID bundel.";
 /* Error when a profile breaks a rule: an application scope lists this bundle identifier more than once. %@ is an application bundle identifier. */
-"profile.validation.duplicateAppID" = "ID bundel aplikasi target tercantum dua kali: %@. Hapus salah satunya.";
-/* Error when a profile breaks a rule: an axis source has no axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningRequired" = "Pengikatan %d memerlukan penyetelan sumbu. Tambahkan penyetelan itu.";
-/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningNotApplicable" = "Pengikatan %d tidak boleh memiliki penyetelan sumbu. Hapus penyetelan itu.";
-/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.incompatibleSourceAndDestination" = "Pengikatan %d menggabungkan jenis sumber dan tujuan yang tidak cocok. Ubah salah satunya.";
-/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTuning" = "Pengikatan %1$d memiliki %2$@ yang tidak terhingga. Masukkan angka terhingga.";
-/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.tuningOutOfRange" = "Pengikatan %1$d memiliki %2$@ di luar rentang. Zona mati 0 sampai 0.95, penguatan 0.1 sampai 10, ambang aktivasi digital 0.01 sampai 1.";
-/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboNotSupported" = "Pengikatan %d menggunakan turbo dengan tujuan kontinu. Hapus turbo atau ubah tujuannya.";
-/* Error when a profile breaks a rule: a turbo field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTurbo" = "Pengikatan %1$d memiliki %2$@ turbo yang tidak terhingga. Masukkan angka terhingga.";
-/* Error when a profile breaks a rule: a turbo field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.turboOutOfRange" = "Pengikatan %1$d memiliki %2$@ turbo di luar rentang. Laju pengulangan 1 sampai 60 Hz, siklus kerja 0.05 sampai 0.95, jeda awal 0 sampai 2500 ms, pengulangan maksimum 1 sampai 500.";
-/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.longHoldNotSupported" = "Pengikatan %d menggunakan tahan lama dengan sumber atau tujuan kontinu. Hapus tahan lama atau gunakan sumber dan tujuan tombol.";
-/* Error when a profile breaks a rule: a long-hold field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteLongHold" = "Pengikatan %1$d memiliki %2$@ tahan lama yang tidak terhingga. Masukkan angka terhingga.";
-/* Error when a profile breaks a rule: a long-hold field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.longHoldOutOfRange" = "Pengikatan %1$d memiliki %2$@ tahan lama di luar rentang. Gunakan 100 sampai 5000 ms.";
-/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteMultiTap" = "Pengikatan %1$d memiliki %2$@ ketukan berganda yang tidak terhingga. Masukkan angka terhingga.";
-/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.multiTapOutOfRange" = "Pengikatan %1$d memiliki %2$@ ketukan berganda di luar rentang. Gunakan jumlah 2 sampai 5 dan rentang waktu 50 sampai 1000 ms.";
-/* Error when a profile breaks a rule: two multi-tap entries have the same count. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.duplicateMultiTapCount" = "Pengikatan %d memiliki dua entri ketukan berganda dengan jumlah yang sama. Beri setiap entri jumlah tersendiri.";
-/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboAndActivationConflict" = "Pengikatan %d tidak boleh menggabungkan turbo dengan tahan lama atau ketukan berganda. Hapus salah satunya.";
-/* Error when a profile breaks a rule: a chord window is out of range. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordWindowOutOfRange" = "Rentang waktu kombinasi tombol %d di luar rentang. Gunakan 1 sampai 1000 ms.";
-/* Error when a profile breaks a rule: a chord has fewer than two sources. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordTooFewSources" = "Kombinasi tombol %d harus memiliki setidaknya dua sumber. Tambahkan satu.";
-/* Error when a profile breaks a rule: a chord has an axis source. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousSource" = "Kombinasi tombol %d menggunakan sumber kontinu (sumbu). Gunakan sumber tombol.";
-/* Error when a profile breaks a rule: a chord has a continuous destination. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousDestination" = "Kombinasi tombol %d menggunakan tujuan kontinu. Pilih tujuan tombol.";
-/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.duplicateChordSources" = "Kombinasi tombol %d menduplikasi kumpulan sumber kombinasi tombol lain. Hapus salah satunya.";
-/* Error when a profile breaks a rule: a sequence has fewer than two sources. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceTooFewSources" = "Urutan %d harus memiliki setidaknya dua sumber. Tambahkan satu.";
-/* Error when a profile breaks a rule: a sequence has an axis source. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousSource" = "Urutan %d menggunakan sumber kontinu (sumbu). Gunakan sumber tombol.";
-/* Error when a profile breaks a rule: a sequence has a continuous destination. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousDestination" = "Urutan %d menggunakan tujuan kontinu. Pilih tujuan tombol.";
-/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceWindowOutOfRange" = "Rentang waktu urutan %d di luar rentang. Gunakan 200 sampai 10000 ms.";
-/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.duplicateSequenceSources" = "Urutan %d menduplikasi susunan sumber urutan lain. Hapus salah satunya.";
-/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingRemarkInvalid" = "Pengikatan %d memiliki catatan yang tidak valid. Gunakan 1 sampai 200 karakter.";
-/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerNameInvalid" = "Lapisan %d memiliki nama yang tidak valid. Gunakan 1 sampai 40 karakter.";
-/* Error when a profile breaks a rule: a layer activator is an axis. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorNotDiscrete" = "Lapisan %d memiliki pengaktif yang tidak diskret (sumbu). Gunakan sumber tombol.";
-/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.duplicateLayerActivator" = "Lapisan %d menduplikasi pengaktif lapisan lain. Pilih sumber yang berbeda.";
-/* Error when a profile breaks a rule: a layer activator also has a binding. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorAlsoBound" = "Pengaktif lapisan %d juga terikat sebagai sumber biasa. Hapus pengikatan itu atau pilih pengaktif lain.";
-/* Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyMacros" = "Profil pemetaan ulang tidak boleh berisi %d makro. Hapus beberapa; batasnya 16.";
+"ui.profileValidation.duplicateAppID" = "ID bundel aplikasi target tercantum dua kali: %@. Hapus salah satunya.";
+/* Error when a profile breaks a rule: an axis source has no axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningRequired" = "Pengikatan %@ memerlukan penyetelan sumbu. Tambahkan penyetelan itu.";
+/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningNotApplicable" = "Pengikatan %@ tidak boleh memiliki penyetelan sumbu. Hapus penyetelan itu.";
+/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.incompatibleSourceAndDestination" = "Pengikatan %@ menggabungkan jenis sumber dan tujuan yang tidak cocok. Ubah salah satunya.";
+/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTuning" = "Pengikatan %1$@ memiliki %2$@ yang tidak terhingga. Masukkan angka terhingga.";
+/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.tuningOutOfRange" = "Pengikatan %1$@ memiliki %2$@ di luar rentang. Zona mati 0 sampai 0.95, penguatan 0.1 sampai 10, ambang aktivasi digital 0.01 sampai 1.";
+/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboNotSupported" = "Pengikatan %@ menggunakan turbo dengan tujuan kontinu. Hapus turbo atau ubah tujuannya.";
+/* Error when a profile breaks a rule: a turbo field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTurbo" = "Pengikatan %1$@ memiliki %2$@ turbo yang tidak terhingga. Masukkan angka terhingga.";
+/* Error when a profile breaks a rule: a turbo field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.turboOutOfRange" = "Pengikatan %1$@ memiliki %2$@ turbo di luar rentang. Laju pengulangan 1 sampai 60 Hz, siklus kerja 0.05 sampai 0.95, jeda awal 0 sampai 2500 ms, pengulangan maksimum 1 sampai 500.";
+/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.longHoldNotSupported" = "Pengikatan %@ menggunakan tahan lama dengan sumber atau tujuan kontinu. Hapus tahan lama atau gunakan sumber dan tujuan tombol.";
+/* Error when a profile breaks a rule: a long-hold field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteLongHold" = "Pengikatan %1$@ memiliki %2$@ tahan lama yang tidak terhingga. Masukkan angka terhingga.";
+/* Error when a profile breaks a rule: a long-hold field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.longHoldOutOfRange" = "Pengikatan %1$@ memiliki %2$@ tahan lama di luar rentang. Gunakan 100 sampai 5000 ms.";
+/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteMultiTap" = "Pengikatan %1$@ memiliki %2$@ ketukan berganda yang tidak terhingga. Masukkan angka terhingga.";
+/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.multiTapOutOfRange" = "Pengikatan %1$@ memiliki %2$@ ketukan berganda di luar rentang. Gunakan jumlah 2 sampai 5 dan rentang waktu 50 sampai 1000 ms.";
+/* Error when a profile breaks a rule: two multi-tap entries have the same count. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.duplicateMultiTapCount" = "Pengikatan %@ memiliki dua entri ketukan berganda dengan jumlah yang sama. Beri setiap entri jumlah tersendiri.";
+/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboAndActivationConflict" = "Pengikatan %@ tidak boleh menggabungkan turbo dengan tahan lama atau ketukan berganda. Hapus salah satunya.";
+/* Error when a profile breaks a rule: a chord window is out of range. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordWindowOutOfRange" = "Rentang waktu kombinasi tombol %@ di luar rentang. Gunakan 1 sampai 1000 ms.";
+/* Error when a profile breaks a rule: a chord has fewer than two sources. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordTooFewSources" = "Kombinasi tombol %@ harus memiliki setidaknya dua sumber. Tambahkan satu.";
+/* Error when a profile breaks a rule: a chord has an axis source. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousSource" = "Kombinasi tombol %@ menggunakan sumber kontinu (sumbu). Gunakan sumber tombol.";
+/* Error when a profile breaks a rule: a chord has a continuous destination. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousDestination" = "Kombinasi tombol %@ menggunakan tujuan kontinu. Pilih tujuan tombol.";
+/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.duplicateChordSources" = "Kombinasi tombol %@ menduplikasi kumpulan sumber kombinasi tombol lain. Hapus salah satunya.";
+/* Error when a profile breaks a rule: a sequence has fewer than two sources. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceTooFewSources" = "Urutan %@ harus memiliki setidaknya dua sumber. Tambahkan satu.";
+/* Error when a profile breaks a rule: a sequence has an axis source. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousSource" = "Urutan %@ menggunakan sumber kontinu (sumbu). Gunakan sumber tombol.";
+/* Error when a profile breaks a rule: a sequence has a continuous destination. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousDestination" = "Urutan %@ menggunakan tujuan kontinu. Pilih tujuan tombol.";
+/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceWindowOutOfRange" = "Rentang waktu urutan %@ di luar rentang. Gunakan 200 sampai 10000 ms.";
+/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.duplicateSequenceSources" = "Urutan %@ menduplikasi susunan sumber urutan lain. Hapus salah satunya.";
+/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingRemarkInvalid" = "Pengikatan %@ memiliki catatan yang tidak valid. Gunakan 1 sampai 200 karakter.";
+/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerNameInvalid" = "Lapisan %@ memiliki nama yang tidak valid. Gunakan 1 sampai 40 karakter.";
+/* Error when a profile breaks a rule: a layer activator is an axis. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorNotDiscrete" = "Lapisan %@ memiliki pengaktif yang tidak diskret (sumbu). Gunakan sumber tombol.";
+/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.duplicateLayerActivator" = "Lapisan %@ menduplikasi pengaktif lapisan lain. Pilih sumber yang berbeda.";
+/* Error when a profile breaks a rule: a layer activator also has a binding. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorAlsoBound" = "Pengaktif lapisan %@ juga terikat sebagai sumber biasa. Hapus pengikatan itu atau pilih pengaktif lain.";
 /* Error when a profile breaks a rule: two macros share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateMacroID" = "ID makro %@ duplikat.";
-/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %d is the position of the macro in its list, counted from 0. */
-"profile.validation.duplicateMacroName" = "Makro %d memakai nama yang sama dengan makro sebelumnya. Ganti namanya.";
-/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidMacro" = "Makro %1$d memiliki %2$@ yang tidak valid. Nama 1 sampai 40 karakter, langkah 1 sampai 32, pengulangan 1 sampai 500, dan setiap jeda 0 sampai 5000 ms.";
-/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.invalidMacroStepDestination" = "Langkah %1$d pada makro %2$d memiliki tujuan yang tidak dapat dipakai langkah makro. Gunakan tombol keyboard, tombol penunjuk, atau tombol gamepad atau arah D-pad.";
-/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.macroNestingNotAllowed" = "Langkah %1$d pada makro %2$d menjalankan makro, yang tidak dapat dilakukan langkah makro. Hapus langkah itu.";
-/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
-"profile.validation.macroRunTimeExceeded" = "Makro %1$d berjalan lebih lama dari batas %2$@. Satu putaran maksimal 30 detik dan semua pengulangan maksimal 300 detik; persingkat jeda atau kurangi pengulangan.";
+"ui.profileValidation.duplicateMacroID" = "ID makro %@ duplikat.";
+/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.duplicateMacroName" = "Makro %@ memakai nama yang sama dengan makro sebelumnya. Ganti namanya.";
+/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.invalidMacro" = "Makro %1$@ memiliki %2$@ yang tidak valid. Nama 1 sampai 40 karakter, langkah 1 sampai 32, pengulangan 1 sampai 500, dan setiap jeda 0 sampai 5000 ms.";
+/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.invalidMacroStepDestination" = "Langkah %1$@ pada makro %2$@ memiliki tujuan yang tidak dapat dipakai langkah makro. Gunakan tombol keyboard, tombol penunjuk, atau tombol gamepad atau arah D-pad.";
+/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.macroNestingNotAllowed" = "Langkah %1$@ pada makro %2$@ menjalankan makro, yang tidak dapat dilakukan langkah makro. Hapus langkah itu.";
+/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
+"ui.profileValidation.macroRunTimeExceeded" = "Makro %1$@ berjalan lebih lama dari batas %2$@. Satu putaran maksimal 30 detik dan semua pengulangan maksimal 300 detik; persingkat jeda atau kurangi pengulangan.";
 /* Error when a profile breaks a rule: a destination runs a macro that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownMacro" = "Sebuah tujuan menjalankan makro %@, yang tidak ada. Pilih makro yang ada.";
+"ui.profileValidation.unknownMacro" = "Sebuah tujuan menjalankan makro %@, yang tidak ada. Pilih makro yang ada.";
 /* Error when a profile breaks a rule: a system action destination has a value outside its limits; the value is the action name. %@ is the destination type as the profile file spells it, kept as written. */
-"profile.validation.invalidSystemAction" = "Tujuan %@ memiliki nilai yang tidak valid. Periksa nilainya.";
+"ui.profileValidation.invalidSystemAction" = "Tujuan %@ memiliki nilai yang tidak valid. Periksa nilainya.";
 /* Error when a profile breaks a rule: a destination sets a layer that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownLayer" = "Sebuah tujuan mengatur lapisan %@, yang tidak ada. Pilih lapisan yang ada.";
+"ui.profileValidation.unknownLayer" = "Sebuah tujuan mengatur lapisan %@, yang tidak ada. Pilih lapisan yang ada.";
 /* Error when a profile breaks a rule: a destination switches to a profile that does not exist. %@ is an identifier (UUID). */
-"profile.validation.unknownSwitchProfile" = "Sebuah tujuan beralih ke profil %@, yang tidak ada. Pilih profil yang ada.";
+"ui.profileValidation.unknownSwitchProfile" = "Sebuah tujuan beralih ke profil %@, yang tidak ada. Pilih profil yang ada.";
 /* Error when a profile breaks a rule: a destination switches to a profile for another controller model. %@ is an identifier (UUID). */
-"profile.validation.switchProfileForOtherModel" = "Sebuah tujuan beralih ke profil %@, yang untuk model lain. Pilih profil untuk model ini.";
+"ui.profileValidation.switchProfileForOtherModel" = "Sebuah tujuan beralih ke profil %@, yang untuk model lain. Pilih profil untuk model ini.";
 /* Error when a profile breaks a rule: a `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or. %@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidSpeech" = "Tujuan Ucapkan memiliki %@ yang tidak valid. Teks 1 sampai 128 karakter.";
+"ui.profileValidation.invalidSpeech" = "Tujuan Ucapkan memiliki %@ yang tidak valid. Teks 1 sampai 128 karakter.";
 /* Error when a profile breaks a rule: a `Speak` destination names a voice that this Mac does not have. %@ is the name of a voice. */
-"profile.validation.unknownSpeechVoice" = "Tujuan Ucapkan menyebut suara %@, yang tidak dimiliki Mac ini. Pilih suara yang terpasang atau suara sistem.";
+"platform.macos.profileValidation.unknownSpeechVoice" = "Tujuan Ucapkan menyebut suara %@, yang tidak dimiliki Mac ini. Pilih suara yang terpasang atau suara sistem.";
 /* Error when a profile breaks a rule: a MIDI destination has a channel, note, controller or velocity out of range. */
-"profile.validation.invalidMIDIDestination" = "Tujuan MIDI memerlukan saluran 1 sampai 16, nada atau pengontrol 0 sampai 127, dan velositas 1 sampai 127.";
+"ui.profileValidation.invalidMIDIDestination" = "Tujuan MIDI memerlukan saluran 1 sampai 16, nada atau pengontrol 0 sampai 127, dan velositas 1 sampai 127.";
 /* Error when a profile breaks a rule: the profile could not be encoded. */
-"profile.validation.encodingFailed" = "Profil pemetaan ulang tidak dapat disandikan. Periksa nilainya.";
-/* Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. */
-"profile.validation.encodedSizeExceeded" = "Profil pemetaan ulang yang disandikan terlalu besar (%d byte). Jaga agar di bawah 4 MiB.";
+"ui.profileValidation.encodingFailed" = "Profil pemetaan ulang tidak dapat disandikan. Periksa nilainya.";
+
+/* Error when the service's profile library refuses a request: the profile file or the active profile list is damaged. */
+"ui.profileLibrary.corruptLibrary" = "Daftar profil aktif rusak.";
+/* Error when the service's profile library refuses a request: a profile with the name already exists. %@ is the name of a profile. */
+"ui.profileLibrary.duplicateName" = "Profil bernama %@ sudah ada.";
+/* Error when the service's profile library refuses a request: a profile with the ID already exists. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileAlreadyExists" = "Profil %@ sudah ada.";
+/* Error when the service's profile library refuses a request: no profile has the ID. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileNotFound" = "Profil %@ tidak ada.";
+/* Error when the service's profile library refuses a request: a Joy-Con pair profile starts only with an explicit pair session. */
+"ui.profileLibrary.pairProfileRequiresExplicitSession" = "Profil pasangan Joy-Con dimulai dengan sesi pasangan yang eksplisit.";
+/* Error when the service's profile library refuses a request: the profile produces no output; activating it needs `allowEmpty`. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileProducesNoOutput" = "Profil %@ tidak menghasilkan keluaran; untuk mengaktifkannya diperlukan allowEmpty.";
+/* Error when the service's profile library refuses a request: the profile changed since the caller read it. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileUpdateConflict" = "Profil %@ berubah sejak dibaca.";
+/* Error when the service's profile library refuses a request: a profile file could not be read. */
+"ui.profileLibrary.unreadableLibrary" = "File profil tidak dapat dibaca.";
+/* Error when the service's profile library refuses a request: a profile file could not be written. */
+"ui.profileLibrary.unwritableLibrary" = "File profil tidak dapat ditulis.";
+/* Error when the service's profile library refuses a request: the damaged profile files need repair before a change. */
+"ui.profileLibrary.profileRecoveryRequired" = "Perbaiki atau hapus file profil yang rusak sebelum mengubah profil.";
+/* Error when the service's profile library refuses a request: no damaged-file issue has the ID. */
+"ui.profileLibrary.profileIssueNotFound" = "Profil rusak yang dipilih sudah tidak terbaru.";
+/* Error when the service's profile library refuses a request: the profile comes from a package and cannot be changed. */
+"ui.profileLibrary.packageProfileReadOnly" = "Profil dari paket terpasang tidak dapat diubah. Duplikat profil lalu ubah salinannya.";
+/* Error when remapping output cannot apply a profile change: both the profile library and the event engine failed. %1$@ is the message of the profile library error and %2$@ the message of the event engine error, each a full sentence; keep the order the language reads naturally. */
+"ui.remappingRoute.libraryAndEngine" = "%1$@ %2$@";
+/* Error when remapping output cannot apply a profile change: a profile transaction is already active. */
+"ui.remappingRoute.profileTransactionAlreadyActive" = "Transaksi profil sudah aktif.";
+/* Error when remapping output cannot apply a profile change: a profile transaction could not be reconciled, with the detail; output stays suspended. %@ is the reason the system gives, in English. */
+"ui.remappingRoute.profileTransactionUnreconciled" = "Keluaran pemetaan ulang tetap ditangguhkan karena transaksi profil tidak dapat direkonsiliasi. %@";
+/* Error when remapping output cannot apply a profile change: the transaction token is not the active one. */
+"ui.remappingRoute.profileTransactionViolation" = "Token transaksi profil tidak valid.";
+/* Error when remapping output cannot apply a profile change: the router has shut down. */
+"ui.remappingRoute.shutDown" = "Router keluaran pemetaan ulang telah dimatikan.";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con is not connected. */
+"ui.joyConPair.controllerUnavailable" = "Kedua Joy-Con yang dipilih harus terhubung.";
+/* Error when two Joy-Cons cannot start a paired session: the selection is not one left and one right Joy-Con. */
+"ui.joyConPair.invalidControllerSide" = "Pilih satu Joy-Con kiri dan satu Joy-Con kanan.";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con already belongs to a pair. */
+"ui.joyConPair.memberAlreadyPaired" = "Salah satu Joy-Con yang dipilih sudah menjadi bagian dari sesi pasangan.";
+/* Error when two Joy-Cons cannot start a paired session: the profile is not configured for paired Joy-Cons. */
+"ui.joyConPair.profileNotPairable" = "Profil yang dipilih tidak dikonfigurasi untuk pasangan Joy-Con.";
+/* Error when two Joy-Cons cannot start a paired session: the pair session does not exist. */
+"ui.joyConPair.sessionUnavailable" = "Sesi pasangan Joy-Con tidak lagi tersedia.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.timeout" = "Transfer USB habis waktu.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.disconnected" = "Perangkat USB terputus.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.inputOutput" = "Transfer USB gagal dengan galat masukan/keluaran.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.accessDenied" = "Sistem menolak akses ke perangkat USB.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notFound" = "Perangkat, antarmuka, atau endpoint USB tidak ditemukan.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notSupported" = "Koneksi USB tidak mendukung operasi ini.";
+/* Error when a USB transfer to a controller fails. %1$@ is the error code of the platform, a signed decimal number kept as written; %2$@ is the message of the platform, in English. */
+"ui.usbTransport.platform" = "Galat platform USB %1$@: %2$@";
+/* Error when the service cannot open a virtual feed: the name is not a virtual gamepad kind. %@ is the name of a virtual gamepad kind, kept as written. */
+"ui.virtualFeed.unknownProfile" = "Jenis gamepad virtual tidak dikenal: %@.";
+/* Error when the service cannot open a virtual feed: the service is stopping. */
+"ui.virtualFeed.serviceStopped" = "Layanan sedang berhenti.";
+/* Error when the service cannot open a virtual feed: the virtual controller did not start, with the reason. %@ is the reason the system gives, in English. */
+"ui.virtualFeed.activationFailed" = "Gamepad virtual tidak dimulai: %@.";
+/* Error when a remapping cannot post keyboard or pointer input: post-event access is not granted. */
+"platform.macos.systemInput.postEventAccessNotGranted" = "Akses untuk mengirim peristiwa papan ketik dan penunjuk tidak diberikan.";
+/* Error when a remapping cannot post keyboard or pointer input: the profile key has no macOS virtual key. %@ is the key as the profile file spells it, kept as written. */
+"platform.macos.systemInput.unsupportedKeyboardKey" = "Tombol papan ketik “%@” tidak didukung di macOS.";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not create the event. */
+"platform.macos.systemInput.eventPreparationFailed" = "CoreGraphics tidak dapat menyiapkan peristiwa masukan sistem.";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not post the event. */
+"platform.macos.systemInput.eventPostingFailed" = "CoreGraphics tidak dapat mengirim peristiwa masukan sistem.";
+/* Error when a remapping action does not reach keyboard or pointer input: the engine is suspended until sink recovery succeeds. */
+"ui.remappingSink.faulted" = "Pemetaan ulang masukan sistem ditangguhkan sampai pemulihan sink berhasil.";
+/* Error when a remapping action does not reach keyboard or pointer input: routing admission refuses output. */
+"ui.remappingSink.outputSuspended" = "Pemetaan ulang masukan sistem ditangguhkan oleh penerimaan perutean.";
+/* Error when a remapping action does not reach keyboard or pointer input: a sink rejected an action or is missing. */
+"ui.remappingSink.sinkUnavailable" = "Sink masukan sistem menolak sebuah aksi pemetaan ulang.";
+/* Error when a virtual gamepad frame is not published: the queue holds only host replies, and one more arrived. */
+"ui.outputPublication.queueOverflow" = "Antrean publikasi gamepad virtual meluap.";
+/* Error when a virtual gamepad frame is not published: the native send exceeded its deadline. */
+"ui.outputPublication.sendTimedOut" = "Publikasi gamepad virtual habis waktu.";
+/* Error when a virtual gamepad frame is not published: a newer frame took the place of this one in a full queue. */
+"ui.outputPublication.superseded" = "Frame gamepad virtual digantikan oleh frame yang lebih baru.";
+/* Error when a command-line source or target cannot be read: the source operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidSource" = "Sumber “%@” tidak valid.";
+/* Error when a command-line source or target cannot be read: the target operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidDestination" = "Target “%@” tidak valid.";
+/* Error when the record probe refuses a controller: the record names an 8BitDo bootloader identity, which OJD sends nothing. */
+"ui.recordProbe.bootloaderIdentity" = "Probe catatan tidak mengirim apa pun ke pengontrol dalam mode bootloader.";
+/* Error when the record probe refuses a controller: the record's protocol is one the probe cannot drive; the value names it. %@ is the name of a controller protocol, kept as written. */
+"ui.recordProbe.unsupportedProtocol" = "Probe catatan tanpa penandatanganan tidak mendukung protokol %@.";
+/* Error when a profile breaks a rule: a field is outside its valid range. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.motionTuningField" = "Bidang penyetelan sensor gerak “%@” berada di luar rentang yang valid.";
+/* Error when a profile breaks a rule: a field is outside its valid range or inconsistent with the others. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.gyroOutputField" = "Bidang keluaran giroskop “%@” berada di luar rentang yang valid.";
+/* Error when a USB transfer to a controller fails: another client, which the system does not name, holds the USB interface. */
+"ui.usbTransport.ownedByAnotherClient" = "Klien lain memegang antarmuka USB.";
+/* Error when a USB transfer to a controller fails: another client holds the USB interface. %@ is the name of that client as the system reports it. */
+"ui.usbTransport.ownedByNamedClient" = "Klien lain memegang antarmuka USB (%@).";

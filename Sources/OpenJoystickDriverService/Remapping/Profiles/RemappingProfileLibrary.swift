@@ -35,28 +35,28 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
 
   /// The text that explains the failure to a user.
   var errorDescription: String? {
-    switch self {
-    case .corruptLibrary: "The active remapping profile list is damaged."
-    case .duplicateName(let name): "A remapping profile named \(name) already exists."
+    let localized = Localization()
+    return switch self {
+    case .corruptLibrary: localized.string("ui.profileLibrary.corruptLibrary")
+    case .duplicateName(let name): localized.string("ui.profileLibrary.duplicateName", name)
     case .invalidProfile(let error): error.localizedDescription
-    case .profileCountExceeded(let count): "There cannot be \(count) remapping profiles."
-    case .profileAlreadyExists(let id): "The remapping profile \(id.uuidString) already exists."
-    case .profileNotFound(let id): "The remapping profile \(id.uuidString) does not exist."
+    case .profileCountExceeded(let count):
+      localized.plural("ui.profileLibrary.profileCountExceeded", count: count)
+    case .profileAlreadyExists(let id):
+      localized.string("ui.profileLibrary.profileAlreadyExists", id.uuidString)
+    case .profileNotFound(let id):
+      localized.string("ui.profileLibrary.profileNotFound", id.uuidString)
     case .pairProfileRequiresExplicitSession:
-      "Paired Joy-Con profiles are started with an explicit pair session."
+      localized.string("ui.profileLibrary.pairProfileRequiresExplicitSession")
     case .profileProducesNoOutput(let id):
-      "The remapping profile \(id.uuidString) produces no output; activating it needs "
-        + "allowEmpty."
+      localized.string("ui.profileLibrary.profileProducesNoOutput", id.uuidString)
     case .profileUpdateConflict(let id):
-      "The remapping profile \(id.uuidString) changed since it was read."
-    case .unreadableLibrary: "A remapping profile file could not be read."
-    case .unwritableLibrary: "A remapping profile file could not be written."
-    case .profileRecoveryRequired:
-      "Repair or remove the damaged profile files before changing profiles."
-    case .profileIssueNotFound: "The selected damaged profile is no longer current."
-    case .packageProfileReadOnly:
-      "A profile that comes from an installed package cannot be changed. Duplicate the profile "
-        + "and change the copy."
+      localized.string("ui.profileLibrary.profileUpdateConflict", id.uuidString)
+    case .unreadableLibrary: localized.string("ui.profileLibrary.unreadableLibrary")
+    case .unwritableLibrary: localized.string("ui.profileLibrary.unwritableLibrary")
+    case .profileRecoveryRequired: localized.string("ui.profileLibrary.profileRecoveryRequired")
+    case .profileIssueNotFound: localized.string("ui.profileLibrary.profileIssueNotFound")
+    case .packageProfileReadOnly: localized.string("ui.profileLibrary.packageProfileReadOnly")
     }
   }
 }

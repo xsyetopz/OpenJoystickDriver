@@ -9,9 +9,11 @@ public enum RemappingCommandValueError: Error, Equatable, LocalizedError, Sendab
 
   /// Message that names the operand that does not parse.
   public var errorDescription: String? {
-    switch self {
-    case .invalidSource(let raw): "Invalid source '\(raw)'."
-    case .invalidDestination(let raw): "Invalid target '\(raw)'."
+    let localized = Localization()
+    return switch self {
+    case .invalidSource(let raw): localized.string("ui.remappingCommand.invalidSource", raw)
+    case .invalidDestination(let raw):
+      localized.string("ui.remappingCommand.invalidDestination", raw)
     }
   }
 }

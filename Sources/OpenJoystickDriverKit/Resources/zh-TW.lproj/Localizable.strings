@@ -6681,158 +6681,253 @@
 "ui.help.exportFormat" = "選擇匯出對應的檔案格式";
 
 /* Error when a profile breaks a rule: the mapping of this stick has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidStickMapping" = "請檢查 %@ 搖桿的設定。";
+"ui.profileValidation.invalidStickMapping" = "請檢查 %@ 搖桿的設定。";
 /* Error when a profile breaks a rule: two mappings read this stick. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateStickMapping" = "%@ 搖桿有多個模式對應。請只保留一個。";
+"ui.profileValidation.duplicateStickMapping" = "%@ 搖桿有多個模式對應。請只保留一個。";
 /* Error when a profile breaks a rule: the mapping of this trigger has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidTriggerMapping" = "請檢查 %@ 雙階段扳機的設定。";
+"ui.profileValidation.invalidTriggerMapping" = "請檢查 %@ 雙階段扳機的設定。";
 /* Error when a profile breaks a rule: two mappings read this trigger. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateTriggerMapping" = "%@ 扳機有多個階段對應。請只保留一個。";
+"ui.profileValidation.duplicateTriggerMapping" = "%@ 扳機有多個階段對應。請只保留一個。";
 /* Error when a profile breaks a rule: a binding reads a stage of this trigger, which has no dual-stage mapping. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.triggerStageWithoutMapping" = "%@ 扳機階段需要雙階段扳機對應。請加入一個。";
+"ui.profileValidation.triggerStageWithoutMapping" = "%@ 扳機階段需要雙階段扳機對應。請加入一個。";
 /* Error when a profile breaks a rule: a binding reads a motion lean, but no motion tuning defines one. */
-"profile.validation.motionLeanWithoutMapping" = "傾斜來源需要傾斜設定。請加入設定或移除這些來源。";
+"ui.profileValidation.motionLeanWithoutMapping" = "傾斜來源需要傾斜設定。請加入設定或移除這些來源。";
 /* Error when a profile breaks a rule: the touch mapping of this surface has an invalid field. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.invalidTouchMapping" = "請檢查 %@ 觸控表面的連續對應。";
+"ui.profileValidation.invalidTouchMapping" = "請檢查 %@ 觸控表面的連續對應。";
 /* Error when a profile breaks a rule: two touch mappings read this surface. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.duplicateTouchMapping" = "%@ 觸控表面有多個連續對應。請只保留一個。";
+"ui.profileValidation.duplicateTouchMapping" = "%@ 觸控表面有多個連續對應。請只保留一個。";
 /* Error when a profile breaks a rule: a touch grid source has invalid dimensions or cell coordinates. */
-"profile.validation.invalidTouchGrid" = "觸控格線來源的尺寸或儲存格座標無效。列和欄請使用 1 到 16，儲存格須位於格線內。";
+"ui.profileValidation.invalidTouchGrid" = "觸控格線來源的尺寸或儲存格座標無效。列和欄請使用 1 到 16，儲存格須位於格線內。";
 /* Error when a profile breaks a rule: a touch swipe source has an invalid minimum distance. */
-"profile.validation.invalidTouchSwipe" = "觸控滑動來源的最小距離無效。請使用 0.01 到 1。";
+"ui.profileValidation.invalidTouchSwipe" = "觸控滑動來源的最小距離無效。請使用 0.01 到 1。";
 /* Error when a profile breaks a rule: a stick region has a radius, sector or hysteresis out of range. */
-"profile.validation.invalidStickRegion" = "搖桿區域須滿足 0 <= inner < outer <= 1，兩個角度要麼都設定要麼都不設定，釋放餘量為 0 到 0.25。";
+"ui.profileValidation.invalidStickRegion" = "搖桿區域須滿足 0 <= inner < outer <= 1，兩個角度要麼都設定要麼都不設定，釋放餘量為 0 到 0.25。";
 /* Error when a profile breaks a rule: a trigger band has a pressure or hysteresis out of range. */
-"profile.validation.invalidTriggerBand" = "扳機區間須滿足 0 <= from < to <= 1，釋放餘量為 0 到 0.25。";
+"ui.profileValidation.invalidTriggerBand" = "扳機區間須滿足 0 <= from < to <= 1，釋放餘量為 0 到 0.25。";
 /* Error when a profile breaks a rule: a touch area is empty or outside the surface. */
-"profile.validation.invalidTouchArea" = "觸控區域不能為空，且須位於觸控表面內。請調整大小使其符合。";
+"ui.profileValidation.invalidTouchArea" = "觸控區域不能為空，且須位於觸控表面內。請調整大小使其符合。";
 /* Error when a profile breaks a rule: a trigger has bands and a dual-stage mapping. %@ is the trigger as the profile file spells it, kept as written. */
-"profile.validation.triggerBandWithDualStage" = "%@ 扳機同時設定了區間和雙階段對應。請移除其中一個。";
+"ui.profileValidation.triggerBandWithDualStage" = "%@ 扳機同時設定了區間和雙階段對應。請移除其中一個。";
 /* Error when a profile breaks a rule: two regions of one stick, or two bands of one trigger, share a position. */
-"profile.validation.overlappingRegions" = "同一搖桿的各區域之間，或同一扳機的各區間之間，不能重疊。請縮小範圍或移除其中一個。";
+"ui.profileValidation.overlappingRegions" = "同一搖桿的各區域之間，或同一扳機的各區間之間，不能重疊。請縮小範圍或移除其中一個。";
 /* Error when a profile breaks a rule: the pointer speed has a minimum or maximum scale that is not finite or not 0 to 10. */
-"profile.validation.invalidPointerSpeed" = "指標速度的縮放值須為 0 到 10 之間的有限數字。";
+"ui.profileValidation.invalidPointerSpeed" = "指標速度的縮放值須為 0 到 10 之間的有限數字。";
 /* Error when a profile breaks a rule: the pointer speed reads a trigger or stick that the controller does not report. */
-"profile.validation.unsupportedPointerSpeedDriver" = "指標速度讀取了控制器未回報的扳機或搖桿。請選擇控制器會回報的驅動。";
+"ui.profileValidation.unsupportedPointerSpeedDriver" = "指標速度讀取了控制器未回報的扳機或搖桿。請選擇控制器會回報的驅動。";
 /* Error when a profile breaks a rule: a Joy-Con pair profile does not target a left Joy-Con model. */
-"profile.validation.invalidJoyConPairDevice" = "Joy-Con 配對的設定檔必須以 Nintendo 左 Joy-Con 型號（057e:2006 或 057e:2067）為目標。";
-/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingBehaviorConflict" = "對應 %d 使用了與其目的地或啟用設定不相容的行為。";
+"ui.profileValidation.invalidJoyConPairDevice" = "Joy-Con 配對的設定檔必須以 Nintendo 左 Joy-Con 型號（057e:2006 或 057e:2067）為目標。";
+/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingBehaviorConflict" = "對應 %@ 使用了與其目的地或啟用設定不相容的行為。";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this button. %@ is the button as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadButton" = "虛擬遊戲控制器無法輸出 %@。請選擇其他按鈕。";
+"ui.profileValidation.unsupportedGamepadButton" = "虛擬遊戲控制器無法輸出 %@。請選擇其他按鈕。";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this axis. %@ is the axis as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadAxis" = "虛擬遊戲控制器無法輸出 %@。請選擇其他軸。";
+"ui.profileValidation.unsupportedGamepadAxis" = "虛擬遊戲控制器無法輸出 %@。請選擇其他軸。";
 /* Error when a profile breaks a rule: a virtual gamepad destination or stick output is used while the output policy has no virtual. */
-"profile.validation.virtualOutputRequired" = "遊戲控制器目的地需要虛擬遊戲控制器輸出。請開啟該輸出或更改目的地。";
+"ui.profileValidation.virtualOutputRequired" = "遊戲控制器目的地需要虛擬遊戲控制器輸出。請開啟該輸出或更改目的地。";
 /* Error when a profile breaks a rule: a physical-controller output value is out of range. */
-"profile.validation.invalidPhysicalOutput" = "實體控制器的輸出值無效。請選擇控制器支援的輸出。";
+"ui.profileValidation.invalidPhysicalOutput" = "實體控制器的輸出值無效。請選擇控制器支援的輸出。";
 /* Error when a profile breaks a rule: the profile name is empty, too long, padded with whitespace or holds control characters. */
-"profile.validation.invalidProfileName" = "設定檔名稱須包含 1 到 80 個可列印字元。";
-/* Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyBindings" = "設定檔不能包含 %d 個對應。請移除一些；上限為 512 個。";
+"ui.profileValidation.invalidProfileName" = "設定檔名稱須包含 1 到 80 個可列印字元。";
 /* Error when a profile breaks a rule: two bindings, chords, sequences, actions or touch mappings share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateBindingID" = "對應識別碼 %@ 重複。";
+"ui.profileValidation.duplicateBindingID" = "對應識別碼 %@ 重複。";
 /* Error when a profile breaks a rule: two layers share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateLayerID" = "層識別碼 %@ 重複。";
+"ui.profileValidation.duplicateLayerID" = "層識別碼 %@ 重複。";
 /* Error when a profile breaks a rule: two bindings of one scope read this source. */
-"profile.validation.duplicateSource" = "每個控制器來源只能出現在一個對應中。請移除多餘的對應。";
+"ui.profileValidation.duplicateSource" = "每個控制器來源只能出現在一個對應中。請移除多餘的對應。";
 /* Error when a profile breaks a rule: the application bundle identifier is not valid; the value is the identifier. %@ is an application bundle identifier. */
-"profile.validation.invalidAppID" = "目標 App 的 Bundle 識別碼無效：%@。請使用以點分隔的各部分，由 3 到 255 個 ASCII 字母、數字和連字號組成，例如 com.example.app。";
+"ui.profileValidation.invalidAppID" = "目標 App 的 Bundle 識別碼無效：%@。請使用以點分隔的各部分，由 3 到 255 個 ASCII 字母、數字和連字號組成，例如 com.example.app。";
 /* Error when a profile breaks a rule: an application scope lists no bundle identifier. */
-"profile.validation.noAppIDs" = "App 目標至少需要一個 Bundle 識別碼。";
+"ui.profileValidation.noAppIDs" = "App 目標至少需要一個 Bundle 識別碼。";
 /* Error when a profile breaks a rule: an application scope lists this bundle identifier more than once. %@ is an application bundle identifier. */
-"profile.validation.duplicateAppID" = "目標 App 的 Bundle 識別碼重複列出：%@。請移除一個。";
-/* Error when a profile breaks a rule: an axis source has no axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningRequired" = "對應 %d 需要軸調整。請加入。";
-/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningNotApplicable" = "對應 %d 不能設定軸調整。請移除。";
-/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.incompatibleSourceAndDestination" = "對應 %d 組合了不相容的來源和目的地類型。請更改其中一個。";
-/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTuning" = "對應 %1$d 的 %2$@ 不是有限數字。請輸入有限數字。";
-/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.tuningOutOfRange" = "對應 %1$d 的 %2$@ 超出範圍。死區為 0 到 0.95，增益為 0.1 到 10，數位啟用臨界值為 0.01 到 1。";
-/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboNotSupported" = "對應 %d 在連續目的地上使用了連發。請移除連發或更改目的地。";
-/* Error when a profile breaks a rule: a turbo field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTurbo" = "對應 %1$d 的連發 %2$@ 不是有限數字。請輸入有限數字。";
-/* Error when a profile breaks a rule: a turbo field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.turboOutOfRange" = "對應 %1$d 的連發 %2$@ 超出範圍。重複率為 1 到 60 Hz，工作週期為 0.05 到 0.95，初始延遲為 0 到 2500 ms，最大重複次數為 1 到 500。";
-/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.longHoldNotSupported" = "對應 %d 在連續來源或目的地上使用了長按。請移除長按，或使用按鈕來源和目的地。";
-/* Error when a profile breaks a rule: a long-hold field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteLongHold" = "對應 %1$d 的長按 %2$@ 不是有限數字。請輸入有限數字。";
-/* Error when a profile breaks a rule: a long-hold field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.longHoldOutOfRange" = "對應 %1$d 的長按 %2$@ 超出範圍。請使用 100 到 5000 ms。";
-/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteMultiTap" = "對應 %1$d 的多次輕點 %2$@ 不是有限數字。請輸入有限數字。";
-/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.multiTapOutOfRange" = "對應 %1$d 的多次輕點 %2$@ 超出範圍。次數請使用 2 到 5，時間窗口請使用 50 到 1000 ms。";
-/* Error when a profile breaks a rule: two multi-tap entries have the same count. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.duplicateMultiTapCount" = "對應 %d 有兩個次數相同的多次輕點項目。請為每個項目指定不同的次數。";
-/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboAndActivationConflict" = "對應 %d 不能將連發與長按或多次輕點組合使用。請移除其中一個。";
-/* Error when a profile breaks a rule: a chord window is out of range. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordWindowOutOfRange" = "組合鍵 %d 的時間窗口超出範圍。請使用 1 到 1000 ms。";
-/* Error when a profile breaks a rule: a chord has fewer than two sources. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordTooFewSources" = "組合鍵 %d 至少需要兩個來源。請加入一個。";
-/* Error when a profile breaks a rule: a chord has an axis source. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousSource" = "組合鍵 %d 使用了連續（軸）來源。請使用按鈕來源。";
-/* Error when a profile breaks a rule: a chord has a continuous destination. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousDestination" = "組合鍵 %d 使用了連續目的地。請選擇按鈕目的地。";
-/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.duplicateChordSources" = "組合鍵 %d 的來源組合與另一個組合鍵相同。請移除其中一個。";
-/* Error when a profile breaks a rule: a sequence has fewer than two sources. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceTooFewSources" = "序列 %d 至少需要兩個來源。請加入一個。";
-/* Error when a profile breaks a rule: a sequence has an axis source. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousSource" = "序列 %d 使用了連續（軸）來源。請使用按鈕來源。";
-/* Error when a profile breaks a rule: a sequence has a continuous destination. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousDestination" = "序列 %d 使用了連續目的地。請選擇按鈕目的地。";
-/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceWindowOutOfRange" = "序列 %d 的時間窗口超出範圍。請使用 200 到 10000 ms。";
-/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.duplicateSequenceSources" = "序列 %d 的來源順序與另一個序列相同。請移除其中一個。";
-/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingRemarkInvalid" = "對應 %d 的備註無效。請使用 1 到 200 個字元。";
-/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerNameInvalid" = "層 %d 的名稱無效。請使用 1 到 40 個字元。";
-/* Error when a profile breaks a rule: a layer activator is an axis. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorNotDiscrete" = "層 %d 的啟用器不是離散輸入（而是軸）。請使用按鈕來源。";
-/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.duplicateLayerActivator" = "層 %d 的啟用器與另一個層相同。請選擇不同的來源。";
-/* Error when a profile breaks a rule: a layer activator also has a binding. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorAlsoBound" = "層 %d 的啟用器同時被對應為一般來源。請移除該對應，或選擇其他啟用器。";
-/* Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyMacros" = "設定檔不能包含 %d 個巨集。請移除一些；上限為 16 個。";
+"ui.profileValidation.duplicateAppID" = "目標 App 的 Bundle 識別碼重複列出：%@。請移除一個。";
+/* Error when a profile breaks a rule: an axis source has no axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningRequired" = "對應 %@ 需要軸調整。請加入。";
+/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningNotApplicable" = "對應 %@ 不能設定軸調整。請移除。";
+/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.incompatibleSourceAndDestination" = "對應 %@ 組合了不相容的來源和目的地類型。請更改其中一個。";
+/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTuning" = "對應 %1$@ 的 %2$@ 不是有限數字。請輸入有限數字。";
+/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.tuningOutOfRange" = "對應 %1$@ 的 %2$@ 超出範圍。死區為 0 到 0.95，增益為 0.1 到 10，數位啟用臨界值為 0.01 到 1。";
+/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboNotSupported" = "對應 %@ 在連續目的地上使用了連發。請移除連發或更改目的地。";
+/* Error when a profile breaks a rule: a turbo field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTurbo" = "對應 %1$@ 的連發 %2$@ 不是有限數字。請輸入有限數字。";
+/* Error when a profile breaks a rule: a turbo field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.turboOutOfRange" = "對應 %1$@ 的連發 %2$@ 超出範圍。重複率為 1 到 60 Hz，工作週期為 0.05 到 0.95，初始延遲為 0 到 2500 ms，最大重複次數為 1 到 500。";
+/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.longHoldNotSupported" = "對應 %@ 在連續來源或目的地上使用了長按。請移除長按，或使用按鈕來源和目的地。";
+/* Error when a profile breaks a rule: a long-hold field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteLongHold" = "對應 %1$@ 的長按 %2$@ 不是有限數字。請輸入有限數字。";
+/* Error when a profile breaks a rule: a long-hold field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.longHoldOutOfRange" = "對應 %1$@ 的長按 %2$@ 超出範圍。請使用 100 到 5000 ms。";
+/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteMultiTap" = "對應 %1$@ 的多次輕點 %2$@ 不是有限數字。請輸入有限數字。";
+/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.multiTapOutOfRange" = "對應 %1$@ 的多次輕點 %2$@ 超出範圍。次數請使用 2 到 5，時間窗口請使用 50 到 1000 ms。";
+/* Error when a profile breaks a rule: two multi-tap entries have the same count. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.duplicateMultiTapCount" = "對應 %@ 有兩個次數相同的多次輕點項目。請為每個項目指定不同的次數。";
+/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboAndActivationConflict" = "對應 %@ 不能將連發與長按或多次輕點組合使用。請移除其中一個。";
+/* Error when a profile breaks a rule: a chord window is out of range. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordWindowOutOfRange" = "組合鍵 %@ 的時間窗口超出範圍。請使用 1 到 1000 ms。";
+/* Error when a profile breaks a rule: a chord has fewer than two sources. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordTooFewSources" = "組合鍵 %@ 至少需要兩個來源。請加入一個。";
+/* Error when a profile breaks a rule: a chord has an axis source. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousSource" = "組合鍵 %@ 使用了連續（軸）來源。請使用按鈕來源。";
+/* Error when a profile breaks a rule: a chord has a continuous destination. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousDestination" = "組合鍵 %@ 使用了連續目的地。請選擇按鈕目的地。";
+/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.duplicateChordSources" = "組合鍵 %@ 的來源組合與另一個組合鍵相同。請移除其中一個。";
+/* Error when a profile breaks a rule: a sequence has fewer than two sources. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceTooFewSources" = "序列 %@ 至少需要兩個來源。請加入一個。";
+/* Error when a profile breaks a rule: a sequence has an axis source. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousSource" = "序列 %@ 使用了連續（軸）來源。請使用按鈕來源。";
+/* Error when a profile breaks a rule: a sequence has a continuous destination. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousDestination" = "序列 %@ 使用了連續目的地。請選擇按鈕目的地。";
+/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceWindowOutOfRange" = "序列 %@ 的時間窗口超出範圍。請使用 200 到 10000 ms。";
+/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.duplicateSequenceSources" = "序列 %@ 的來源順序與另一個序列相同。請移除其中一個。";
+/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingRemarkInvalid" = "對應 %@ 的備註無效。請使用 1 到 200 個字元。";
+/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerNameInvalid" = "層 %@ 的名稱無效。請使用 1 到 40 個字元。";
+/* Error when a profile breaks a rule: a layer activator is an axis. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorNotDiscrete" = "層 %@ 的啟用器不是離散輸入（而是軸）。請使用按鈕來源。";
+/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.duplicateLayerActivator" = "層 %@ 的啟用器與另一個層相同。請選擇不同的來源。";
+/* Error when a profile breaks a rule: a layer activator also has a binding. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorAlsoBound" = "層 %@ 的啟用器同時被對應為一般來源。請移除該對應，或選擇其他啟用器。";
 /* Error when a profile breaks a rule: two macros share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateMacroID" = "巨集識別碼 %@ 重複。";
-/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %d is the position of the macro in its list, counted from 0. */
-"profile.validation.duplicateMacroName" = "巨集 %d 與前面某個巨集同名。請重新命名。";
-/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidMacro" = "巨集 %1$d 的 %2$@ 無效。名稱為 1 到 40 個字元，步驟為 1 到 32 個，重複為 1 到 500 次，每個延遲為 0 到 5000 ms。";
-/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.invalidMacroStepDestination" = "巨集 %2$d 的步驟 %1$d 含有巨集步驟無法使用的目的地。請使用按鍵、指標按鈕，或遊戲控制器按鈕或方向鍵方向。";
-/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.macroNestingNotAllowed" = "巨集 %2$d 的步驟 %1$d 執行了另一個巨集，而巨集步驟不能這樣做。請移除該步驟。";
-/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
-"profile.validation.macroRunTimeExceeded" = "巨集 %1$d 的執行時間超出 %2$@ 上限。單次執行最長 30 秒，所有重複最長 300 秒；請縮短延遲或減少重複次數。";
+"ui.profileValidation.duplicateMacroID" = "巨集識別碼 %@ 重複。";
+/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.duplicateMacroName" = "巨集 %@ 與前面某個巨集同名。請重新命名。";
+/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.invalidMacro" = "巨集 %1$@ 的 %2$@ 無效。名稱為 1 到 40 個字元，步驟為 1 到 32 個，重複為 1 到 500 次，每個延遲為 0 到 5000 ms。";
+/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.invalidMacroStepDestination" = "巨集 %2$@ 的步驟 %1$@ 含有巨集步驟無法使用的目的地。請使用按鍵、指標按鈕，或遊戲控制器按鈕或方向鍵方向。";
+/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.macroNestingNotAllowed" = "巨集 %2$@ 的步驟 %1$@ 執行了另一個巨集，而巨集步驟不能這樣做。請移除該步驟。";
+/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
+"ui.profileValidation.macroRunTimeExceeded" = "巨集 %1$@ 的執行時間超出 %2$@ 上限。單次執行最長 30 秒，所有重複最長 300 秒；請縮短延遲或減少重複次數。";
 /* Error when a profile breaks a rule: a destination runs a macro that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownMacro" = "某個目的地執行的巨集 %@ 不存在。請選擇現有的巨集。";
+"ui.profileValidation.unknownMacro" = "某個目的地執行的巨集 %@ 不存在。請選擇現有的巨集。";
 /* Error when a profile breaks a rule: a system action destination has a value outside its limits; the value is the action name. %@ is the destination type as the profile file spells it, kept as written. */
-"profile.validation.invalidSystemAction" = "%@ 目的地的值無效。請檢查該值。";
+"ui.profileValidation.invalidSystemAction" = "%@ 目的地的值無效。請檢查該值。";
 /* Error when a profile breaks a rule: a destination sets a layer that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownLayer" = "某個目的地設定的層 %@ 不存在。請選擇現有的層。";
+"ui.profileValidation.unknownLayer" = "某個目的地設定的層 %@ 不存在。請選擇現有的層。";
 /* Error when a profile breaks a rule: a destination switches to a profile that does not exist. %@ is an identifier (UUID). */
-"profile.validation.unknownSwitchProfile" = "某個目的地切換到的設定檔 %@ 不存在。請選擇現有的設定檔。";
+"ui.profileValidation.unknownSwitchProfile" = "某個目的地切換到的設定檔 %@ 不存在。請選擇現有的設定檔。";
 /* Error when a profile breaks a rule: a destination switches to a profile for another controller model. %@ is an identifier (UUID). */
-"profile.validation.switchProfileForOtherModel" = "某個目的地切換到的設定檔 %@ 適用於另一個型號。請選擇適用於此型號的設定檔。";
+"ui.profileValidation.switchProfileForOtherModel" = "某個目的地切換到的設定檔 %@ 適用於另一個型號。請選擇適用於此型號的設定檔。";
 /* Error when a profile breaks a rule: a `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or. %@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidSpeech" = "朗讀目的地的 %@ 無效。文字為 1 到 128 個字元。";
+"ui.profileValidation.invalidSpeech" = "朗讀目的地的 %@ 無效。文字為 1 到 128 個字元。";
 /* Error when a profile breaks a rule: a `Speak` destination names a voice that this Mac does not have. %@ is the name of a voice. */
-"profile.validation.unknownSpeechVoice" = "朗讀目的地指定的語音 %@ 在這台 Mac 上不存在。請選擇已安裝的語音或系統語音。";
+"platform.macos.profileValidation.unknownSpeechVoice" = "朗讀目的地指定的語音 %@ 在這台 Mac 上不存在。請選擇已安裝的語音或系統語音。";
 /* Error when a profile breaks a rule: a MIDI destination has a channel, note, controller or velocity out of range. */
-"profile.validation.invalidMIDIDestination" = "MIDI 目的地需要 1 到 16 的頻道、0 到 127 的音符或控制器，以及 1 到 127 的力度。";
+"ui.profileValidation.invalidMIDIDestination" = "MIDI 目的地需要 1 到 16 的頻道、0 到 127 的音符或控制器，以及 1 到 127 的力度。";
 /* Error when a profile breaks a rule: the profile could not be encoded. */
-"profile.validation.encodingFailed" = "無法對設定檔進行編碼。請檢查其值。";
-/* Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. */
-"profile.validation.encodedSizeExceeded" = "編碼後的設定檔過大（%d 位元組）。請控制在 4 MiB 以內。";
+"ui.profileValidation.encodingFailed" = "無法對設定檔進行編碼。請檢查其值。";
+
+/* Error when the service's profile library refuses a request: the profile file or the active profile list is damaged. */
+"ui.profileLibrary.corruptLibrary" = "使用中的設定檔清單已損毀。";
+/* Error when the service's profile library refuses a request: a profile with the name already exists. %@ is the name of a profile. */
+"ui.profileLibrary.duplicateName" = "名為 %@ 的設定檔已存在。";
+/* Error when the service's profile library refuses a request: a profile with the ID already exists. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileAlreadyExists" = "設定檔 %@ 已存在。";
+/* Error when the service's profile library refuses a request: no profile has the ID. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileNotFound" = "設定檔 %@ 不存在。";
+/* Error when the service's profile library refuses a request: a Joy-Con pair profile starts only with an explicit pair session. */
+"ui.profileLibrary.pairProfileRequiresExplicitSession" = "配對 Joy-Con 設定檔須透過明確的配對工作階段啟動。";
+/* Error when the service's profile library refuses a request: the profile produces no output; activating it needs `allowEmpty`. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileProducesNoOutput" = "設定檔 %@ 不會產生任何輸出；啟用它需要 allowEmpty。";
+/* Error when the service's profile library refuses a request: the profile changed since the caller read it. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileUpdateConflict" = "設定檔 %@ 在讀取後已變更。";
+/* Error when the service's profile library refuses a request: a profile file could not be read. */
+"ui.profileLibrary.unreadableLibrary" = "無法讀取設定檔。";
+/* Error when the service's profile library refuses a request: a profile file could not be written. */
+"ui.profileLibrary.unwritableLibrary" = "無法寫入設定檔。";
+/* Error when the service's profile library refuses a request: the damaged profile files need repair before a change. */
+"ui.profileLibrary.profileRecoveryRequired" = "變更設定檔之前，請先修復或移除已損毀的設定檔。";
+/* Error when the service's profile library refuses a request: no damaged-file issue has the ID. */
+"ui.profileLibrary.profileIssueNotFound" = "所選的已損毀設定檔已不是目前狀態。";
+/* Error when the service's profile library refuses a request: the profile comes from a package and cannot be changed. */
+"ui.profileLibrary.packageProfileReadOnly" = "來自已安裝套件的設定檔無法變更。請複製該設定檔，然後變更副本。";
+/* Error when remapping output cannot apply a profile change: both the profile library and the event engine failed. %1$@ is the message of the profile library error and %2$@ the message of the event engine error, each a full sentence; keep the order the language reads naturally. */
+"ui.remappingRoute.libraryAndEngine" = "%1$@ %2$@";
+/* Error when remapping output cannot apply a profile change: a profile transaction is already active. */
+"ui.remappingRoute.profileTransactionAlreadyActive" = "已有設定檔交易正在進行。";
+/* Error when remapping output cannot apply a profile change: a profile transaction could not be reconciled, with the detail; output stays suspended. %@ is the reason the system gives, in English. */
+"ui.remappingRoute.profileTransactionUnreconciled" = "由於無法協調設定檔交易，重新對應輸出仍處於暫停狀態。%@";
+/* Error when remapping output cannot apply a profile change: the transaction token is not the active one. */
+"ui.remappingRoute.profileTransactionViolation" = "設定檔交易權杖無效。";
+/* Error when remapping output cannot apply a profile change: the router has shut down. */
+"ui.remappingRoute.shutDown" = "重新對應輸出路由器已關閉。";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con is not connected. */
+"ui.joyConPair.controllerUnavailable" = "所選的兩個 Joy-Con 都必須已連線。";
+/* Error when two Joy-Cons cannot start a paired session: the selection is not one left and one right Joy-Con. */
+"ui.joyConPair.invalidControllerSide" = "請選擇一個左側 Joy-Con 和一個右側 Joy-Con。";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con already belongs to a pair. */
+"ui.joyConPair.memberAlreadyPaired" = "所選的某個 Joy-Con 已屬於一個配對工作階段。";
+/* Error when two Joy-Cons cannot start a paired session: the profile is not configured for paired Joy-Cons. */
+"ui.joyConPair.profileNotPairable" = "所選設定檔尚未設定為用於配對 Joy-Con。";
+/* Error when two Joy-Cons cannot start a paired session: the pair session does not exist. */
+"ui.joyConPair.sessionUnavailable" = "配對 Joy-Con 工作階段已無法使用。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.timeout" = "USB 傳輸逾時。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.disconnected" = "USB 裝置已中斷連線。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.inputOutput" = "USB 傳輸因輸入/輸出錯誤而失敗。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.accessDenied" = "系統拒絕存取該 USB 裝置。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notFound" = "找不到 USB 裝置、介面或端點。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notSupported" = "此 USB 連線不支援此操作。";
+/* Error when a USB transfer to a controller fails. %1$@ is the error code of the platform, a signed decimal number kept as written; %2$@ is the message of the platform, in English. */
+"ui.usbTransport.platform" = "USB 平台錯誤 %1$@：%2$@";
+/* Error when the service cannot open a virtual feed: the name is not a virtual gamepad kind. %@ is the name of a virtual gamepad kind, kept as written. */
+"ui.virtualFeed.unknownProfile" = "未知的虛擬遊戲控制器類型：%@。";
+/* Error when the service cannot open a virtual feed: the service is stopping. */
+"ui.virtualFeed.serviceStopped" = "服務正在停止。";
+/* Error when the service cannot open a virtual feed: the virtual controller did not start, with the reason. %@ is the reason the system gives, in English. */
+"ui.virtualFeed.activationFailed" = "虛擬遊戲控制器未能啟動：%@。";
+/* Error when a remapping cannot post keyboard or pointer input: post-event access is not granted. */
+"platform.macos.systemInput.postEventAccessNotGranted" = "尚未授予鍵盤與指標傳送權限。";
+/* Error when a remapping cannot post keyboard or pointer input: the profile key has no macOS virtual key. %@ is the key as the profile file spells it, kept as written. */
+"platform.macos.systemInput.unsupportedKeyboardKey" = "macOS 不支援鍵盤按鍵「%@」。";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not create the event. */
+"platform.macos.systemInput.eventPreparationFailed" = "CoreGraphics 無法準備系統輸入事件。";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not post the event. */
+"platform.macos.systemInput.eventPostingFailed" = "CoreGraphics 無法傳送系統輸入事件。";
+/* Error when a remapping action does not reach keyboard or pointer input: the engine is suspended until sink recovery succeeds. */
+"ui.remappingSink.faulted" = "系統輸入重新對應已暫停，直到接收端復原成功。";
+/* Error when a remapping action does not reach keyboard or pointer input: routing admission refuses output. */
+"ui.remappingSink.outputSuspended" = "系統輸入重新對應已被路由准入暫停。";
+/* Error when a remapping action does not reach keyboard or pointer input: a sink rejected an action or is missing. */
+"ui.remappingSink.sinkUnavailable" = "系統輸入接收端拒絕了一個重新對應動作。";
+/* Error when a virtual gamepad frame is not published: the queue holds only host replies, and one more arrived. */
+"ui.outputPublication.queueOverflow" = "虛擬遊戲控制器發布佇列已溢位。";
+/* Error when a virtual gamepad frame is not published: the native send exceeded its deadline. */
+"ui.outputPublication.sendTimedOut" = "虛擬遊戲控制器發布逾時。";
+/* Error when a virtual gamepad frame is not published: a newer frame took the place of this one in a full queue. */
+"ui.outputPublication.superseded" = "虛擬遊戲控制器影格已被較新的影格取代。";
+/* Error when a command-line source or target cannot be read: the source operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidSource" = "來源「%@」無效。";
+/* Error when a command-line source or target cannot be read: the target operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidDestination" = "目標「%@」無效。";
+/* Error when the record probe refuses a controller: the record names an 8BitDo bootloader identity, which OJD sends nothing. */
+"ui.recordProbe.bootloaderIdentity" = "記錄探測不會向處於開機載入程式模式的控制器傳送任何內容。";
+/* Error when the record probe refuses a controller: the record's protocol is one the probe cannot drive; the value names it. %@ is the name of a controller protocol, kept as written. */
+"ui.recordProbe.unsupportedProtocol" = "免簽署的記錄探測不支援協定 %@。";
+/* Error when a profile breaks a rule: a field is outside its valid range. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.motionTuningField" = "體感調校欄位「%@」超出有效範圍。";
+/* Error when a profile breaks a rule: a field is outside its valid range or inconsistent with the others. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.gyroOutputField" = "陀螺儀輸出欄位「%@」超出有效範圍。";
+/* Error when a USB transfer to a controller fails: another client, which the system does not name, holds the USB interface. */
+"ui.usbTransport.ownedByAnotherClient" = "另一個用戶端佔用了 USB 介面。";
+/* Error when a USB transfer to a controller fails: another client holds the USB interface. %@ is the name of that client as the system reports it. */
+"ui.usbTransport.ownedByNamedClient" = "另一個用戶端（%@）佔用了 USB 介面。";

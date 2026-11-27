@@ -316,5 +316,130 @@
 			<string>Изменено %d скрытого параметра</string>
 		</dict>
 	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyBindings</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Профиль переназначения не может содержать %d привязку. Удалите часть; предел равен 512.</string>
+			<key>zero</key>
+			<string>Профиль переназначения не может содержать %d привязок. Удалите часть; предел равен 512.</string>
+			<key>two</key>
+			<string>Профиль переназначения не может содержать %d привязки. Удалите часть; предел равен 512.</string>
+			<key>few</key>
+			<string>Профиль переназначения не может содержать %d привязки. Удалите часть; предел равен 512.</string>
+			<key>many</key>
+			<string>Профиль переназначения не может содержать %d привязок. Удалите часть; предел равен 512.</string>
+			<key>other</key>
+			<string>Профиль переназначения не может содержать %d привязок. Удалите часть; предел равен 512.</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyMacros</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Профиль переназначения не может содержать %d макрос. Удалите часть; предел равен 16.</string>
+			<key>zero</key>
+			<string>Профиль переназначения не может содержать %d макросов. Удалите часть; предел равен 16.</string>
+			<key>two</key>
+			<string>Профиль переназначения не может содержать %d макроса. Удалите часть; предел равен 16.</string>
+			<key>few</key>
+			<string>Профиль переназначения не может содержать %d макроса. Удалите часть; предел равен 16.</string>
+			<key>many</key>
+			<string>Профиль переназначения не может содержать %d макросов. Удалите часть; предел равен 16.</string>
+			<key>other</key>
+			<string>Профиль переназначения не может содержать %d макросов. Удалите часть; предел равен 16.</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. -->
+	<key>ui.profileValidation.encodedSizeExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Закодированный профиль переназначения слишком велик (%d байт). Он должен занимать менее 4 MiB.</string>
+			<key>zero</key>
+			<string>Закодированный профиль переназначения слишком велик (%d байт). Он должен занимать менее 4 MiB.</string>
+			<key>two</key>
+			<string>Закодированный профиль переназначения слишком велик (%d байта). Он должен занимать менее 4 MiB.</string>
+			<key>few</key>
+			<string>Закодированный профиль переназначения слишком велик (%d байта). Он должен занимать менее 4 MiB.</string>
+			<key>many</key>
+			<string>Закодированный профиль переназначения слишком велик (%d байт). Он должен занимать менее 4 MiB.</string>
+			<key>other</key>
+			<string>Закодированный профиль переназначения слишком велик (%d байт). Он должен занимать менее 4 MiB.</string>
+		</dict>
+	</dict>
+	<!-- Error when the service's profile library refuses a request: the library would hold more profiles than the limit allows, with the count. %d is the number of profiles. -->
+	<key>ui.profileLibrary.profileCountExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Не может быть %d профиля.</string>
+			<key>zero</key>
+			<string>Не может быть %d профилей.</string>
+			<key>two</key>
+			<string>Не может быть %d профилей.</string>
+			<key>few</key>
+			<string>Не может быть %d профилей.</string>
+			<key>many</key>
+			<string>Не может быть %d профилей.</string>
+			<key>other</key>
+			<string>Не может быть %d профилей.</string>
+		</dict>
+	</dict>
+	<!-- Error when the service cannot open a virtual feed: the pool already holds the most feeds, with that limit. %d is the largest number of virtual feeds. -->
+	<key>ui.virtualFeed.tooManyFeeds</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Служба уже ведёт %d виртуальный поток.</string>
+			<key>zero</key>
+			<string>Служба уже ведёт %d виртуальных потоков.</string>
+			<key>two</key>
+			<string>Служба уже ведёт %d виртуальных потока.</string>
+			<key>few</key>
+			<string>Служба уже ведёт %d виртуальных потока.</string>
+			<key>many</key>
+			<string>Служба уже ведёт %d виртуальных потоков.</string>
+			<key>other</key>
+			<string>Служба уже ведёт %d виртуальных потоков.</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

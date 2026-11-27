@@ -6681,158 +6681,253 @@
 "ui.help.exportFormat" = "निर्यात किए गए मैपिंग का फ़ाइल प्रारूप चुनें";
 
 /* Error when a profile breaks a rule: the mapping of this stick has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidStickMapping" = "%@ स्टिक की सेटिंग्स जाँचें।";
+"ui.profileValidation.invalidStickMapping" = "%@ स्टिक की सेटिंग्स जाँचें।";
 /* Error when a profile breaks a rule: two mappings read this stick. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateStickMapping" = "%@ स्टिक के लिए कई मोड मैपिंग हैं। एक ही रखें।";
+"ui.profileValidation.duplicateStickMapping" = "%@ स्टिक के लिए कई मोड मैपिंग हैं। एक ही रखें।";
 /* Error when a profile breaks a rule: the mapping of this trigger has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidTriggerMapping" = "%@ दो-चरण ट्रिगर की सेटिंग्स जाँचें।";
+"ui.profileValidation.invalidTriggerMapping" = "%@ दो-चरण ट्रिगर की सेटिंग्स जाँचें।";
 /* Error when a profile breaks a rule: two mappings read this trigger. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateTriggerMapping" = "%@ ट्रिगर के लिए कई चरण मैपिंग हैं। एक ही रखें।";
+"ui.profileValidation.duplicateTriggerMapping" = "%@ ट्रिगर के लिए कई चरण मैपिंग हैं। एक ही रखें।";
 /* Error when a profile breaks a rule: a binding reads a stage of this trigger, which has no dual-stage mapping. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.triggerStageWithoutMapping" = "%@ ट्रिगर चरण के लिए दो-चरण ट्रिगर मैपिंग ज़रूरी है। एक जोड़ें।";
+"ui.profileValidation.triggerStageWithoutMapping" = "%@ ट्रिगर चरण के लिए दो-चरण ट्रिगर मैपिंग ज़रूरी है। एक जोड़ें।";
 /* Error when a profile breaks a rule: a binding reads a motion lean, but no motion tuning defines one. */
-"profile.validation.motionLeanWithoutMapping" = "गति झुकाव स्रोतों के लिए गति झुकाव सेटिंग्स ज़रूरी हैं। उन्हें जोड़ें या स्रोत हटाएँ।";
+"ui.profileValidation.motionLeanWithoutMapping" = "गति झुकाव स्रोतों के लिए गति झुकाव सेटिंग्स ज़रूरी हैं। उन्हें जोड़ें या स्रोत हटाएँ।";
 /* Error when a profile breaks a rule: the touch mapping of this surface has an invalid field. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.invalidTouchMapping" = "%@ टच सतह की सतत मैपिंग जाँचें।";
+"ui.profileValidation.invalidTouchMapping" = "%@ टच सतह की सतत मैपिंग जाँचें।";
 /* Error when a profile breaks a rule: two touch mappings read this surface. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.duplicateTouchMapping" = "%@ टच सतह के लिए कई सतत मैपिंग हैं। एक ही रखें।";
+"ui.profileValidation.duplicateTouchMapping" = "%@ टच सतह के लिए कई सतत मैपिंग हैं। एक ही रखें।";
 /* Error when a profile breaks a rule: a touch grid source has invalid dimensions or cell coordinates. */
-"profile.validation.invalidTouchGrid" = "टच ग्रिड स्रोत में आयाम या सेल निर्देशांक अमान्य हैं। 1 से 16 पंक्तियाँ और कॉलम रखें, और सेल ग्रिड के भीतर रखें।";
+"ui.profileValidation.invalidTouchGrid" = "टच ग्रिड स्रोत में आयाम या सेल निर्देशांक अमान्य हैं। 1 से 16 पंक्तियाँ और कॉलम रखें, और सेल ग्रिड के भीतर रखें।";
 /* Error when a profile breaks a rule: a touch swipe source has an invalid minimum distance. */
-"profile.validation.invalidTouchSwipe" = "टच स्वाइप स्रोत की न्यूनतम दूरी अमान्य है। 0.01 से 1 के बीच का मान रखें।";
+"ui.profileValidation.invalidTouchSwipe" = "टच स्वाइप स्रोत की न्यूनतम दूरी अमान्य है। 0.01 से 1 के बीच का मान रखें।";
 /* Error when a profile breaks a rule: a stick region has a radius, sector or hysteresis out of range. */
-"profile.validation.invalidStickRegion" = "स्टिक क्षेत्र के लिए 0 <= inner < outer <= 1, दोनों कोण या कोई नहीं, और हिस्टैरिसिस 0 से 0.25 ज़रूरी है।";
+"ui.profileValidation.invalidStickRegion" = "स्टिक क्षेत्र के लिए 0 <= inner < outer <= 1, दोनों कोण या कोई नहीं, और हिस्टैरिसिस 0 से 0.25 ज़रूरी है।";
 /* Error when a profile breaks a rule: a trigger band has a pressure or hysteresis out of range. */
-"profile.validation.invalidTriggerBand" = "ट्रिगर बैंड के लिए 0 <= from < to <= 1 और हिस्टैरिसिस 0 से 0.25 ज़रूरी है।";
+"ui.profileValidation.invalidTriggerBand" = "ट्रिगर बैंड के लिए 0 <= from < to <= 1 और हिस्टैरिसिस 0 से 0.25 ज़रूरी है।";
 /* Error when a profile breaks a rule: a touch area is empty or outside the surface. */
-"profile.validation.invalidTouchArea" = "टच क्षेत्र खाली नहीं होना चाहिए और सतह के भीतर होना चाहिए। उसका आकार सतह के अनुसार बदलें।";
+"ui.profileValidation.invalidTouchArea" = "टच क्षेत्र खाली नहीं होना चाहिए और सतह के भीतर होना चाहिए। उसका आकार सतह के अनुसार बदलें।";
 /* Error when a profile breaks a rule: a trigger has bands and a dual-stage mapping. %@ is the trigger as the profile file spells it, kept as written. */
-"profile.validation.triggerBandWithDualStage" = "%@ ट्रिगर में बैंड और दो-चरण मैपिंग दोनों हैं। एक हटाएँ।";
+"ui.profileValidation.triggerBandWithDualStage" = "%@ ट्रिगर में बैंड और दो-चरण मैपिंग दोनों हैं। एक हटाएँ।";
 /* Error when a profile breaks a rule: two regions of one stick, or two bands of one trigger, share a position. */
-"profile.validation.overlappingRegions" = "एक स्टिक के क्षेत्र या एक ट्रिगर के बैंड आपस में ओवरलैप नहीं होने चाहिए। किसी एक को संकरा करें या हटाएँ।";
+"ui.profileValidation.overlappingRegions" = "एक स्टिक के क्षेत्र या एक ट्रिगर के बैंड आपस में ओवरलैप नहीं होने चाहिए। किसी एक को संकरा करें या हटाएँ।";
 /* Error when a profile breaks a rule: the pointer speed has a minimum or maximum scale that is not finite or not 0 to 10. */
-"profile.validation.invalidPointerSpeed" = "पॉइंटर की गति के स्केल 0 से 10 के बीच की सीमित संख्याएँ होनी चाहिए।";
+"ui.profileValidation.invalidPointerSpeed" = "पॉइंटर की गति के स्केल 0 से 10 के बीच की सीमित संख्याएँ होनी चाहिए।";
 /* Error when a profile breaks a rule: the pointer speed reads a trigger or stick that the controller does not report. */
-"profile.validation.unsupportedPointerSpeedDriver" = "पॉइंटर की गति ऐसा ट्रिगर या स्टिक पढ़ती है जिसकी रिपोर्ट कंट्रोलर नहीं देता। ऐसा स्रोत चुनें जिसकी रिपोर्ट कंट्रोलर देता है।";
+"ui.profileValidation.unsupportedPointerSpeedDriver" = "पॉइंटर की गति ऐसा ट्रिगर या स्टिक पढ़ती है जिसकी रिपोर्ट कंट्रोलर नहीं देता। ऐसा स्रोत चुनें जिसकी रिपोर्ट कंट्रोलर देता है।";
 /* Error when a profile breaks a rule: a Joy-Con pair profile does not target a left Joy-Con model. */
-"profile.validation.invalidJoyConPairDevice" = "Joy-Con जोड़ी वाली प्रोफ़ाइल का लक्ष्य Nintendo का बायाँ Joy-Con मॉडल (057e:2006 या 057e:2067) होना चाहिए।";
-/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingBehaviorConflict" = "बाइंडिंग %d ऐसे व्यवहार का उपयोग करती है जो उसके गंतव्य या सक्रियण सेटिंग्स के अनुकूल नहीं है।";
+"ui.profileValidation.invalidJoyConPairDevice" = "Joy-Con जोड़ी वाली प्रोफ़ाइल का लक्ष्य Nintendo का बायाँ Joy-Con मॉडल (057e:2006 या 057e:2067) होना चाहिए।";
+/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingBehaviorConflict" = "बाइंडिंग %@ ऐसे व्यवहार का उपयोग करती है जो उसके गंतव्य या सक्रियण सेटिंग्स के अनुकूल नहीं है।";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this button. %@ is the button as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadButton" = "वर्चुअल गेमपैड %@ आउटपुट नहीं कर सकता। कोई दूसरा बटन चुनें।";
+"ui.profileValidation.unsupportedGamepadButton" = "वर्चुअल गेमपैड %@ आउटपुट नहीं कर सकता। कोई दूसरा बटन चुनें।";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this axis. %@ is the axis as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadAxis" = "वर्चुअल गेमपैड %@ आउटपुट नहीं कर सकता। कोई दूसरा अक्ष चुनें।";
+"ui.profileValidation.unsupportedGamepadAxis" = "वर्चुअल गेमपैड %@ आउटपुट नहीं कर सकता। कोई दूसरा अक्ष चुनें।";
 /* Error when a profile breaks a rule: a virtual gamepad destination or stick output is used while the output policy has no virtual. */
-"profile.validation.virtualOutputRequired" = "गेमपैड गंतव्यों के लिए वर्चुअल गेमपैड आउटपुट ज़रूरी है। उसे चालू करें या गंतव्य बदलें।";
+"ui.profileValidation.virtualOutputRequired" = "गेमपैड गंतव्यों के लिए वर्चुअल गेमपैड आउटपुट ज़रूरी है। उसे चालू करें या गंतव्य बदलें।";
 /* Error when a profile breaks a rule: a physical-controller output value is out of range. */
-"profile.validation.invalidPhysicalOutput" = "फ़िज़िकल कंट्रोलर का आउटपुट मान अमान्य है। ऐसा आउटपुट चुनें जिसे कंट्रोलर समर्थन देता हो।";
+"ui.profileValidation.invalidPhysicalOutput" = "फ़िज़िकल कंट्रोलर का आउटपुट मान अमान्य है। ऐसा आउटपुट चुनें जिसे कंट्रोलर समर्थन देता हो।";
 /* Error when a profile breaks a rule: the profile name is empty, too long, padded with whitespace or holds control characters. */
-"profile.validation.invalidProfileName" = "प्रोफ़ाइल के नाम में 1 से 80 प्रिंट होने योग्य वर्ण होने चाहिए।";
-/* Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyBindings" = "रीमैपिंग प्रोफ़ाइल में %d बाइंडिंग नहीं हो सकतीं। कुछ हटाएँ; सीमा 512 है।";
+"ui.profileValidation.invalidProfileName" = "प्रोफ़ाइल के नाम में 1 से 80 प्रिंट होने योग्य वर्ण होने चाहिए।";
 /* Error when a profile breaks a rule: two bindings, chords, sequences, actions or touch mappings share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateBindingID" = "बाइंडिंग पहचानकर्ता %@ दोहराया गया है।";
+"ui.profileValidation.duplicateBindingID" = "बाइंडिंग पहचानकर्ता %@ दोहराया गया है।";
 /* Error when a profile breaks a rule: two layers share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateLayerID" = "परत पहचानकर्ता %@ दोहराया गया है।";
+"ui.profileValidation.duplicateLayerID" = "परत पहचानकर्ता %@ दोहराया गया है।";
 /* Error when a profile breaks a rule: two bindings of one scope read this source. */
-"profile.validation.duplicateSource" = "हर कंट्रोलर स्रोत केवल एक बाइंडिंग में आ सकता है। अतिरिक्त बाइंडिंग हटाएँ।";
+"ui.profileValidation.duplicateSource" = "हर कंट्रोलर स्रोत केवल एक बाइंडिंग में आ सकता है। अतिरिक्त बाइंडिंग हटाएँ।";
 /* Error when a profile breaks a rule: the application bundle identifier is not valid; the value is the identifier. %@ is an application bundle identifier. */
-"profile.validation.invalidAppID" = "लक्ष्य ऐप का बंडल पहचानकर्ता अमान्य है: %@। बिंदुओं से अलग किए गए भागों में 3 से 255 ASCII अक्षर, अंक और हाइफ़न रखें, जैसे com.example.app।";
+"ui.profileValidation.invalidAppID" = "लक्ष्य ऐप का बंडल पहचानकर्ता अमान्य है: %@। बिंदुओं से अलग किए गए भागों में 3 से 255 ASCII अक्षर, अंक और हाइफ़न रखें, जैसे com.example.app।";
 /* Error when a profile breaks a rule: an application scope lists no bundle identifier. */
-"profile.validation.noAppIDs" = "ऐप लक्ष्य के लिए कम से कम एक बंडल पहचानकर्ता ज़रूरी है।";
+"ui.profileValidation.noAppIDs" = "ऐप लक्ष्य के लिए कम से कम एक बंडल पहचानकर्ता ज़रूरी है।";
 /* Error when a profile breaks a rule: an application scope lists this bundle identifier more than once. %@ is an application bundle identifier. */
-"profile.validation.duplicateAppID" = "लक्ष्य ऐप का बंडल पहचानकर्ता दो बार दिया गया है: %@। एक हटाएँ।";
-/* Error when a profile breaks a rule: an axis source has no axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningRequired" = "बाइंडिंग %d के लिए अक्ष ट्यूनिंग ज़रूरी है। उसे जोड़ें।";
-/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningNotApplicable" = "बाइंडिंग %d में अक्ष ट्यूनिंग नहीं हो सकती। उसे हटाएँ।";
-/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.incompatibleSourceAndDestination" = "बाइंडिंग %d में स्रोत और गंतव्य के प्रकार आपस में मेल नहीं खाते। किसी एक को बदलें।";
-/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTuning" = "बाइंडिंग %1$d में %2$@ असीमित है। कोई सीमित संख्या दर्ज करें।";
-/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.tuningOutOfRange" = "बाइंडिंग %1$d में %2$@ सीमा से बाहर है। डेडज़ोन 0 से 0.95, गेन 0.1 से 10 और डिजिटल सक्रियण सीमा 0.01 से 1 होती है।";
-/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboNotSupported" = "बाइंडिंग %d सतत गंतव्य के साथ टर्बो का उपयोग करती है। टर्बो हटाएँ या गंतव्य बदलें।";
-/* Error when a profile breaks a rule: a turbo field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTurbo" = "बाइंडिंग %1$d के टर्बो %2$@ का मान असीमित है। कोई सीमित संख्या दर्ज करें।";
-/* Error when a profile breaks a rule: a turbo field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.turboOutOfRange" = "बाइंडिंग %1$d के टर्बो %2$@ का मान सीमा से बाहर है। पुनरावृत्ति दर 1 से 60 Hz, ड्यूटी साइकिल 0.05 से 0.95, शुरुआती विलंब 0 से 2500 ms और अधिकतम पुनरावृत्ति 1 से 500 होती है।";
-/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.longHoldNotSupported" = "बाइंडिंग %d सतत स्रोत या गंतव्य के साथ लंबे समय तक दबाए रखने का उपयोग करती है। उसे हटाएँ या बटन स्रोत और गंतव्य चुनें।";
-/* Error when a profile breaks a rule: a long-hold field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteLongHold" = "बाइंडिंग %1$d के लंबे समय तक दबाए रखने के %2$@ का मान असीमित है। कोई सीमित संख्या दर्ज करें।";
-/* Error when a profile breaks a rule: a long-hold field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.longHoldOutOfRange" = "बाइंडिंग %1$d के लंबे समय तक दबाए रखने के %2$@ का मान सीमा से बाहर है। 100 से 5000 ms रखें।";
-/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteMultiTap" = "बाइंडिंग %1$d के एकाधिक टैप %2$@ का मान असीमित है। कोई सीमित संख्या दर्ज करें।";
-/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.multiTapOutOfRange" = "बाइंडिंग %1$d के एकाधिक टैप %2$@ का मान सीमा से बाहर है। 2 से 5 की संख्या और 50 से 1000 ms की विंडो रखें।";
-/* Error when a profile breaks a rule: two multi-tap entries have the same count. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.duplicateMultiTapCount" = "बाइंडिंग %d में समान संख्या वाली दो एकाधिक टैप प्रविष्टियाँ हैं। हर प्रविष्टि को अलग संख्या दें।";
-/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboAndActivationConflict" = "बाइंडिंग %d में टर्बो को लंबे समय तक दबाए रखने या एकाधिक टैप के साथ नहीं जोड़ा जा सकता। एक हटाएँ।";
-/* Error when a profile breaks a rule: a chord window is out of range. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordWindowOutOfRange" = "कॉर्ड %d की विंडो सीमा से बाहर है। 1 से 1000 ms रखें।";
-/* Error when a profile breaks a rule: a chord has fewer than two sources. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordTooFewSources" = "कॉर्ड %d में कम से कम दो स्रोत होने चाहिए। एक जोड़ें।";
-/* Error when a profile breaks a rule: a chord has an axis source. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousSource" = "कॉर्ड %d सतत (अक्ष) स्रोत का उपयोग करता है। बटन स्रोत चुनें।";
-/* Error when a profile breaks a rule: a chord has a continuous destination. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousDestination" = "कॉर्ड %d सतत गंतव्य का उपयोग करता है। बटन गंतव्य चुनें।";
-/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.duplicateChordSources" = "कॉर्ड %d का स्रोत समूह किसी दूसरे कॉर्ड जैसा ही है। एक हटाएँ।";
-/* Error when a profile breaks a rule: a sequence has fewer than two sources. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceTooFewSources" = "अनुक्रम %d में कम से कम दो स्रोत होने चाहिए। एक जोड़ें।";
-/* Error when a profile breaks a rule: a sequence has an axis source. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousSource" = "अनुक्रम %d सतत (अक्ष) स्रोत का उपयोग करता है। बटन स्रोत चुनें।";
-/* Error when a profile breaks a rule: a sequence has a continuous destination. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousDestination" = "अनुक्रम %d सतत गंतव्य का उपयोग करता है। बटन गंतव्य चुनें।";
-/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceWindowOutOfRange" = "अनुक्रम %d की विंडो सीमा से बाहर है। 200 से 10000 ms रखें।";
-/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.duplicateSequenceSources" = "अनुक्रम %d का स्रोत क्रम किसी दूसरे अनुक्रम जैसा ही है। एक हटाएँ।";
-/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingRemarkInvalid" = "बाइंडिंग %d का नोट अमान्य है। 1 से 200 वर्ण रखें।";
-/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerNameInvalid" = "परत %d का नाम अमान्य है। 1 से 40 वर्ण रखें।";
-/* Error when a profile breaks a rule: a layer activator is an axis. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorNotDiscrete" = "परत %d का सक्रियणकर्ता असतत नहीं, बल्कि अक्ष है। बटन स्रोत चुनें।";
-/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.duplicateLayerActivator" = "परत %d का सक्रियणकर्ता किसी दूसरी परत जैसा ही है। कोई दूसरा स्रोत चुनें।";
-/* Error when a profile breaks a rule: a layer activator also has a binding. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorAlsoBound" = "परत %d का सक्रियणकर्ता सामान्य स्रोत के रूप में भी बाइंड है। वह बाइंडिंग हटाएँ या कोई दूसरा सक्रियणकर्ता चुनें।";
-/* Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyMacros" = "रीमैपिंग प्रोफ़ाइल में %d मैक्रो नहीं हो सकते। कुछ हटाएँ; सीमा 16 है।";
+"ui.profileValidation.duplicateAppID" = "लक्ष्य ऐप का बंडल पहचानकर्ता दो बार दिया गया है: %@। एक हटाएँ।";
+/* Error when a profile breaks a rule: an axis source has no axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningRequired" = "बाइंडिंग %@ के लिए अक्ष ट्यूनिंग ज़रूरी है। उसे जोड़ें।";
+/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningNotApplicable" = "बाइंडिंग %@ में अक्ष ट्यूनिंग नहीं हो सकती। उसे हटाएँ।";
+/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.incompatibleSourceAndDestination" = "बाइंडिंग %@ में स्रोत और गंतव्य के प्रकार आपस में मेल नहीं खाते। किसी एक को बदलें।";
+/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTuning" = "बाइंडिंग %1$@ में %2$@ असीमित है। कोई सीमित संख्या दर्ज करें।";
+/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.tuningOutOfRange" = "बाइंडिंग %1$@ में %2$@ सीमा से बाहर है। डेडज़ोन 0 से 0.95, गेन 0.1 से 10 और डिजिटल सक्रियण सीमा 0.01 से 1 होती है।";
+/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboNotSupported" = "बाइंडिंग %@ सतत गंतव्य के साथ टर्बो का उपयोग करती है। टर्बो हटाएँ या गंतव्य बदलें।";
+/* Error when a profile breaks a rule: a turbo field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTurbo" = "बाइंडिंग %1$@ के टर्बो %2$@ का मान असीमित है। कोई सीमित संख्या दर्ज करें।";
+/* Error when a profile breaks a rule: a turbo field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.turboOutOfRange" = "बाइंडिंग %1$@ के टर्बो %2$@ का मान सीमा से बाहर है। पुनरावृत्ति दर 1 से 60 Hz, ड्यूटी साइकिल 0.05 से 0.95, शुरुआती विलंब 0 से 2500 ms और अधिकतम पुनरावृत्ति 1 से 500 होती है।";
+/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.longHoldNotSupported" = "बाइंडिंग %@ सतत स्रोत या गंतव्य के साथ लंबे समय तक दबाए रखने का उपयोग करती है। उसे हटाएँ या बटन स्रोत और गंतव्य चुनें।";
+/* Error when a profile breaks a rule: a long-hold field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteLongHold" = "बाइंडिंग %1$@ के लंबे समय तक दबाए रखने के %2$@ का मान असीमित है। कोई सीमित संख्या दर्ज करें।";
+/* Error when a profile breaks a rule: a long-hold field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.longHoldOutOfRange" = "बाइंडिंग %1$@ के लंबे समय तक दबाए रखने के %2$@ का मान सीमा से बाहर है। 100 से 5000 ms रखें।";
+/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteMultiTap" = "बाइंडिंग %1$@ के एकाधिक टैप %2$@ का मान असीमित है। कोई सीमित संख्या दर्ज करें।";
+/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.multiTapOutOfRange" = "बाइंडिंग %1$@ के एकाधिक टैप %2$@ का मान सीमा से बाहर है। 2 से 5 की संख्या और 50 से 1000 ms की विंडो रखें।";
+/* Error when a profile breaks a rule: two multi-tap entries have the same count. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.duplicateMultiTapCount" = "बाइंडिंग %@ में समान संख्या वाली दो एकाधिक टैप प्रविष्टियाँ हैं। हर प्रविष्टि को अलग संख्या दें।";
+/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboAndActivationConflict" = "बाइंडिंग %@ में टर्बो को लंबे समय तक दबाए रखने या एकाधिक टैप के साथ नहीं जोड़ा जा सकता। एक हटाएँ।";
+/* Error when a profile breaks a rule: a chord window is out of range. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordWindowOutOfRange" = "कॉर्ड %@ की विंडो सीमा से बाहर है। 1 से 1000 ms रखें।";
+/* Error when a profile breaks a rule: a chord has fewer than two sources. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordTooFewSources" = "कॉर्ड %@ में कम से कम दो स्रोत होने चाहिए। एक जोड़ें।";
+/* Error when a profile breaks a rule: a chord has an axis source. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousSource" = "कॉर्ड %@ सतत (अक्ष) स्रोत का उपयोग करता है। बटन स्रोत चुनें।";
+/* Error when a profile breaks a rule: a chord has a continuous destination. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousDestination" = "कॉर्ड %@ सतत गंतव्य का उपयोग करता है। बटन गंतव्य चुनें।";
+/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.duplicateChordSources" = "कॉर्ड %@ का स्रोत समूह किसी दूसरे कॉर्ड जैसा ही है। एक हटाएँ।";
+/* Error when a profile breaks a rule: a sequence has fewer than two sources. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceTooFewSources" = "अनुक्रम %@ में कम से कम दो स्रोत होने चाहिए। एक जोड़ें।";
+/* Error when a profile breaks a rule: a sequence has an axis source. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousSource" = "अनुक्रम %@ सतत (अक्ष) स्रोत का उपयोग करता है। बटन स्रोत चुनें।";
+/* Error when a profile breaks a rule: a sequence has a continuous destination. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousDestination" = "अनुक्रम %@ सतत गंतव्य का उपयोग करता है। बटन गंतव्य चुनें।";
+/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceWindowOutOfRange" = "अनुक्रम %@ की विंडो सीमा से बाहर है। 200 से 10000 ms रखें।";
+/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.duplicateSequenceSources" = "अनुक्रम %@ का स्रोत क्रम किसी दूसरे अनुक्रम जैसा ही है। एक हटाएँ।";
+/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingRemarkInvalid" = "बाइंडिंग %@ का नोट अमान्य है। 1 से 200 वर्ण रखें।";
+/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerNameInvalid" = "परत %@ का नाम अमान्य है। 1 से 40 वर्ण रखें।";
+/* Error when a profile breaks a rule: a layer activator is an axis. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorNotDiscrete" = "परत %@ का सक्रियणकर्ता असतत नहीं, बल्कि अक्ष है। बटन स्रोत चुनें।";
+/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.duplicateLayerActivator" = "परत %@ का सक्रियणकर्ता किसी दूसरी परत जैसा ही है। कोई दूसरा स्रोत चुनें।";
+/* Error when a profile breaks a rule: a layer activator also has a binding. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorAlsoBound" = "परत %@ का सक्रियणकर्ता सामान्य स्रोत के रूप में भी बाइंड है। वह बाइंडिंग हटाएँ या कोई दूसरा सक्रियणकर्ता चुनें।";
 /* Error when a profile breaks a rule: two macros share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateMacroID" = "मैक्रो पहचानकर्ता %@ दोहराया गया है।";
-/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %d is the position of the macro in its list, counted from 0. */
-"profile.validation.duplicateMacroName" = "मैक्रो %d का नाम पहले के किसी मैक्रो जैसा ही है। उसका नाम बदलें।";
-/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidMacro" = "मैक्रो %1$d में %2$@ अमान्य है। नाम 1 से 40 वर्ण, चरण 1 से 32, दोहराव 1 से 500 और हर विलंब 0 से 5000 ms होना चाहिए।";
-/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.invalidMacroStepDestination" = "मैक्रो %2$d के चरण %1$d का गंतव्य मैक्रो चरण में उपयोग नहीं हो सकता। कुंजी, पॉइंटर बटन, या गेमपैड बटन अथवा डी-पैड दिशा चुनें।";
-/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.macroNestingNotAllowed" = "मैक्रो %2$d का चरण %1$d एक मैक्रो चलाता है, जो मैक्रो चरण नहीं कर सकता। वह चरण हटाएँ।";
-/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
-"profile.validation.macroRunTimeExceeded" = "मैक्रो %1$d %2$@ सीमा से अधिक समय तक चलता है। एक बार चलने में अधिकतम 30 सेकंड और सभी दोहरावों में अधिकतम 300 सेकंड लगते हैं; विलंब घटाएँ या दोहराव कम करें।";
+"ui.profileValidation.duplicateMacroID" = "मैक्रो पहचानकर्ता %@ दोहराया गया है।";
+/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.duplicateMacroName" = "मैक्रो %@ का नाम पहले के किसी मैक्रो जैसा ही है। उसका नाम बदलें।";
+/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.invalidMacro" = "मैक्रो %1$@ में %2$@ अमान्य है। नाम 1 से 40 वर्ण, चरण 1 से 32, दोहराव 1 से 500 और हर विलंब 0 से 5000 ms होना चाहिए।";
+/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.invalidMacroStepDestination" = "मैक्रो %2$@ के चरण %1$@ का गंतव्य मैक्रो चरण में उपयोग नहीं हो सकता। कुंजी, पॉइंटर बटन, या गेमपैड बटन अथवा डी-पैड दिशा चुनें।";
+/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.macroNestingNotAllowed" = "मैक्रो %2$@ का चरण %1$@ एक मैक्रो चलाता है, जो मैक्रो चरण नहीं कर सकता। वह चरण हटाएँ।";
+/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
+"ui.profileValidation.macroRunTimeExceeded" = "मैक्रो %1$@ %2$@ सीमा से अधिक समय तक चलता है। एक बार चलने में अधिकतम 30 सेकंड और सभी दोहरावों में अधिकतम 300 सेकंड लगते हैं; विलंब घटाएँ या दोहराव कम करें।";
 /* Error when a profile breaks a rule: a destination runs a macro that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownMacro" = "एक गंतव्य मैक्रो %@ चलाता है, जो मौजूद नहीं है। कोई मौजूदा मैक्रो चुनें।";
+"ui.profileValidation.unknownMacro" = "एक गंतव्य मैक्रो %@ चलाता है, जो मौजूद नहीं है। कोई मौजूदा मैक्रो चुनें।";
 /* Error when a profile breaks a rule: a system action destination has a value outside its limits; the value is the action name. %@ is the destination type as the profile file spells it, kept as written. */
-"profile.validation.invalidSystemAction" = "%@ गंतव्य का मान अमान्य है। मान जाँचें।";
+"ui.profileValidation.invalidSystemAction" = "%@ गंतव्य का मान अमान्य है। मान जाँचें।";
 /* Error when a profile breaks a rule: a destination sets a layer that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownLayer" = "एक गंतव्य परत %@ सेट करता है, जो मौजूद नहीं है। कोई मौजूदा परत चुनें।";
+"ui.profileValidation.unknownLayer" = "एक गंतव्य परत %@ सेट करता है, जो मौजूद नहीं है। कोई मौजूदा परत चुनें।";
 /* Error when a profile breaks a rule: a destination switches to a profile that does not exist. %@ is an identifier (UUID). */
-"profile.validation.unknownSwitchProfile" = "एक गंतव्य प्रोफ़ाइल %@ पर स्विच करता है, जो मौजूद नहीं है। कोई मौजूदा प्रोफ़ाइल चुनें।";
+"ui.profileValidation.unknownSwitchProfile" = "एक गंतव्य प्रोफ़ाइल %@ पर स्विच करता है, जो मौजूद नहीं है। कोई मौजूदा प्रोफ़ाइल चुनें।";
 /* Error when a profile breaks a rule: a destination switches to a profile for another controller model. %@ is an identifier (UUID). */
-"profile.validation.switchProfileForOtherModel" = "एक गंतव्य प्रोफ़ाइल %@ पर स्विच करता है, जो किसी दूसरे मॉडल के लिए है। इस मॉडल की प्रोफ़ाइल चुनें।";
+"ui.profileValidation.switchProfileForOtherModel" = "एक गंतव्य प्रोफ़ाइल %@ पर स्विच करता है, जो किसी दूसरे मॉडल के लिए है। इस मॉडल की प्रोफ़ाइल चुनें।";
 /* Error when a profile breaks a rule: a `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or. %@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidSpeech" = "बोलें गंतव्य का %@ अमान्य है। टेक्स्ट 1 से 128 वर्ण का होता है।";
+"ui.profileValidation.invalidSpeech" = "बोलें गंतव्य का %@ अमान्य है। टेक्स्ट 1 से 128 वर्ण का होता है।";
 /* Error when a profile breaks a rule: a `Speak` destination names a voice that this Mac does not have. %@ is the name of a voice. */
-"profile.validation.unknownSpeechVoice" = "बोलें गंतव्य में आवाज़ %@ दी गई है, जो इस Mac में नहीं है। इंस्टॉल की गई आवाज़ या सिस्टम आवाज़ चुनें।";
+"platform.macos.profileValidation.unknownSpeechVoice" = "बोलें गंतव्य में आवाज़ %@ दी गई है, जो इस Mac में नहीं है। इंस्टॉल की गई आवाज़ या सिस्टम आवाज़ चुनें।";
 /* Error when a profile breaks a rule: a MIDI destination has a channel, note, controller or velocity out of range. */
-"profile.validation.invalidMIDIDestination" = "MIDI गंतव्य के लिए 1 से 16 का चैनल, 0 से 127 का नोट या कंट्रोलर, और 1 से 127 की वेलॉसिटी ज़रूरी है।";
+"ui.profileValidation.invalidMIDIDestination" = "MIDI गंतव्य के लिए 1 से 16 का चैनल, 0 से 127 का नोट या कंट्रोलर, और 1 से 127 की वेलॉसिटी ज़रूरी है।";
 /* Error when a profile breaks a rule: the profile could not be encoded. */
-"profile.validation.encodingFailed" = "रीमैपिंग प्रोफ़ाइल को एनकोड नहीं किया जा सका। उसके मान जाँचें।";
-/* Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. */
-"profile.validation.encodedSizeExceeded" = "एनकोड की गई रीमैपिंग प्रोफ़ाइल बहुत बड़ी है (%d बाइट)। उसे 4 MiB से कम रखें।";
+"ui.profileValidation.encodingFailed" = "रीमैपिंग प्रोफ़ाइल को एनकोड नहीं किया जा सका। उसके मान जाँचें।";
+
+/* Error when the service's profile library refuses a request: the profile file or the active profile list is damaged. */
+"ui.profileLibrary.corruptLibrary" = "सक्रिय प्रोफ़ाइल सूची क्षतिग्रस्त है।";
+/* Error when the service's profile library refuses a request: a profile with the name already exists. %@ is the name of a profile. */
+"ui.profileLibrary.duplicateName" = "%@ नाम की प्रोफ़ाइल पहले से मौजूद है।";
+/* Error when the service's profile library refuses a request: a profile with the ID already exists. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileAlreadyExists" = "प्रोफ़ाइल %@ पहले से मौजूद है।";
+/* Error when the service's profile library refuses a request: no profile has the ID. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileNotFound" = "प्रोफ़ाइल %@ मौजूद नहीं है।";
+/* Error when the service's profile library refuses a request: a Joy-Con pair profile starts only with an explicit pair session. */
+"ui.profileLibrary.pairProfileRequiresExplicitSession" = "Joy-Con जोड़ी की प्रोफ़ाइल स्पष्ट जोड़ी सत्र से शुरू होती हैं।";
+/* Error when the service's profile library refuses a request: the profile produces no output; activating it needs `allowEmpty`. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileProducesNoOutput" = "प्रोफ़ाइल %@ कोई आउटपुट नहीं बनाती; उसे सक्रिय करने के लिए allowEmpty ज़रूरी है।";
+/* Error when the service's profile library refuses a request: the profile changed since the caller read it. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileUpdateConflict" = "प्रोफ़ाइल %@ पढ़े जाने के बाद बदल गई।";
+/* Error when the service's profile library refuses a request: a profile file could not be read. */
+"ui.profileLibrary.unreadableLibrary" = "कोई प्रोफ़ाइल फ़ाइल पढ़ी नहीं जा सकी।";
+/* Error when the service's profile library refuses a request: a profile file could not be written. */
+"ui.profileLibrary.unwritableLibrary" = "कोई प्रोफ़ाइल फ़ाइल लिखी नहीं जा सकी।";
+/* Error when the service's profile library refuses a request: the damaged profile files need repair before a change. */
+"ui.profileLibrary.profileRecoveryRequired" = "प्रोफ़ाइल बदलने से पहले क्षतिग्रस्त प्रोफ़ाइल फ़ाइलों की मरम्मत करें या उन्हें हटाएँ।";
+/* Error when the service's profile library refuses a request: no damaged-file issue has the ID. */
+"ui.profileLibrary.profileIssueNotFound" = "चुनी गई क्षतिग्रस्त प्रोफ़ाइल अब मौजूदा नहीं है।";
+/* Error when the service's profile library refuses a request: the profile comes from a package and cannot be changed. */
+"ui.profileLibrary.packageProfileReadOnly" = "इंस्टॉल किए गए पैकेज से आई प्रोफ़ाइल बदली नहीं जा सकती। प्रोफ़ाइल को डुप्लिकेट करें और कॉपी बदलें।";
+/* Error when remapping output cannot apply a profile change: both the profile library and the event engine failed. %1$@ is the message of the profile library error and %2$@ the message of the event engine error, each a full sentence; keep the order the language reads naturally. */
+"ui.remappingRoute.libraryAndEngine" = "%1$@ %2$@";
+/* Error when remapping output cannot apply a profile change: a profile transaction is already active. */
+"ui.remappingRoute.profileTransactionAlreadyActive" = "एक प्रोफ़ाइल लेन-देन पहले से सक्रिय है।";
+/* Error when remapping output cannot apply a profile change: a profile transaction could not be reconciled, with the detail; output stays suspended. %@ is the reason the system gives, in English. */
+"ui.remappingRoute.profileTransactionUnreconciled" = "प्रोफ़ाइल लेन-देन का मिलान नहीं हो सका, इसलिए रीमैपिंग आउटपुट निलंबित है। %@";
+/* Error when remapping output cannot apply a profile change: the transaction token is not the active one. */
+"ui.remappingRoute.profileTransactionViolation" = "प्रोफ़ाइल लेन-देन टोकन अमान्य है।";
+/* Error when remapping output cannot apply a profile change: the router has shut down. */
+"ui.remappingRoute.shutDown" = "रीमैपिंग आउटपुट राउटर बंद हो चुका है।";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con is not connected. */
+"ui.joyConPair.controllerUnavailable" = "चुने गए दोनों Joy-Con कनेक्ट होने चाहिए।";
+/* Error when two Joy-Cons cannot start a paired session: the selection is not one left and one right Joy-Con. */
+"ui.joyConPair.invalidControllerSide" = "एक बायाँ और एक दायाँ Joy-Con चुनें।";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con already belongs to a pair. */
+"ui.joyConPair.memberAlreadyPaired" = "चुना गया एक Joy-Con पहले से किसी जोड़ी सत्र का हिस्सा है।";
+/* Error when two Joy-Cons cannot start a paired session: the profile is not configured for paired Joy-Cons. */
+"ui.joyConPair.profileNotPairable" = "चुनी गई प्रोफ़ाइल Joy-Con जोड़ी के लिए कॉन्फ़िगर नहीं है।";
+/* Error when two Joy-Cons cannot start a paired session: the pair session does not exist. */
+"ui.joyConPair.sessionUnavailable" = "Joy-Con जोड़ी सत्र अब उपलब्ध नहीं है।";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.timeout" = "USB ट्रांसफ़र का समय समाप्त हो गया।";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.disconnected" = "USB डिवाइस डिस्कनेक्ट हो गया।";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.inputOutput" = "USB ट्रांसफ़र इनपुट/आउटपुट त्रुटि से विफल हुआ।";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.accessDenied" = "सिस्टम ने USB डिवाइस तक पहुँच अस्वीकार कर दी।";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notFound" = "USB डिवाइस, इंटरफ़ेस या एंडपॉइंट नहीं मिला।";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notSupported" = "USB कनेक्शन इस ऑपरेशन का समर्थन नहीं करता।";
+/* Error when a USB transfer to a controller fails. %1$@ is the error code of the platform, a signed decimal number kept as written; %2$@ is the message of the platform, in English. */
+"ui.usbTransport.platform" = "USB प्लैटफ़ॉर्म त्रुटि %1$@: %2$@";
+/* Error when the service cannot open a virtual feed: the name is not a virtual gamepad kind. %@ is the name of a virtual gamepad kind, kept as written. */
+"ui.virtualFeed.unknownProfile" = "अज्ञात वर्चुअल गेमपैड प्रकार: %@।";
+/* Error when the service cannot open a virtual feed: the service is stopping. */
+"ui.virtualFeed.serviceStopped" = "सेवा बंद हो रही है।";
+/* Error when the service cannot open a virtual feed: the virtual controller did not start, with the reason. %@ is the reason the system gives, in English. */
+"ui.virtualFeed.activationFailed" = "वर्चुअल गेमपैड शुरू नहीं हुआ: %@।";
+/* Error when a remapping cannot post keyboard or pointer input: post-event access is not granted. */
+"platform.macos.systemInput.postEventAccessNotGranted" = "कीबोर्ड और पॉइंटर इवेंट भेजने की अनुमति नहीं दी गई है।";
+/* Error when a remapping cannot post keyboard or pointer input: the profile key has no macOS virtual key. %@ is the key as the profile file spells it, kept as written. */
+"platform.macos.systemInput.unsupportedKeyboardKey" = "कीबोर्ड कुंजी “%@” macOS पर समर्थित नहीं है।";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not create the event. */
+"platform.macos.systemInput.eventPreparationFailed" = "CoreGraphics सिस्टम-इनपुट इवेंट तैयार नहीं कर सका।";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not post the event. */
+"platform.macos.systemInput.eventPostingFailed" = "CoreGraphics सिस्टम-इनपुट इवेंट पोस्ट नहीं कर सका।";
+/* Error when a remapping action does not reach keyboard or pointer input: the engine is suspended until sink recovery succeeds. */
+"ui.remappingSink.faulted" = "सिंक की रिकवरी सफल होने तक सिस्टम-इनपुट रीमैपिंग निलंबित है।";
+/* Error when a remapping action does not reach keyboard or pointer input: routing admission refuses output. */
+"ui.remappingSink.outputSuspended" = "रूटिंग एडमिशन ने सिस्टम-इनपुट रीमैपिंग निलंबित कर दी है।";
+/* Error when a remapping action does not reach keyboard or pointer input: a sink rejected an action or is missing. */
+"ui.remappingSink.sinkUnavailable" = "सिस्टम-इनपुट सिंक ने रीमैपिंग क्रिया अस्वीकार कर दी।";
+/* Error when a virtual gamepad frame is not published: the queue holds only host replies, and one more arrived. */
+"ui.outputPublication.queueOverflow" = "वर्चुअल गेमपैड प्रकाशन कतार ओवरफ़्लो हो गई।";
+/* Error when a virtual gamepad frame is not published: the native send exceeded its deadline. */
+"ui.outputPublication.sendTimedOut" = "वर्चुअल गेमपैड प्रकाशन का समय समाप्त हो गया।";
+/* Error when a virtual gamepad frame is not published: a newer frame took the place of this one in a full queue. */
+"ui.outputPublication.superseded" = "वर्चुअल गेमपैड फ़्रेम की जगह नए फ़्रेम ने ले ली।";
+/* Error when a command-line source or target cannot be read: the source operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidSource" = "अमान्य स्रोत “%@”।";
+/* Error when a command-line source or target cannot be read: the target operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidDestination" = "अमान्य लक्ष्य “%@”।";
+/* Error when the record probe refuses a controller: the record names an 8BitDo bootloader identity, which OJD sends nothing. */
+"ui.recordProbe.bootloaderIdentity" = "रिकॉर्ड प्रोब बूटलोडर मोड वाले कंट्रोलर को कुछ नहीं भेजता।";
+/* Error when the record probe refuses a controller: the record's protocol is one the probe cannot drive; the value names it. %@ is the name of a controller protocol, kept as written. */
+"ui.recordProbe.unsupportedProtocol" = "बिना हस्ताक्षर वाला रिकॉर्ड प्रोब प्रोटोकॉल %@ का समर्थन नहीं करता।";
+/* Error when a profile breaks a rule: a field is outside its valid range. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.motionTuningField" = "गति समायोजन फ़ील्ड “%@” अपनी मान्य सीमा से बाहर है।";
+/* Error when a profile breaks a rule: a field is outside its valid range or inconsistent with the others. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.gyroOutputField" = "जाइरो आउटपुट फ़ील्ड “%@” अपनी मान्य सीमा से बाहर है।";
+/* Error when a USB transfer to a controller fails: another client, which the system does not name, holds the USB interface. */
+"ui.usbTransport.ownedByAnotherClient" = "कोई दूसरा क्लाइंट USB इंटरफ़ेस इस्तेमाल कर रहा है।";
+/* Error when a USB transfer to a controller fails: another client holds the USB interface. %@ is the name of that client as the system reports it. */
+"ui.usbTransport.ownedByNamedClient" = "कोई दूसरा क्लाइंट USB इंटरफ़ेस इस्तेमाल कर रहा है (%@)।";

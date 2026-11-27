@@ -298,5 +298,130 @@
 			<string>%d ajustes ocultos alterados</string>
 		</dict>
 	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyBindings</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Um perfil de remapeamento não pode conter %d atribuição. Remova algumas; o limite é 512.</string>
+			<key>zero</key>
+			<string>Um perfil de remapeamento não pode conter %d atribuições. Remova algumas; o limite é 512.</string>
+			<key>two</key>
+			<string>Um perfil de remapeamento não pode conter %d atribuições. Remova algumas; o limite é 512.</string>
+			<key>few</key>
+			<string>Um perfil de remapeamento não pode conter %d atribuições. Remova algumas; o limite é 512.</string>
+			<key>many</key>
+			<string>Um perfil de remapeamento não pode conter %d de atribuições. Remova algumas; o limite é 512.</string>
+			<key>other</key>
+			<string>Um perfil de remapeamento não pode conter %d atribuições. Remova algumas; o limite é 512.</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyMacros</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Um perfil de remapeamento não pode conter %d macro. Remova algumas; o limite é 16.</string>
+			<key>zero</key>
+			<string>Um perfil de remapeamento não pode conter %d macros. Remova algumas; o limite é 16.</string>
+			<key>two</key>
+			<string>Um perfil de remapeamento não pode conter %d macros. Remova algumas; o limite é 16.</string>
+			<key>few</key>
+			<string>Um perfil de remapeamento não pode conter %d macros. Remova algumas; o limite é 16.</string>
+			<key>many</key>
+			<string>Um perfil de remapeamento não pode conter %d de macros. Remova algumas; o limite é 16.</string>
+			<key>other</key>
+			<string>Um perfil de remapeamento não pode conter %d macros. Remova algumas; o limite é 16.</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. -->
+	<key>ui.profileValidation.encodedSizeExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>O perfil de remapeamento codificado é grande demais (%d byte). Mantenha-o abaixo de 4 MiB.</string>
+			<key>zero</key>
+			<string>O perfil de remapeamento codificado é grande demais (%d bytes). Mantenha-o abaixo de 4 MiB.</string>
+			<key>two</key>
+			<string>O perfil de remapeamento codificado é grande demais (%d bytes). Mantenha-o abaixo de 4 MiB.</string>
+			<key>few</key>
+			<string>O perfil de remapeamento codificado é grande demais (%d bytes). Mantenha-o abaixo de 4 MiB.</string>
+			<key>many</key>
+			<string>O perfil de remapeamento codificado é grande demais (%d de bytes). Mantenha-o abaixo de 4 MiB.</string>
+			<key>other</key>
+			<string>O perfil de remapeamento codificado é grande demais (%d bytes). Mantenha-o abaixo de 4 MiB.</string>
+		</dict>
+	</dict>
+	<!-- Error when the service's profile library refuses a request: the library would hold more profiles than the limit allows, with the count. %d is the number of profiles. -->
+	<key>ui.profileLibrary.profileCountExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Não pode haver %d perfil.</string>
+			<key>zero</key>
+			<string>Não pode haver %d perfis.</string>
+			<key>two</key>
+			<string>Não pode haver %d perfis.</string>
+			<key>few</key>
+			<string>Não pode haver %d perfis.</string>
+			<key>many</key>
+			<string>Não pode haver %d de perfis.</string>
+			<key>other</key>
+			<string>Não pode haver %d perfis.</string>
+		</dict>
+	</dict>
+	<!-- Error when the service cannot open a virtual feed: the pool already holds the most feeds, with that limit. %d is the largest number of virtual feeds. -->
+	<key>ui.virtualFeed.tooManyFeeds</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>O serviço já executa %d feed virtual.</string>
+			<key>zero</key>
+			<string>O serviço já executa %d feeds virtuais.</string>
+			<key>two</key>
+			<string>O serviço já executa %d feeds virtuais.</string>
+			<key>few</key>
+			<string>O serviço já executa %d feeds virtuais.</string>
+			<key>many</key>
+			<string>O serviço já executa %d de feeds virtuais.</string>
+			<key>other</key>
+			<string>O serviço já executa %d feeds virtuais.</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

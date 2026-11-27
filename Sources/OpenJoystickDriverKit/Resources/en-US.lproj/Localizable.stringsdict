@@ -280,5 +280,130 @@
 			<string>%d hidden settings are changed</string>
 		</dict>
 	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyBindings</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>A profile cannot contain %d binding. Remove some; the limit is 512.</string>
+			<key>zero</key>
+			<string>A profile cannot contain %d bindings. Remove some; the limit is 512.</string>
+			<key>two</key>
+			<string>A profile cannot contain %d bindings. Remove some; the limit is 512.</string>
+			<key>few</key>
+			<string>A profile cannot contain %d bindings. Remove some; the limit is 512.</string>
+			<key>many</key>
+			<string>A profile cannot contain %d bindings. Remove some; the limit is 512.</string>
+			<key>other</key>
+			<string>A profile cannot contain %d bindings. Remove some; the limit is 512.</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyMacros</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>A profile cannot contain %d macro. Remove some; the limit is 16.</string>
+			<key>zero</key>
+			<string>A profile cannot contain %d macros. Remove some; the limit is 16.</string>
+			<key>two</key>
+			<string>A profile cannot contain %d macros. Remove some; the limit is 16.</string>
+			<key>few</key>
+			<string>A profile cannot contain %d macros. Remove some; the limit is 16.</string>
+			<key>many</key>
+			<string>A profile cannot contain %d macros. Remove some; the limit is 16.</string>
+			<key>other</key>
+			<string>A profile cannot contain %d macros. Remove some; the limit is 16.</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. -->
+	<key>ui.profileValidation.encodedSizeExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>The encoded profile is too large (%d byte). Keep it under 4 MiB.</string>
+			<key>zero</key>
+			<string>The encoded profile is too large (%d bytes). Keep it under 4 MiB.</string>
+			<key>two</key>
+			<string>The encoded profile is too large (%d bytes). Keep it under 4 MiB.</string>
+			<key>few</key>
+			<string>The encoded profile is too large (%d bytes). Keep it under 4 MiB.</string>
+			<key>many</key>
+			<string>The encoded profile is too large (%d bytes). Keep it under 4 MiB.</string>
+			<key>other</key>
+			<string>The encoded profile is too large (%d bytes). Keep it under 4 MiB.</string>
+		</dict>
+	</dict>
+	<!-- Error when the service's profile library refuses a request: the library would hold more profiles than the limit allows, with the count. %d is the number of profiles. -->
+	<key>ui.profileLibrary.profileCountExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>There cannot be %d profile.</string>
+			<key>zero</key>
+			<string>There cannot be %d profiles.</string>
+			<key>two</key>
+			<string>There cannot be %d profiles.</string>
+			<key>few</key>
+			<string>There cannot be %d profiles.</string>
+			<key>many</key>
+			<string>There cannot be %d profiles.</string>
+			<key>other</key>
+			<string>There cannot be %d profiles.</string>
+		</dict>
+	</dict>
+	<!-- Error when the service cannot open a virtual feed: the pool already holds the most feeds, with that limit. %d is the largest number of virtual feeds. -->
+	<key>ui.virtualFeed.tooManyFeeds</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>The service already runs %d virtual feed.</string>
+			<key>zero</key>
+			<string>The service already runs %d virtual feeds.</string>
+			<key>two</key>
+			<string>The service already runs %d virtual feeds.</string>
+			<key>few</key>
+			<string>The service already runs %d virtual feeds.</string>
+			<key>many</key>
+			<string>The service already runs %d virtual feeds.</string>
+			<key>other</key>
+			<string>The service already runs %d virtual feeds.</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

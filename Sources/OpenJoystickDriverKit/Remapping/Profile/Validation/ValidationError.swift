@@ -174,142 +174,149 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
     let localized = Localization()
     return switch self {
     case .invalidStickMapping(let source):
-      localized.string("profile.validation.invalidStickMapping", source.rawValue)
+      localized.string("ui.profileValidation.invalidStickMapping", source.rawValue)
     case .duplicateStickMapping(let source):
-      localized.string("profile.validation.duplicateStickMapping", source.rawValue)
+      localized.string("ui.profileValidation.duplicateStickMapping", source.rawValue)
     case .invalidTriggerMapping(let source):
-      localized.string("profile.validation.invalidTriggerMapping", source.rawValue)
+      localized.string("ui.profileValidation.invalidTriggerMapping", source.rawValue)
     case .duplicateTriggerMapping(let source):
-      localized.string("profile.validation.duplicateTriggerMapping", source.rawValue)
+      localized.string("ui.profileValidation.duplicateTriggerMapping", source.rawValue)
     case .triggerStageWithoutMapping(let source):
-      localized.string("profile.validation.triggerStageWithoutMapping", source.rawValue)
-    case .motionLeanWithoutMapping: localized.string("profile.validation.motionLeanWithoutMapping")
+      localized.string("ui.profileValidation.triggerStageWithoutMapping", source.rawValue)
+    case .motionLeanWithoutMapping:
+      localized.string("ui.profileValidation.motionLeanWithoutMapping")
     case .invalidTouchMapping(let surface):
-      localized.string("profile.validation.invalidTouchMapping", surface.rawValue)
+      localized.string("ui.profileValidation.invalidTouchMapping", surface.rawValue)
     case .duplicateTouchMapping(let surface):
-      localized.string("profile.validation.duplicateTouchMapping", surface.rawValue)
-    case .invalidTouchGrid: localized.string("profile.validation.invalidTouchGrid")
-    case .invalidTouchSwipe: localized.string("profile.validation.invalidTouchSwipe")
-    case .invalidStickRegion: localized.string("profile.validation.invalidStickRegion")
-    case .invalidTriggerBand: localized.string("profile.validation.invalidTriggerBand")
-    case .invalidTouchArea: localized.string("profile.validation.invalidTouchArea")
+      localized.string("ui.profileValidation.duplicateTouchMapping", surface.rawValue)
+    case .invalidTouchGrid: localized.string("ui.profileValidation.invalidTouchGrid")
+    case .invalidTouchSwipe: localized.string("ui.profileValidation.invalidTouchSwipe")
+    case .invalidStickRegion: localized.string("ui.profileValidation.invalidStickRegion")
+    case .invalidTriggerBand: localized.string("ui.profileValidation.invalidTriggerBand")
+    case .invalidTouchArea: localized.string("ui.profileValidation.invalidTouchArea")
     case .triggerBandWithDualStage(let trigger):
-      localized.string("profile.validation.triggerBandWithDualStage", trigger.rawValue)
-    case .overlappingRegions: localized.string("profile.validation.overlappingRegions")
+      localized.string("ui.profileValidation.triggerBandWithDualStage", trigger.rawValue)
+    case .overlappingRegions: localized.string("ui.profileValidation.overlappingRegions")
     case .invalidMotionTuning(let error): error.localizedDescription
     case .invalidGyroOutput(let error): error.localizedDescription
-    case .invalidPointerSpeed: localized.string("profile.validation.invalidPointerSpeed")
+    case .invalidPointerSpeed: localized.string("ui.profileValidation.invalidPointerSpeed")
     case .unsupportedPointerSpeedDriver:
-      localized.string("profile.validation.unsupportedPointerSpeedDriver")
-    case .invalidJoyConPairDevice: localized.string("profile.validation.invalidJoyConPairDevice")
+      localized.string("ui.profileValidation.unsupportedPointerSpeedDriver")
+    case .invalidJoyConPairDevice: localized.string("ui.profileValidation.invalidJoyConPairDevice")
     case .bindingBehaviorConflict(let index):
-      localized.string("profile.validation.bindingBehaviorConflict", index)
+      localized.string("ui.profileValidation.bindingBehaviorConflict", String(index))
     case .unsupportedGamepadButton(let button):
-      localized.string("profile.validation.unsupportedGamepadButton", button.rawValue)
+      localized.string("ui.profileValidation.unsupportedGamepadButton", button.rawValue)
     case .unsupportedGamepadAxis(let axis):
-      localized.string("profile.validation.unsupportedGamepadAxis", axis.rawValue)
-    case .virtualOutputRequired: localized.string("profile.validation.virtualOutputRequired")
-    case .invalidPhysicalOutput: localized.string("profile.validation.invalidPhysicalOutput")
-    case .invalidProfileName: localized.string("profile.validation.invalidProfileName")
-    case .tooManyBindings(let count): localized.string("profile.validation.tooManyBindings", count)
+      localized.string("ui.profileValidation.unsupportedGamepadAxis", axis.rawValue)
+    case .virtualOutputRequired: localized.string("ui.profileValidation.virtualOutputRequired")
+    case .invalidPhysicalOutput: localized.string("ui.profileValidation.invalidPhysicalOutput")
+    case .invalidProfileName: localized.string("ui.profileValidation.invalidProfileName")
+    case .tooManyBindings(let count):
+      localized.plural("ui.profileValidation.tooManyBindings", count: count)
     case .duplicateBindingID(let id):
-      localized.string("profile.validation.duplicateBindingID", id.uuidString)
+      localized.string("ui.profileValidation.duplicateBindingID", id.uuidString)
     case .duplicateLayerID(let id):
-      localized.string("profile.validation.duplicateLayerID", id.uuidString)
-    case .duplicateSource: localized.string("profile.validation.duplicateSource")
+      localized.string("ui.profileValidation.duplicateLayerID", id.uuidString)
+    case .duplicateSource: localized.string("ui.profileValidation.duplicateSource")
     case .invalidAppID(let identifier):
-      localized.string("profile.validation.invalidAppID", identifier)
-    case .noAppIDs: localized.string("profile.validation.noAppIDs")
+      localized.string("ui.profileValidation.invalidAppID", identifier)
+    case .noAppIDs: localized.string("ui.profileValidation.noAppIDs")
     case .duplicateAppID(let identifier):
-      localized.string("profile.validation.duplicateAppID", identifier)
+      localized.string("ui.profileValidation.duplicateAppID", identifier)
     case .axisTuningRequired(let index):
-      localized.string("profile.validation.axisTuningRequired", index)
+      localized.string("ui.profileValidation.axisTuningRequired", String(index))
     case .axisTuningNotApplicable(let index):
-      localized.string("profile.validation.axisTuningNotApplicable", index)
+      localized.string("ui.profileValidation.axisTuningNotApplicable", String(index))
     case .incompatibleSourceAndDestination(let index):
-      localized.string("profile.validation.incompatibleSourceAndDestination", index)
+      localized.string("ui.profileValidation.incompatibleSourceAndDestination", String(index))
     case .nonFiniteTuning(let index, let field):
-      localized.string("profile.validation.nonFiniteTuning", index, field)
+      localized.string("ui.profileValidation.nonFiniteTuning", String(index), field)
     case .tuningOutOfRange(let index, let field):
-      localized.string("profile.validation.tuningOutOfRange", index, field)
+      localized.string("ui.profileValidation.tuningOutOfRange", String(index), field)
     case .turboNotSupported(let index):
-      localized.string("profile.validation.turboNotSupported", index)
+      localized.string("ui.profileValidation.turboNotSupported", String(index))
     case .nonFiniteTurbo(let index, let field):
-      localized.string("profile.validation.nonFiniteTurbo", index, field)
+      localized.string("ui.profileValidation.nonFiniteTurbo", String(index), field)
     case .turboOutOfRange(let index, let field):
-      localized.string("profile.validation.turboOutOfRange", index, field)
+      localized.string("ui.profileValidation.turboOutOfRange", String(index), field)
     case .longHoldNotSupported(let index):
-      localized.string("profile.validation.longHoldNotSupported", index)
+      localized.string("ui.profileValidation.longHoldNotSupported", String(index))
     case .nonFiniteLongHold(let index, let field):
-      localized.string("profile.validation.nonFiniteLongHold", index, field)
+      localized.string("ui.profileValidation.nonFiniteLongHold", String(index), field)
     case .longHoldOutOfRange(let index, let field):
-      localized.string("profile.validation.longHoldOutOfRange", index, field)
+      localized.string("ui.profileValidation.longHoldOutOfRange", String(index), field)
     case .nonFiniteMultiTap(let index, let field):
-      localized.string("profile.validation.nonFiniteMultiTap", index, field)
+      localized.string("ui.profileValidation.nonFiniteMultiTap", String(index), field)
     case .multiTapOutOfRange(let index, let field):
-      localized.string("profile.validation.multiTapOutOfRange", index, field)
+      localized.string("ui.profileValidation.multiTapOutOfRange", String(index), field)
     case .duplicateMultiTapCount(let index):
-      localized.string("profile.validation.duplicateMultiTapCount", index)
+      localized.string("ui.profileValidation.duplicateMultiTapCount", String(index))
     case .turboAndActivationConflict(let index):
-      localized.string("profile.validation.turboAndActivationConflict", index)
+      localized.string("ui.profileValidation.turboAndActivationConflict", String(index))
     case .chordWindowOutOfRange(let index):
-      localized.string("profile.validation.chordWindowOutOfRange", index)
+      localized.string("ui.profileValidation.chordWindowOutOfRange", String(index))
     case .chordTooFewSources(let index):
-      localized.string("profile.validation.chordTooFewSources", index)
+      localized.string("ui.profileValidation.chordTooFewSources", String(index))
     case .chordContinuousSource(let index):
-      localized.string("profile.validation.chordContinuousSource", index)
+      localized.string("ui.profileValidation.chordContinuousSource", String(index))
     case .chordContinuousDestination(let index):
-      localized.string("profile.validation.chordContinuousDestination", index)
+      localized.string("ui.profileValidation.chordContinuousDestination", String(index))
     case .duplicateChordSources(let index):
-      localized.string("profile.validation.duplicateChordSources", index)
+      localized.string("ui.profileValidation.duplicateChordSources", String(index))
     case .sequenceTooFewSources(let index):
-      localized.string("profile.validation.sequenceTooFewSources", index)
+      localized.string("ui.profileValidation.sequenceTooFewSources", String(index))
     case .sequenceContinuousSource(let index):
-      localized.string("profile.validation.sequenceContinuousSource", index)
+      localized.string("ui.profileValidation.sequenceContinuousSource", String(index))
     case .sequenceContinuousDestination(let index):
-      localized.string("profile.validation.sequenceContinuousDestination", index)
+      localized.string("ui.profileValidation.sequenceContinuousDestination", String(index))
     case .sequenceWindowOutOfRange(let index):
-      localized.string("profile.validation.sequenceWindowOutOfRange", index)
+      localized.string("ui.profileValidation.sequenceWindowOutOfRange", String(index))
     case .duplicateSequenceSources(let index):
-      localized.string("profile.validation.duplicateSequenceSources", index)
+      localized.string("ui.profileValidation.duplicateSequenceSources", String(index))
     case .bindingRemarkInvalid(let index):
-      localized.string("profile.validation.bindingRemarkInvalid", index)
+      localized.string("ui.profileValidation.bindingRemarkInvalid", String(index))
     case .layerNameInvalid(let index):
-      localized.string("profile.validation.layerNameInvalid", index)
+      localized.string("ui.profileValidation.layerNameInvalid", String(index))
     case .layerActivatorNotDiscrete(let index):
-      localized.string("profile.validation.layerActivatorNotDiscrete", index)
+      localized.string("ui.profileValidation.layerActivatorNotDiscrete", String(index))
     case .duplicateLayerActivator(let index):
-      localized.string("profile.validation.duplicateLayerActivator", index)
+      localized.string("ui.profileValidation.duplicateLayerActivator", String(index))
     case .layerActivatorAlsoBound(let index):
-      localized.string("profile.validation.layerActivatorAlsoBound", index)
-    case .tooManyMacros(let count): localized.string("profile.validation.tooManyMacros", count)
+      localized.string("ui.profileValidation.layerActivatorAlsoBound", String(index))
+    case .tooManyMacros(let count):
+      localized.plural("ui.profileValidation.tooManyMacros", count: count)
     case .duplicateMacroID(let id):
-      localized.string("profile.validation.duplicateMacroID", id.uuidString)
+      localized.string("ui.profileValidation.duplicateMacroID", id.uuidString)
     case .duplicateMacroName(let index):
-      localized.string("profile.validation.duplicateMacroName", index)
+      localized.string("ui.profileValidation.duplicateMacroName", String(index))
     case .invalidMacro(let index, let field):
-      localized.string("profile.validation.invalidMacro", index, field)
+      localized.string("ui.profileValidation.invalidMacro", String(index), field)
     case .invalidMacroStepDestination(let index, let step):
-      localized.string("profile.validation.invalidMacroStepDestination", step, index)
+      localized.string(
+        "ui.profileValidation.invalidMacroStepDestination",
+        String(step),
+        String(index)
+      )
     case .macroNestingNotAllowed(let index, let step):
-      localized.string("profile.validation.macroNestingNotAllowed", step, index)
+      localized.string("ui.profileValidation.macroNestingNotAllowed", String(step), String(index))
     case .macroRunTimeExceeded(let index, let limit):
-      localized.string("profile.validation.macroRunTimeExceeded", index, limit)
-    case .unknownMacro(let id): localized.string("profile.validation.unknownMacro", id.uuidString)
+      localized.string("ui.profileValidation.macroRunTimeExceeded", String(index), limit)
+    case .unknownMacro(let id): localized.string("ui.profileValidation.unknownMacro", id.uuidString)
     case .invalidSystemAction(let action):
-      localized.string("profile.validation.invalidSystemAction", action)
-    case .unknownLayer(let id): localized.string("profile.validation.unknownLayer", id.uuidString)
+      localized.string("ui.profileValidation.invalidSystemAction", action)
+    case .unknownLayer(let id): localized.string("ui.profileValidation.unknownLayer", id.uuidString)
     case .unknownSwitchProfile(let id):
-      localized.string("profile.validation.unknownSwitchProfile", id.uuidString)
+      localized.string("ui.profileValidation.unknownSwitchProfile", id.uuidString)
     case .switchProfileForOtherModel(let id):
-      localized.string("profile.validation.switchProfileForOtherModel", id.uuidString)
-    case .invalidSpeech(let field): localized.string("profile.validation.invalidSpeech", field)
+      localized.string("ui.profileValidation.switchProfileForOtherModel", id.uuidString)
+    case .invalidSpeech(let field): localized.string("ui.profileValidation.invalidSpeech", field)
     case .unknownSpeechVoice(let voice):
-      localized.string("profile.validation.unknownSpeechVoice", voice)
-    case .invalidMIDIDestination: localized.string("profile.validation.invalidMIDIDestination")
-    case .encodingFailed: localized.string("profile.validation.encodingFailed")
+      localized.string("platform.macos.profileValidation.unknownSpeechVoice", voice)
+    case .invalidMIDIDestination: localized.string("ui.profileValidation.invalidMIDIDestination")
+    case .encodingFailed: localized.string("ui.profileValidation.encodingFailed")
     case .encodedSizeExceeded(let size):
-      localized.string("profile.validation.encodedSizeExceeded", size)
+      localized.plural("ui.profileValidation.encodedSizeExceeded", count: size)
     }
   }
 }

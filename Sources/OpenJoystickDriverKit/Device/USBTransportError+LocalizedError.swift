@@ -4,16 +4,19 @@ extension USBTransportError: LocalizedError {
   /// A sentence that names the failure, and the platform code of a ``platform(code:message:)``
   /// error, so a tool that prints `localizedDescription` shows the cause.
   public var errorDescription: String? {
-    switch self {
-    case .timeout: "The USB transfer timed out."
-    case .disconnected: "The USB device disconnected."
-    case .inputOutput: "The USB transfer failed with an input/output error."
-    case .accessDenied: "The system denied access to the USB device."
+    let localized = Localization()
+    return switch self {
+    case .timeout: localized.string("ui.usbTransport.timeout")
+    case .disconnected: localized.string("ui.usbTransport.disconnected")
+    case .inputOutput: localized.string("ui.usbTransport.inputOutput")
+    case .accessDenied: localized.string("ui.usbTransport.accessDenied")
     case .ownedByAnotherClient(let owner):
-      "Another client holds the USB interface" + (owner.map { " (\($0))" } ?? "") + "."
-    case .notFound: "The USB device, interface or endpoint was not found."
-    case .notSupported: "The USB transport does not support this operation."
-    case .platform(let code, let message): "USB platform error \(code): \(message)"
+      owner.map { localized.string("ui.usbTransport.ownedByNamedClient", $0) }
+        ?? localized.string("ui.usbTransport.ownedByAnotherClient")
+    case .notFound: localized.string("ui.usbTransport.notFound")
+    case .notSupported: localized.string("ui.usbTransport.notSupported")
+    case .platform(let code, let message):
+      localized.string("ui.usbTransport.platform", String(code), message)
     }
   }
 }

@@ -280,5 +280,130 @@
 			<string>%d छिपी सेटिंग बदली गई हैं</string>
 		</dict>
 	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyBindings</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d बाइंडिंग नहीं हो सकती। कुछ हटाएँ; सीमा 512 है।</string>
+			<key>zero</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d बाइंडिंग नहीं हो सकतीं। कुछ हटाएँ; सीमा 512 है।</string>
+			<key>two</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d बाइंडिंग नहीं हो सकतीं। कुछ हटाएँ; सीमा 512 है।</string>
+			<key>few</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d बाइंडिंग नहीं हो सकतीं। कुछ हटाएँ; सीमा 512 है।</string>
+			<key>many</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d बाइंडिंग नहीं हो सकतीं। कुछ हटाएँ; सीमा 512 है।</string>
+			<key>other</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d बाइंडिंग नहीं हो सकतीं। कुछ हटाएँ; सीमा 512 है।</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. -->
+	<key>ui.profileValidation.tooManyMacros</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d मैक्रो नहीं हो सकते। कुछ हटाएँ; सीमा 16 है।</string>
+			<key>zero</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d मैक्रो नहीं हो सकते। कुछ हटाएँ; सीमा 16 है।</string>
+			<key>two</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d मैक्रो नहीं हो सकते। कुछ हटाएँ; सीमा 16 है।</string>
+			<key>few</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d मैक्रो नहीं हो सकते। कुछ हटाएँ; सीमा 16 है।</string>
+			<key>many</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d मैक्रो नहीं हो सकते। कुछ हटाएँ; सीमा 16 है।</string>
+			<key>other</key>
+			<string>रीमैपिंग प्रोफ़ाइल में %d मैक्रो नहीं हो सकते। कुछ हटाएँ; सीमा 16 है।</string>
+		</dict>
+	</dict>
+	<!-- Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. -->
+	<key>ui.profileValidation.encodedSizeExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>एनकोड की गई रीमैपिंग प्रोफ़ाइल बहुत बड़ी है (%d बाइट)। उसे 4 MiB से कम रखें।</string>
+			<key>zero</key>
+			<string>एनकोड की गई रीमैपिंग प्रोफ़ाइल बहुत बड़ी है (%d बाइट)। उसे 4 MiB से कम रखें।</string>
+			<key>two</key>
+			<string>एनकोड की गई रीमैपिंग प्रोफ़ाइल बहुत बड़ी है (%d बाइट)। उसे 4 MiB से कम रखें।</string>
+			<key>few</key>
+			<string>एनकोड की गई रीमैपिंग प्रोफ़ाइल बहुत बड़ी है (%d बाइट)। उसे 4 MiB से कम रखें।</string>
+			<key>many</key>
+			<string>एनकोड की गई रीमैपिंग प्रोफ़ाइल बहुत बड़ी है (%d बाइट)। उसे 4 MiB से कम रखें।</string>
+			<key>other</key>
+			<string>एनकोड की गई रीमैपिंग प्रोफ़ाइल बहुत बड़ी है (%d बाइट)। उसे 4 MiB से कम रखें।</string>
+		</dict>
+	</dict>
+	<!-- Error when the service's profile library refuses a request: the library would hold more profiles than the limit allows, with the count. %d is the number of profiles. -->
+	<key>ui.profileLibrary.profileCountExceeded</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d प्रोफ़ाइल नहीं हो सकती।</string>
+			<key>zero</key>
+			<string>%d प्रोफ़ाइल नहीं हो सकतीं।</string>
+			<key>two</key>
+			<string>%d प्रोफ़ाइल नहीं हो सकतीं।</string>
+			<key>few</key>
+			<string>%d प्रोफ़ाइल नहीं हो सकतीं।</string>
+			<key>many</key>
+			<string>%d प्रोफ़ाइल नहीं हो सकतीं।</string>
+			<key>other</key>
+			<string>%d प्रोफ़ाइल नहीं हो सकतीं।</string>
+		</dict>
+	</dict>
+	<!-- Error when the service cannot open a virtual feed: the pool already holds the most feeds, with that limit. %d is the largest number of virtual feeds. -->
+	<key>ui.virtualFeed.tooManyFeeds</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>सेवा पहले से %d वर्चुअल फ़ीड चला रही है।</string>
+			<key>zero</key>
+			<string>सेवा पहले से %d वर्चुअल फ़ीड चला रही है।</string>
+			<key>two</key>
+			<string>सेवा पहले से %d वर्चुअल फ़ीड चला रही है।</string>
+			<key>few</key>
+			<string>सेवा पहले से %d वर्चुअल फ़ीड चला रही है।</string>
+			<key>many</key>
+			<string>सेवा पहले से %d वर्चुअल फ़ीड चला रही है।</string>
+			<key>other</key>
+			<string>सेवा पहले से %d वर्चुअल फ़ीड चला रही है।</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

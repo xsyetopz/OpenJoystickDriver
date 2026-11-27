@@ -12,10 +12,11 @@ extension UserSpaceReportSender {
 
     /// The description of the error for the user.
     var errorDescription: String? {
-      switch self {
-      case .queueOverflow: "Virtual controller publication queue overflowed."
-      case .sendTimedOut: "Virtual controller publication timed out."
-      case .superseded: "Virtual controller frame superseded by a newer frame."
+      let localized = Localization()
+      return switch self {
+      case .queueOverflow: localized.string("ui.outputPublication.queueOverflow")
+      case .sendTimedOut: localized.string("ui.outputPublication.sendTimedOut")
+      case .superseded: localized.string("ui.outputPublication.superseded")
       }
     }
   }

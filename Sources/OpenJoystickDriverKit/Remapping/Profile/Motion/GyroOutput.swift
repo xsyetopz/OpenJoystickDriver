@@ -138,8 +138,9 @@ public enum RemappingGyroOutputError: Error, Equatable, LocalizedError, Sendable
 
   /// Message that names the field that is outside its valid range.
   public var errorDescription: String? {
-    switch self {
-    case .invalidField(let field): "Gyro output field '\(field)' is outside its valid range."
+    let localized = Localization()
+    return switch self {
+    case .invalidField(let field): localized.string("ui.profileValidation.gyroOutputField", field)
     }
   }
 }

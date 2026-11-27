@@ -96,7 +96,7 @@ extension RemappingRequestCoordinatorTests {
         == .failure(
           ApplicationServiceRemappingRPCError(
             code: .profileNotFound,
-            message: "The remapping profile \(original.id.uuidString) does not exist."
+            message: "The profile \(original.id.uuidString) does not exist."
           )
         )
     )
@@ -169,7 +169,7 @@ extension RemappingRequestCoordinatorTests {
         == .failure(
           ApplicationServiceRemappingRPCError(
             code: .profileUpdateConflict,
-            message: "The remapping profile \(original.id.uuidString) changed since it was read."
+            message: "The profile \(original.id.uuidString) changed since it was read."
           )
         )
     )

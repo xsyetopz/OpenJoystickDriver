@@ -21,17 +21,23 @@ enum RemappingOutputRoutingError: Error, Equatable, LocalizedError, Sendable {
 
   /// The text that explains the failure to a user.
   var errorDescription: String? {
-    switch self {
+    let localized = Localization()
+    return switch self {
     case .engine(let error): error.localizedDescription
     case .library(let error): error.localizedDescription
     case .libraryAndEngine(let libraryError, let engineError):
-      "\(libraryError.localizedDescription) \(engineError.localizedDescription)"
-    case .profileTransactionAlreadyActive: "A remapping profile transaction is already active."
+      localized.string(
+        "ui.remappingRoute.libraryAndEngine",
+        libraryError.localizedDescription,
+        engineError.localizedDescription
+      )
+    case .profileTransactionAlreadyActive:
+      localized.string("ui.remappingRoute.profileTransactionAlreadyActive")
     case .profileTransactionUnreconciled(let detail):
-      "Remapping output remains suspended because a profile transaction could not be "
-        + "reconciled. \(detail)"
-    case .profileTransactionViolation: "The remapping profile transaction token is invalid."
-    case .shutDown: "The remapping output router has shut down."
+      localized.string("ui.remappingRoute.profileTransactionUnreconciled", detail)
+    case .profileTransactionViolation:
+      localized.string("ui.remappingRoute.profileTransactionViolation")
+    case .shutDown: localized.string("ui.remappingRoute.shutDown")
     }
   }
 }
@@ -136,13 +142,13 @@ enum RemappingJoyConPairError: Error, Equatable, LocalizedError, Sendable {
 
   /// The text that explains the failure to a user.
   var errorDescription: String? {
-    switch self {
-    case .controllerUnavailable:
-      "Both selected Joy-Cons must be connected."
-    case .invalidControllerSide: "Select one left Joy-Con and one right Joy-Con."
-    case .memberAlreadyPaired: "A selected Joy-Con already belongs to a paired session."
-    case .profileNotPairable: "The selected profile is not configured for paired Joy-Cons."
-    case .sessionUnavailable: "The paired Joy-Con session is no longer available."
+    let localized = Localization()
+    return switch self {
+    case .controllerUnavailable: localized.string("ui.joyConPair.controllerUnavailable")
+    case .invalidControllerSide: localized.string("ui.joyConPair.invalidControllerSide")
+    case .memberAlreadyPaired: localized.string("ui.joyConPair.memberAlreadyPaired")
+    case .profileNotPairable: localized.string("ui.joyConPair.profileNotPairable")
+    case .sessionUnavailable: localized.string("ui.joyConPair.sessionUnavailable")
     }
   }
 }

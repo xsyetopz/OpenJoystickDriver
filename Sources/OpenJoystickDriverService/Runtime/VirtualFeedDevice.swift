@@ -42,11 +42,12 @@ enum VirtualFeedError: LocalizedError, Equatable {
 
   /// The message that the client sees.
   var errorDescription: String? {
-    switch self {
-    case .unknownProfile(let profile): "Unknown virtual HID profile: \(profile)."
-    case .tooManyFeeds(let limit): "The service already runs \(limit) virtual feeds."
-    case .serviceStopped: "The service is stopping."
-    case .activationFailed(let detail): "The virtual controller did not start: \(detail)."
+    let localized = Localization()
+    return switch self {
+    case .unknownProfile(let profile): localized.string("ui.virtualFeed.unknownProfile", profile)
+    case .tooManyFeeds(let limit): localized.plural("ui.virtualFeed.tooManyFeeds", count: limit)
+    case .serviceStopped: localized.string("ui.virtualFeed.serviceStopped")
+    case .activationFailed(let detail): localized.string("ui.virtualFeed.activationFailed", detail)
     }
   }
 }

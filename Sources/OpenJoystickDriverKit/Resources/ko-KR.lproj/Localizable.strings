@@ -6681,158 +6681,253 @@
 "ui.help.exportFormat" = "내보낼 매핑의 파일 형식을 선택합니다";
 
 /* Error when a profile breaks a rule: the mapping of this stick has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidStickMapping" = "%@ 스틱의 설정을 확인하세요.";
+"ui.profileValidation.invalidStickMapping" = "%@ 스틱의 설정을 확인하세요.";
 /* Error when a profile breaks a rule: two mappings read this stick. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateStickMapping" = "%@ 스틱에 모드 매핑이 여러 개 있습니다. 하나만 남기세요.";
+"ui.profileValidation.duplicateStickMapping" = "%@ 스틱에 모드 매핑이 여러 개 있습니다. 하나만 남기세요.";
 /* Error when a profile breaks a rule: the mapping of this trigger has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidTriggerMapping" = "%@ 2단계 트리거의 설정을 확인하세요.";
+"ui.profileValidation.invalidTriggerMapping" = "%@ 2단계 트리거의 설정을 확인하세요.";
 /* Error when a profile breaks a rule: two mappings read this trigger. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateTriggerMapping" = "%@ 트리거에 단계 매핑이 여러 개 있습니다. 하나만 남기세요.";
+"ui.profileValidation.duplicateTriggerMapping" = "%@ 트리거에 단계 매핑이 여러 개 있습니다. 하나만 남기세요.";
 /* Error when a profile breaks a rule: a binding reads a stage of this trigger, which has no dual-stage mapping. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.triggerStageWithoutMapping" = "%@ 트리거 단계에는 2단계 트리거 매핑이 필요합니다. 매핑을 추가하세요.";
+"ui.profileValidation.triggerStageWithoutMapping" = "%@ 트리거 단계에는 2단계 트리거 매핑이 필요합니다. 매핑을 추가하세요.";
 /* Error when a profile breaks a rule: a binding reads a motion lean, but no motion tuning defines one. */
-"profile.validation.motionLeanWithoutMapping" = "기울기 소스에는 기울기 설정이 필요합니다. 설정을 추가하거나 소스를 제거하세요.";
+"ui.profileValidation.motionLeanWithoutMapping" = "기울기 소스에는 기울기 설정이 필요합니다. 설정을 추가하거나 소스를 제거하세요.";
 /* Error when a profile breaks a rule: the touch mapping of this surface has an invalid field. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.invalidTouchMapping" = "%@ 터치 표면의 연속 매핑을 확인하세요.";
+"ui.profileValidation.invalidTouchMapping" = "%@ 터치 표면의 연속 매핑을 확인하세요.";
 /* Error when a profile breaks a rule: two touch mappings read this surface. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.duplicateTouchMapping" = "%@ 터치 표면에 연속 매핑이 여러 개 있습니다. 하나만 남기세요.";
+"ui.profileValidation.duplicateTouchMapping" = "%@ 터치 표면에 연속 매핑이 여러 개 있습니다. 하나만 남기세요.";
 /* Error when a profile breaks a rule: a touch grid source has invalid dimensions or cell coordinates. */
-"profile.validation.invalidTouchGrid" = "터치 격자 소스의 크기 또는 셀 좌표가 올바르지 않습니다. 행과 열은 1~16으로 하고, 셀은 격자 안에 두세요.";
+"ui.profileValidation.invalidTouchGrid" = "터치 격자 소스의 크기 또는 셀 좌표가 올바르지 않습니다. 행과 열은 1~16으로 하고, 셀은 격자 안에 두세요.";
 /* Error when a profile breaks a rule: a touch swipe source has an invalid minimum distance. */
-"profile.validation.invalidTouchSwipe" = "터치 스와이프 소스의 최소 거리가 올바르지 않습니다. 0.01~1로 지정하세요.";
+"ui.profileValidation.invalidTouchSwipe" = "터치 스와이프 소스의 최소 거리가 올바르지 않습니다. 0.01~1로 지정하세요.";
 /* Error when a profile breaks a rule: a stick region has a radius, sector or hysteresis out of range. */
-"profile.validation.invalidStickRegion" = "스틱 영역은 0 <= inner < outer <= 1이어야 하고, 각도는 둘 다 지정하거나 모두 생략해야 하며, 해제 여유는 0~0.25여야 합니다.";
+"ui.profileValidation.invalidStickRegion" = "스틱 영역은 0 <= inner < outer <= 1이어야 하고, 각도는 둘 다 지정하거나 모두 생략해야 하며, 해제 여유는 0~0.25여야 합니다.";
 /* Error when a profile breaks a rule: a trigger band has a pressure or hysteresis out of range. */
-"profile.validation.invalidTriggerBand" = "트리거 구간은 0 <= from < to <= 1이어야 하고, 해제 여유는 0~0.25여야 합니다.";
+"ui.profileValidation.invalidTriggerBand" = "트리거 구간은 0 <= from < to <= 1이어야 하고, 해제 여유는 0~0.25여야 합니다.";
 /* Error when a profile breaks a rule: a touch area is empty or outside the surface. */
-"profile.validation.invalidTouchArea" = "터치 영역은 비어 있지 않아야 하며 터치 표면 안에 있어야 합니다. 크기를 맞게 조정하세요.";
+"ui.profileValidation.invalidTouchArea" = "터치 영역은 비어 있지 않아야 하며 터치 표면 안에 있어야 합니다. 크기를 맞게 조정하세요.";
 /* Error when a profile breaks a rule: a trigger has bands and a dual-stage mapping. %@ is the trigger as the profile file spells it, kept as written. */
-"profile.validation.triggerBandWithDualStage" = "%@ 트리거에 구간과 2단계 트리거 매핑이 모두 있습니다. 하나를 제거하세요.";
+"ui.profileValidation.triggerBandWithDualStage" = "%@ 트리거에 구간과 2단계 트리거 매핑이 모두 있습니다. 하나를 제거하세요.";
 /* Error when a profile breaks a rule: two regions of one stick, or two bands of one trigger, share a position. */
-"profile.validation.overlappingRegions" = "한 스틱의 영역끼리 또는 한 트리거의 구간끼리 겹치면 안 됩니다. 범위를 좁히거나 하나를 제거하세요.";
+"ui.profileValidation.overlappingRegions" = "한 스틱의 영역끼리 또는 한 트리거의 구간끼리 겹치면 안 됩니다. 범위를 좁히거나 하나를 제거하세요.";
 /* Error when a profile breaks a rule: the pointer speed has a minimum or maximum scale that is not finite or not 0 to 10. */
-"profile.validation.invalidPointerSpeed" = "포인터 속도 배율은 0~10 사이의 유한한 숫자여야 합니다.";
+"ui.profileValidation.invalidPointerSpeed" = "포인터 속도 배율은 0~10 사이의 유한한 숫자여야 합니다.";
 /* Error when a profile breaks a rule: the pointer speed reads a trigger or stick that the controller does not report. */
-"profile.validation.unsupportedPointerSpeedDriver" = "포인터 속도가 컨트롤러에서 보고하지 않는 트리거 또는 스틱을 읽습니다. 컨트롤러에서 보고하는 구동 입력을 선택하세요.";
+"ui.profileValidation.unsupportedPointerSpeedDriver" = "포인터 속도가 컨트롤러에서 보고하지 않는 트리거 또는 스틱을 읽습니다. 컨트롤러에서 보고하는 구동 입력을 선택하세요.";
 /* Error when a profile breaks a rule: a Joy-Con pair profile does not target a left Joy-Con model. */
-"profile.validation.invalidJoyConPairDevice" = "Joy-Con 쌍 프로파일은 Nintendo 왼쪽 Joy-Con 모델(057e:2006 또는 057e:2067)을 대상으로 해야 합니다.";
-/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingBehaviorConflict" = "할당 %d이(가) 대상 또는 활성화 설정과 맞지 않는 동작을 사용합니다.";
+"ui.profileValidation.invalidJoyConPairDevice" = "Joy-Con 쌍 프로파일은 Nintendo 왼쪽 Joy-Con 모델(057e:2006 또는 057e:2067)을 대상으로 해야 합니다.";
+/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingBehaviorConflict" = "할당 %@이(가) 대상 또는 활성화 설정과 맞지 않는 동작을 사용합니다.";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this button. %@ is the button as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadButton" = "가상 게임패드는 %@을(를) 출력할 수 없습니다. 다른 버튼을 선택하세요.";
+"ui.profileValidation.unsupportedGamepadButton" = "가상 게임패드는 %@을(를) 출력할 수 없습니다. 다른 버튼을 선택하세요.";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this axis. %@ is the axis as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadAxis" = "가상 게임패드는 %@을(를) 출력할 수 없습니다. 다른 축을 선택하세요.";
+"ui.profileValidation.unsupportedGamepadAxis" = "가상 게임패드는 %@을(를) 출력할 수 없습니다. 다른 축을 선택하세요.";
 /* Error when a profile breaks a rule: a virtual gamepad destination or stick output is used while the output policy has no virtual. */
-"profile.validation.virtualOutputRequired" = "게임패드 대상에는 가상 게임패드 출력이 필요합니다. 출력을 켜거나 대상을 변경하세요.";
+"ui.profileValidation.virtualOutputRequired" = "게임패드 대상에는 가상 게임패드 출력이 필요합니다. 출력을 켜거나 대상을 변경하세요.";
 /* Error when a profile breaks a rule: a physical-controller output value is out of range. */
-"profile.validation.invalidPhysicalOutput" = "물리적 컨트롤러의 출력 값이 올바르지 않습니다. 컨트롤러가 지원하는 출력을 선택하세요.";
+"ui.profileValidation.invalidPhysicalOutput" = "물리적 컨트롤러의 출력 값이 올바르지 않습니다. 컨트롤러가 지원하는 출력을 선택하세요.";
 /* Error when a profile breaks a rule: the profile name is empty, too long, padded with whitespace or holds control characters. */
-"profile.validation.invalidProfileName" = "프로파일 이름은 출력 가능한 문자 1~80자여야 합니다.";
-/* Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyBindings" = "프로파일에는 할당을 %d개 넣을 수 없습니다. 일부를 제거하세요. 한도는 512개입니다.";
+"ui.profileValidation.invalidProfileName" = "프로파일 이름은 출력 가능한 문자 1~80자여야 합니다.";
 /* Error when a profile breaks a rule: two bindings, chords, sequences, actions or touch mappings share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateBindingID" = "할당 식별자 %@이(가) 중복되었습니다.";
+"ui.profileValidation.duplicateBindingID" = "할당 식별자 %@이(가) 중복되었습니다.";
 /* Error when a profile breaks a rule: two layers share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateLayerID" = "레이어 식별자 %@이(가) 중복되었습니다.";
+"ui.profileValidation.duplicateLayerID" = "레이어 식별자 %@이(가) 중복되었습니다.";
 /* Error when a profile breaks a rule: two bindings of one scope read this source. */
-"profile.validation.duplicateSource" = "각 컨트롤러 소스는 하나의 할당에만 나타날 수 있습니다. 중복된 할당을 제거하세요.";
+"ui.profileValidation.duplicateSource" = "각 컨트롤러 소스는 하나의 할당에만 나타날 수 있습니다. 중복된 할당을 제거하세요.";
 /* Error when a profile breaks a rule: the application bundle identifier is not valid; the value is the identifier. %@ is an application bundle identifier. */
-"profile.validation.invalidAppID" = "대상 앱의 번들 식별자가 올바르지 않습니다: %@. 점으로 구분한 각 부분에 ASCII 문자, 숫자, 하이픈을 사용해 3~255자로 입력하세요. 예: com.example.app";
+"ui.profileValidation.invalidAppID" = "대상 앱의 번들 식별자가 올바르지 않습니다: %@. 점으로 구분한 각 부분에 ASCII 문자, 숫자, 하이픈을 사용해 3~255자로 입력하세요. 예: com.example.app";
 /* Error when a profile breaks a rule: an application scope lists no bundle identifier. */
-"profile.validation.noAppIDs" = "앱을 대상으로 지정하려면 번들 식별자가 하나 이상 필요합니다.";
+"ui.profileValidation.noAppIDs" = "앱을 대상으로 지정하려면 번들 식별자가 하나 이상 필요합니다.";
 /* Error when a profile breaks a rule: an application scope lists this bundle identifier more than once. %@ is an application bundle identifier. */
-"profile.validation.duplicateAppID" = "대상 앱의 번들 식별자가 두 번 나열되었습니다: %@. 하나를 제거하세요.";
-/* Error when a profile breaks a rule: an axis source has no axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningRequired" = "할당 %d에는 축 조정이 필요합니다. 축 조정을 추가하세요.";
-/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningNotApplicable" = "할당 %d에는 축 조정을 지정할 수 없습니다. 축 조정을 제거하세요.";
-/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.incompatibleSourceAndDestination" = "할당 %d이(가) 호환되지 않는 소스 유형과 대상 유형을 조합합니다. 하나를 변경하세요.";
-/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTuning" = "할당 %1$d의 %2$@이(가) 유한한 값이 아닙니다. 유한한 숫자를 입력하세요.";
-/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.tuningOutOfRange" = "할당 %1$d의 %2$@이(가) 범위를 벗어났습니다. 데드존은 0~0.95, 게인은 0.1~10, 디지털 활성화 임곗값은 0.01~1로 지정하세요.";
-/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboNotSupported" = "할당 %d이(가) 연속 대상에 터보를 사용합니다. 터보를 제거하거나 대상을 변경하세요.";
-/* Error when a profile breaks a rule: a turbo field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTurbo" = "할당 %1$d의 터보 %2$@이(가) 유한한 값이 아닙니다. 유한한 숫자를 입력하세요.";
-/* Error when a profile breaks a rule: a turbo field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.turboOutOfRange" = "할당 %1$d의 터보 %2$@이(가) 범위를 벗어났습니다. 반복 속도는 1~60 Hz, 듀티비는 0.05~0.95, 첫 지연은 0~2500 ms, 최대 반복 횟수는 1~500으로 지정하세요.";
-/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.longHoldNotSupported" = "할당 %d이(가) 연속 소스 또는 대상에 길게 누르기를 사용합니다. 길게 누르기를 제거하거나 버튼 소스와 대상을 사용하세요.";
-/* Error when a profile breaks a rule: a long-hold field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteLongHold" = "할당 %1$d의 길게 누르기 %2$@이(가) 유한한 값이 아닙니다. 유한한 숫자를 입력하세요.";
-/* Error when a profile breaks a rule: a long-hold field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.longHoldOutOfRange" = "할당 %1$d의 길게 누르기 %2$@이(가) 범위를 벗어났습니다. 100~5000 ms로 지정하세요.";
-/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteMultiTap" = "할당 %1$d의 여러 번 탭 %2$@이(가) 유한한 값이 아닙니다. 유한한 숫자를 입력하세요.";
-/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.multiTapOutOfRange" = "할당 %1$d의 여러 번 탭 %2$@이(가) 범위를 벗어났습니다. 횟수는 2~5, 허용 시간은 50~1000 ms로 지정하세요.";
-/* Error when a profile breaks a rule: two multi-tap entries have the same count. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.duplicateMultiTapCount" = "할당 %d에 횟수가 같은 여러 번 탭 항목이 두 개 있습니다. 항목마다 다른 횟수를 지정하세요.";
-/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboAndActivationConflict" = "할당 %d에서는 터보를 길게 누르기 또는 여러 번 탭과 함께 사용할 수 없습니다. 하나를 제거하세요.";
-/* Error when a profile breaks a rule: a chord window is out of range. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordWindowOutOfRange" = "동시 입력 %d의 허용 시간이 범위를 벗어났습니다. 1~1000 ms로 지정하세요.";
-/* Error when a profile breaks a rule: a chord has fewer than two sources. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordTooFewSources" = "동시 입력 %d에는 소스가 두 개 이상 있어야 합니다. 소스를 추가하세요.";
-/* Error when a profile breaks a rule: a chord has an axis source. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousSource" = "동시 입력 %d이(가) 연속(축) 소스를 사용합니다. 버튼 소스를 사용하세요.";
-/* Error when a profile breaks a rule: a chord has a continuous destination. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousDestination" = "동시 입력 %d이(가) 연속 대상을 사용합니다. 버튼 대상을 선택하세요.";
-/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.duplicateChordSources" = "동시 입력 %d의 소스 조합이 다른 동시 입력과 같습니다. 하나를 제거하세요.";
-/* Error when a profile breaks a rule: a sequence has fewer than two sources. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceTooFewSources" = "시퀀스 %d에는 소스가 두 개 이상 있어야 합니다. 소스를 추가하세요.";
-/* Error when a profile breaks a rule: a sequence has an axis source. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousSource" = "시퀀스 %d이(가) 연속(축) 소스를 사용합니다. 버튼 소스를 사용하세요.";
-/* Error when a profile breaks a rule: a sequence has a continuous destination. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousDestination" = "시퀀스 %d이(가) 연속 대상을 사용합니다. 버튼 대상을 선택하세요.";
-/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceWindowOutOfRange" = "시퀀스 %d의 허용 시간이 범위를 벗어났습니다. 200~10000 ms로 지정하세요.";
-/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.duplicateSequenceSources" = "시퀀스 %d의 소스 순서가 다른 시퀀스와 같습니다. 하나를 제거하세요.";
-/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingRemarkInvalid" = "할당 %d의 메모가 올바르지 않습니다. 1~200자로 입력하세요.";
-/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerNameInvalid" = "레이어 %d의 이름이 올바르지 않습니다. 1~40자로 입력하세요.";
-/* Error when a profile breaks a rule: a layer activator is an axis. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorNotDiscrete" = "레이어 %d의 활성화 조작이 이산 입력이 아닙니다(축입니다). 버튼 소스를 사용하세요.";
-/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.duplicateLayerActivator" = "레이어 %d의 활성화 조작이 다른 레이어와 같습니다. 다른 소스를 선택하세요.";
-/* Error when a profile breaks a rule: a layer activator also has a binding. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorAlsoBound" = "레이어 %d의 활성화 조작이 일반 소스로도 할당되어 있습니다. 해당 할당을 제거하거나 다른 활성화 조작을 선택하세요.";
-/* Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyMacros" = "프로파일에는 매크로를 %d개 넣을 수 없습니다. 일부를 제거하세요. 한도는 16개입니다.";
+"ui.profileValidation.duplicateAppID" = "대상 앱의 번들 식별자가 두 번 나열되었습니다: %@. 하나를 제거하세요.";
+/* Error when a profile breaks a rule: an axis source has no axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningRequired" = "할당 %@에는 축 조정이 필요합니다. 축 조정을 추가하세요.";
+/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningNotApplicable" = "할당 %@에는 축 조정을 지정할 수 없습니다. 축 조정을 제거하세요.";
+/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.incompatibleSourceAndDestination" = "할당 %@이(가) 호환되지 않는 소스 유형과 대상 유형을 조합합니다. 하나를 변경하세요.";
+/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTuning" = "할당 %1$@의 %2$@이(가) 유한한 값이 아닙니다. 유한한 숫자를 입력하세요.";
+/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.tuningOutOfRange" = "할당 %1$@의 %2$@이(가) 범위를 벗어났습니다. 데드존은 0~0.95, 게인은 0.1~10, 디지털 활성화 임곗값은 0.01~1로 지정하세요.";
+/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboNotSupported" = "할당 %@이(가) 연속 대상에 터보를 사용합니다. 터보를 제거하거나 대상을 변경하세요.";
+/* Error when a profile breaks a rule: a turbo field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTurbo" = "할당 %1$@의 터보 %2$@이(가) 유한한 값이 아닙니다. 유한한 숫자를 입력하세요.";
+/* Error when a profile breaks a rule: a turbo field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.turboOutOfRange" = "할당 %1$@의 터보 %2$@이(가) 범위를 벗어났습니다. 반복 속도는 1~60 Hz, 듀티비는 0.05~0.95, 첫 지연은 0~2500 ms, 최대 반복 횟수는 1~500으로 지정하세요.";
+/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.longHoldNotSupported" = "할당 %@이(가) 연속 소스 또는 대상에 길게 누르기를 사용합니다. 길게 누르기를 제거하거나 버튼 소스와 대상을 사용하세요.";
+/* Error when a profile breaks a rule: a long-hold field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteLongHold" = "할당 %1$@의 길게 누르기 %2$@이(가) 유한한 값이 아닙니다. 유한한 숫자를 입력하세요.";
+/* Error when a profile breaks a rule: a long-hold field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.longHoldOutOfRange" = "할당 %1$@의 길게 누르기 %2$@이(가) 범위를 벗어났습니다. 100~5000 ms로 지정하세요.";
+/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteMultiTap" = "할당 %1$@의 여러 번 탭 %2$@이(가) 유한한 값이 아닙니다. 유한한 숫자를 입력하세요.";
+/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.multiTapOutOfRange" = "할당 %1$@의 여러 번 탭 %2$@이(가) 범위를 벗어났습니다. 횟수는 2~5, 허용 시간은 50~1000 ms로 지정하세요.";
+/* Error when a profile breaks a rule: two multi-tap entries have the same count. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.duplicateMultiTapCount" = "할당 %@에 횟수가 같은 여러 번 탭 항목이 두 개 있습니다. 항목마다 다른 횟수를 지정하세요.";
+/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboAndActivationConflict" = "할당 %@에서는 터보를 길게 누르기 또는 여러 번 탭과 함께 사용할 수 없습니다. 하나를 제거하세요.";
+/* Error when a profile breaks a rule: a chord window is out of range. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordWindowOutOfRange" = "동시 입력 %@의 허용 시간이 범위를 벗어났습니다. 1~1000 ms로 지정하세요.";
+/* Error when a profile breaks a rule: a chord has fewer than two sources. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordTooFewSources" = "동시 입력 %@에는 소스가 두 개 이상 있어야 합니다. 소스를 추가하세요.";
+/* Error when a profile breaks a rule: a chord has an axis source. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousSource" = "동시 입력 %@이(가) 연속(축) 소스를 사용합니다. 버튼 소스를 사용하세요.";
+/* Error when a profile breaks a rule: a chord has a continuous destination. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousDestination" = "동시 입력 %@이(가) 연속 대상을 사용합니다. 버튼 대상을 선택하세요.";
+/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.duplicateChordSources" = "동시 입력 %@의 소스 조합이 다른 동시 입력과 같습니다. 하나를 제거하세요.";
+/* Error when a profile breaks a rule: a sequence has fewer than two sources. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceTooFewSources" = "시퀀스 %@에는 소스가 두 개 이상 있어야 합니다. 소스를 추가하세요.";
+/* Error when a profile breaks a rule: a sequence has an axis source. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousSource" = "시퀀스 %@이(가) 연속(축) 소스를 사용합니다. 버튼 소스를 사용하세요.";
+/* Error when a profile breaks a rule: a sequence has a continuous destination. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousDestination" = "시퀀스 %@이(가) 연속 대상을 사용합니다. 버튼 대상을 선택하세요.";
+/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceWindowOutOfRange" = "시퀀스 %@의 허용 시간이 범위를 벗어났습니다. 200~10000 ms로 지정하세요.";
+/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.duplicateSequenceSources" = "시퀀스 %@의 소스 순서가 다른 시퀀스와 같습니다. 하나를 제거하세요.";
+/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingRemarkInvalid" = "할당 %@의 메모가 올바르지 않습니다. 1~200자로 입력하세요.";
+/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerNameInvalid" = "레이어 %@의 이름이 올바르지 않습니다. 1~40자로 입력하세요.";
+/* Error when a profile breaks a rule: a layer activator is an axis. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorNotDiscrete" = "레이어 %@의 활성화 조작이 이산 입력이 아닙니다(축입니다). 버튼 소스를 사용하세요.";
+/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.duplicateLayerActivator" = "레이어 %@의 활성화 조작이 다른 레이어와 같습니다. 다른 소스를 선택하세요.";
+/* Error when a profile breaks a rule: a layer activator also has a binding. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorAlsoBound" = "레이어 %@의 활성화 조작이 일반 소스로도 할당되어 있습니다. 해당 할당을 제거하거나 다른 활성화 조작을 선택하세요.";
 /* Error when a profile breaks a rule: two macros share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateMacroID" = "매크로 식별자 %@이(가) 중복되었습니다.";
-/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %d is the position of the macro in its list, counted from 0. */
-"profile.validation.duplicateMacroName" = "매크로 %d의 이름이 앞선 매크로와 같습니다. 이름을 바꾸세요.";
-/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidMacro" = "매크로 %1$d의 %2$@이(가) 올바르지 않습니다. 이름은 1~40자, 단계는 1~32개, 반복은 1~500회, 각 지연은 0~5000 ms로 지정하세요.";
-/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.invalidMacroStepDestination" = "매크로 %2$d의 단계 %1$d에 매크로 단계에서 쓸 수 없는 대상이 있습니다. 키, 포인터 버튼, 게임패드 버튼 또는 방향 패드 방향을 사용하세요.";
-/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.macroNestingNotAllowed" = "매크로 %2$d의 단계 %1$d이(가) 매크로를 실행하는데, 매크로 단계에서는 그럴 수 없습니다. 해당 단계를 제거하세요.";
-/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
-"profile.validation.macroRunTimeExceeded" = "매크로 %1$d의 실행 시간이 %2$@ 한도를 초과합니다. 한 번 실행은 최대 30초, 모든 반복은 최대 300초입니다. 지연을 줄이거나 반복 횟수를 낮추세요.";
+"ui.profileValidation.duplicateMacroID" = "매크로 식별자 %@이(가) 중복되었습니다.";
+/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.duplicateMacroName" = "매크로 %@의 이름이 앞선 매크로와 같습니다. 이름을 바꾸세요.";
+/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.invalidMacro" = "매크로 %1$@의 %2$@이(가) 올바르지 않습니다. 이름은 1~40자, 단계는 1~32개, 반복은 1~500회, 각 지연은 0~5000 ms로 지정하세요.";
+/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.invalidMacroStepDestination" = "매크로 %2$@의 단계 %1$@에 매크로 단계에서 쓸 수 없는 대상이 있습니다. 키, 포인터 버튼, 게임패드 버튼 또는 방향 패드 방향을 사용하세요.";
+/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.macroNestingNotAllowed" = "매크로 %2$@의 단계 %1$@이(가) 매크로를 실행하는데, 매크로 단계에서는 그럴 수 없습니다. 해당 단계를 제거하세요.";
+/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
+"ui.profileValidation.macroRunTimeExceeded" = "매크로 %1$@의 실행 시간이 %2$@ 한도를 초과합니다. 한 번 실행은 최대 30초, 모든 반복은 최대 300초입니다. 지연을 줄이거나 반복 횟수를 낮추세요.";
 /* Error when a profile breaks a rule: a destination runs a macro that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownMacro" = "대상이 존재하지 않는 매크로 %@을(를) 실행합니다. 존재하는 매크로를 선택하세요.";
+"ui.profileValidation.unknownMacro" = "대상이 존재하지 않는 매크로 %@을(를) 실행합니다. 존재하는 매크로를 선택하세요.";
 /* Error when a profile breaks a rule: a system action destination has a value outside its limits; the value is the action name. %@ is the destination type as the profile file spells it, kept as written. */
-"profile.validation.invalidSystemAction" = "%@ 대상의 값이 올바르지 않습니다. 값을 확인하세요.";
+"ui.profileValidation.invalidSystemAction" = "%@ 대상의 값이 올바르지 않습니다. 값을 확인하세요.";
 /* Error when a profile breaks a rule: a destination sets a layer that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownLayer" = "대상이 존재하지 않는 레이어 %@을(를) 설정합니다. 존재하는 레이어를 선택하세요.";
+"ui.profileValidation.unknownLayer" = "대상이 존재하지 않는 레이어 %@을(를) 설정합니다. 존재하는 레이어를 선택하세요.";
 /* Error when a profile breaks a rule: a destination switches to a profile that does not exist. %@ is an identifier (UUID). */
-"profile.validation.unknownSwitchProfile" = "대상이 존재하지 않는 프로파일 %@(으)로 전환합니다. 존재하는 프로파일을 선택하세요.";
+"ui.profileValidation.unknownSwitchProfile" = "대상이 존재하지 않는 프로파일 %@(으)로 전환합니다. 존재하는 프로파일을 선택하세요.";
 /* Error when a profile breaks a rule: a destination switches to a profile for another controller model. %@ is an identifier (UUID). */
-"profile.validation.switchProfileForOtherModel" = "대상이 다른 모델용 프로파일 %@(으)로 전환합니다. 이 모델용 프로파일을 선택하세요.";
+"ui.profileValidation.switchProfileForOtherModel" = "대상이 다른 모델용 프로파일 %@(으)로 전환합니다. 이 모델용 프로파일을 선택하세요.";
 /* Error when a profile breaks a rule: a `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or. %@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidSpeech" = "말하기 대상의 %@이(가) 올바르지 않습니다. 텍스트는 1~128자여야 합니다.";
+"ui.profileValidation.invalidSpeech" = "말하기 대상의 %@이(가) 올바르지 않습니다. 텍스트는 1~128자여야 합니다.";
 /* Error when a profile breaks a rule: a `Speak` destination names a voice that this Mac does not have. %@ is the name of a voice. */
-"profile.validation.unknownSpeechVoice" = "말하기 대상이 이 Mac에 없는 음성 %@을(를) 지정합니다. 설치된 음성 또는 시스템 음성을 선택하세요.";
+"platform.macos.profileValidation.unknownSpeechVoice" = "말하기 대상이 이 Mac에 없는 음성 %@을(를) 지정합니다. 설치된 음성 또는 시스템 음성을 선택하세요.";
 /* Error when a profile breaks a rule: a MIDI destination has a channel, note, controller or velocity out of range. */
-"profile.validation.invalidMIDIDestination" = "MIDI 대상에는 1~16의 채널, 0~127의 노트 또는 컨트롤러, 1~127의 벨로시티가 필요합니다.";
+"ui.profileValidation.invalidMIDIDestination" = "MIDI 대상에는 1~16의 채널, 0~127의 노트 또는 컨트롤러, 1~127의 벨로시티가 필요합니다.";
 /* Error when a profile breaks a rule: the profile could not be encoded. */
-"profile.validation.encodingFailed" = "프로파일을 인코딩할 수 없습니다. 값을 확인하세요.";
-/* Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. */
-"profile.validation.encodedSizeExceeded" = "인코딩된 프로파일이 너무 큽니다(%d바이트). 4 MiB 미만으로 유지하세요.";
+"ui.profileValidation.encodingFailed" = "프로파일을 인코딩할 수 없습니다. 값을 확인하세요.";
+
+/* Error when the service's profile library refuses a request: the profile file or the active profile list is damaged. */
+"ui.profileLibrary.corruptLibrary" = "활성 프로파일 목록이 손상되었습니다.";
+/* Error when the service's profile library refuses a request: a profile with the name already exists. %@ is the name of a profile. */
+"ui.profileLibrary.duplicateName" = "이름이 %@인 프로파일이 이미 있습니다.";
+/* Error when the service's profile library refuses a request: a profile with the ID already exists. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileAlreadyExists" = "프로파일 %@이(가) 이미 있습니다.";
+/* Error when the service's profile library refuses a request: no profile has the ID. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileNotFound" = "프로파일 %@이(가) 없습니다.";
+/* Error when the service's profile library refuses a request: a Joy-Con pair profile starts only with an explicit pair session. */
+"ui.profileLibrary.pairProfileRequiresExplicitSession" = "페어링된 Joy-Con 프로파일은 명시적인 페어 세션으로 시작합니다.";
+/* Error when the service's profile library refuses a request: the profile produces no output; activating it needs `allowEmpty`. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileProducesNoOutput" = "프로파일 %@이(가) 출력을 만들지 않습니다. 활성화하려면 allowEmpty가 필요합니다.";
+/* Error when the service's profile library refuses a request: the profile changed since the caller read it. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileUpdateConflict" = "프로파일 %@이(가) 읽은 이후에 변경되었습니다.";
+/* Error when the service's profile library refuses a request: a profile file could not be read. */
+"ui.profileLibrary.unreadableLibrary" = "프로파일 파일을 읽을 수 없습니다.";
+/* Error when the service's profile library refuses a request: a profile file could not be written. */
+"ui.profileLibrary.unwritableLibrary" = "프로파일 파일을 쓸 수 없습니다.";
+/* Error when the service's profile library refuses a request: the damaged profile files need repair before a change. */
+"ui.profileLibrary.profileRecoveryRequired" = "프로파일을 변경하기 전에 손상된 프로파일 파일을 복구하거나 제거하세요.";
+/* Error when the service's profile library refuses a request: no damaged-file issue has the ID. */
+"ui.profileLibrary.profileIssueNotFound" = "선택한 손상된 프로파일이 더 이상 최신 상태가 아닙니다.";
+/* Error when the service's profile library refuses a request: the profile comes from a package and cannot be changed. */
+"ui.profileLibrary.packageProfileReadOnly" = "설치된 패키지의 프로파일은 변경할 수 없습니다. 프로파일을 복제한 다음 복사본을 변경하세요.";
+/* Error when remapping output cannot apply a profile change: both the profile library and the event engine failed. %1$@ is the message of the profile library error and %2$@ the message of the event engine error, each a full sentence; keep the order the language reads naturally. */
+"ui.remappingRoute.libraryAndEngine" = "%1$@ %2$@";
+/* Error when remapping output cannot apply a profile change: a profile transaction is already active. */
+"ui.remappingRoute.profileTransactionAlreadyActive" = "프로파일 트랜잭션이 이미 활성 상태입니다.";
+/* Error when remapping output cannot apply a profile change: a profile transaction could not be reconciled, with the detail; output stays suspended. %@ is the reason the system gives, in English. */
+"ui.remappingRoute.profileTransactionUnreconciled" = "프로파일 트랜잭션을 조정하지 못해 리매핑 출력이 계속 일시 중단됩니다. %@";
+/* Error when remapping output cannot apply a profile change: the transaction token is not the active one. */
+"ui.remappingRoute.profileTransactionViolation" = "프로파일 트랜잭션 토큰이 올바르지 않습니다.";
+/* Error when remapping output cannot apply a profile change: the router has shut down. */
+"ui.remappingRoute.shutDown" = "리매핑 출력 라우터가 종료되었습니다.";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con is not connected. */
+"ui.joyConPair.controllerUnavailable" = "선택한 Joy-Con 두 개가 모두 연결되어 있어야 합니다.";
+/* Error when two Joy-Cons cannot start a paired session: the selection is not one left and one right Joy-Con. */
+"ui.joyConPair.invalidControllerSide" = "왼쪽 Joy-Con 하나와 오른쪽 Joy-Con 하나를 선택하세요.";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con already belongs to a pair. */
+"ui.joyConPair.memberAlreadyPaired" = "선택한 Joy-Con이 이미 페어링된 세션에 속해 있습니다.";
+/* Error when two Joy-Cons cannot start a paired session: the profile is not configured for paired Joy-Cons. */
+"ui.joyConPair.profileNotPairable" = "선택한 프로파일이 페어링된 Joy-Con용으로 설정되어 있지 않습니다.";
+/* Error when two Joy-Cons cannot start a paired session: the pair session does not exist. */
+"ui.joyConPair.sessionUnavailable" = "페어링된 Joy-Con 세션을 더 이상 사용할 수 없습니다.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.timeout" = "USB 전송 시간이 초과되었습니다.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.disconnected" = "USB 기기의 연결이 끊어졌습니다.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.inputOutput" = "USB 전송이 입출력 오류로 실패했습니다.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.accessDenied" = "시스템이 USB 기기에 대한 접근을 거부했습니다.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notFound" = "USB 기기, 인터페이스 또는 엔드포인트를 찾을 수 없습니다.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notSupported" = "이 USB 연결에서는 이 작업을 지원하지 않습니다.";
+/* Error when a USB transfer to a controller fails. %1$@ is the error code of the platform, a signed decimal number kept as written; %2$@ is the message of the platform, in English. */
+"ui.usbTransport.platform" = "USB 플랫폼 오류 %1$@: %2$@";
+/* Error when the service cannot open a virtual feed: the name is not a virtual gamepad kind. %@ is the name of a virtual gamepad kind, kept as written. */
+"ui.virtualFeed.unknownProfile" = "알 수 없는 가상 게임패드 종류입니다: %@.";
+/* Error when the service cannot open a virtual feed: the service is stopping. */
+"ui.virtualFeed.serviceStopped" = "서비스가 중지되는 중입니다.";
+/* Error when the service cannot open a virtual feed: the virtual controller did not start, with the reason. %@ is the reason the system gives, in English. */
+"ui.virtualFeed.activationFailed" = "가상 게임패드를 시작하지 못했습니다: %@.";
+/* Error when a remapping cannot post keyboard or pointer input: post-event access is not granted. */
+"platform.macos.systemInput.postEventAccessNotGranted" = "키보드 및 포인터 입력 전송 권한이 허용되지 않았습니다.";
+/* Error when a remapping cannot post keyboard or pointer input: the profile key has no macOS virtual key. %@ is the key as the profile file spells it, kept as written. */
+"platform.macos.systemInput.unsupportedKeyboardKey" = "키보드 키 ‘%@’은(는) macOS에서 지원되지 않습니다.";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not create the event. */
+"platform.macos.systemInput.eventPreparationFailed" = "CoreGraphics가 시스템 입력 이벤트를 준비하지 못했습니다.";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not post the event. */
+"platform.macos.systemInput.eventPostingFailed" = "CoreGraphics가 시스템 입력 이벤트를 전송하지 못했습니다.";
+/* Error when a remapping action does not reach keyboard or pointer input: the engine is suspended until sink recovery succeeds. */
+"ui.remappingSink.faulted" = "시스템 입력 리매핑이 싱크가 복구될 때까지 일시 중단됩니다.";
+/* Error when a remapping action does not reach keyboard or pointer input: routing admission refuses output. */
+"ui.remappingSink.outputSuspended" = "시스템 입력 리매핑이 라우팅 승인으로 일시 중단되었습니다.";
+/* Error when a remapping action does not reach keyboard or pointer input: a sink rejected an action or is missing. */
+"ui.remappingSink.sinkUnavailable" = "시스템 입력 싱크가 리매핑 동작을 거부했습니다.";
+/* Error when a virtual gamepad frame is not published: the queue holds only host replies, and one more arrived. */
+"ui.outputPublication.queueOverflow" = "가상 게임패드 게시 대기열이 넘쳤습니다.";
+/* Error when a virtual gamepad frame is not published: the native send exceeded its deadline. */
+"ui.outputPublication.sendTimedOut" = "가상 게임패드 게시 시간이 초과되었습니다.";
+/* Error when a virtual gamepad frame is not published: a newer frame took the place of this one in a full queue. */
+"ui.outputPublication.superseded" = "가상 게임패드 프레임이 더 새로운 프레임으로 대체되었습니다.";
+/* Error when a command-line source or target cannot be read: the source operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidSource" = "소스 ‘%@’이(가) 올바르지 않습니다.";
+/* Error when a command-line source or target cannot be read: the target operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidDestination" = "타깃 ‘%@’이(가) 올바르지 않습니다.";
+/* Error when the record probe refuses a controller: the record names an 8BitDo bootloader identity, which OJD sends nothing. */
+"ui.recordProbe.bootloaderIdentity" = "레코드 프로브는 부트로더 모드의 컨트롤러에 아무것도 보내지 않습니다.";
+/* Error when the record probe refuses a controller: the record's protocol is one the probe cannot drive; the value names it. %@ is the name of a controller protocol, kept as written. */
+"ui.recordProbe.unsupportedProtocol" = "서명이 필요 없는 레코드 프로브는 프로토콜 %@을(를) 지원하지 않습니다.";
+/* Error when a profile breaks a rule: a field is outside its valid range. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.motionTuningField" = "모션 조정 필드 ‘%@’이(가) 유효한 범위를 벗어났습니다.";
+/* Error when a profile breaks a rule: a field is outside its valid range or inconsistent with the others. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.gyroOutputField" = "자이로 출력 필드 ‘%@’이(가) 유효한 범위를 벗어났습니다.";
+/* Error when a USB transfer to a controller fails: another client, which the system does not name, holds the USB interface. */
+"ui.usbTransport.ownedByAnotherClient" = "다른 클라이언트가 USB 인터페이스를 사용하고 있습니다.";
+/* Error when a USB transfer to a controller fails: another client holds the USB interface. %@ is the name of that client as the system reports it. */
+"ui.usbTransport.ownedByNamedClient" = "다른 클라이언트(%@)가 USB 인터페이스를 사용하고 있습니다.";

@@ -6681,158 +6681,253 @@
 "ui.help.exportFormat" = "書き出すマッピングのファイル形式を選びます";
 
 /* Error when a profile breaks a rule: the mapping of this stick has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidStickMapping" = "スティック %@ の設定を確認してください。";
+"ui.profileValidation.invalidStickMapping" = "スティック %@ の設定を確認してください。";
 /* Error when a profile breaks a rule: two mappings read this stick. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateStickMapping" = "スティック %@ に複数のモードのマッピングがあります。1 つだけ残してください。";
+"ui.profileValidation.duplicateStickMapping" = "スティック %@ に複数のモードのマッピングがあります。1 つだけ残してください。";
 /* Error when a profile breaks a rule: the mapping of this trigger has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidTriggerMapping" = "2 段階トリガー %@ の設定を確認してください。";
+"ui.profileValidation.invalidTriggerMapping" = "2 段階トリガー %@ の設定を確認してください。";
 /* Error when a profile breaks a rule: two mappings read this trigger. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateTriggerMapping" = "トリガー %@ に複数の段階のマッピングがあります。1 つだけ残してください。";
+"ui.profileValidation.duplicateTriggerMapping" = "トリガー %@ に複数の段階のマッピングがあります。1 つだけ残してください。";
 /* Error when a profile breaks a rule: a binding reads a stage of this trigger, which has no dual-stage mapping. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.triggerStageWithoutMapping" = "トリガー %@ の段階には、2 段階トリガーのマッピングが必要です。追加してください。";
+"ui.profileValidation.triggerStageWithoutMapping" = "トリガー %@ の段階には、2 段階トリガーのマッピングが必要です。追加してください。";
 /* Error when a profile breaks a rule: a binding reads a motion lean, but no motion tuning defines one. */
-"profile.validation.motionLeanWithoutMapping" = "傾きソースには傾きの設定が必要です。設定を追加するか、ソースを削除してください。";
+"ui.profileValidation.motionLeanWithoutMapping" = "傾きソースには傾きの設定が必要です。設定を追加するか、ソースを削除してください。";
 /* Error when a profile breaks a rule: the touch mapping of this surface has an invalid field. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.invalidTouchMapping" = "タッチ面 %@ の連続マッピングを確認してください。";
+"ui.profileValidation.invalidTouchMapping" = "タッチ面 %@ の連続マッピングを確認してください。";
 /* Error when a profile breaks a rule: two touch mappings read this surface. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.duplicateTouchMapping" = "タッチ面 %@ に複数の連続マッピングがあります。1 つだけ残してください。";
+"ui.profileValidation.duplicateTouchMapping" = "タッチ面 %@ に複数の連続マッピングがあります。1 つだけ残してください。";
 /* Error when a profile breaks a rule: a touch grid source has invalid dimensions or cell coordinates. */
-"profile.validation.invalidTouchGrid" = "タッチのグリッドソースの寸法またはセル座標が正しくありません。行と列は 1 ～ 16 にし、セルはグリッド内に収めてください。";
+"ui.profileValidation.invalidTouchGrid" = "タッチのグリッドソースの寸法またはセル座標が正しくありません。行と列は 1 ～ 16 にし、セルはグリッド内に収めてください。";
 /* Error when a profile breaks a rule: a touch swipe source has an invalid minimum distance. */
-"profile.validation.invalidTouchSwipe" = "タッチのスワイプソースの最小距離が正しくありません。0.01 ～ 1 にしてください。";
+"ui.profileValidation.invalidTouchSwipe" = "タッチのスワイプソースの最小距離が正しくありません。0.01 ～ 1 にしてください。";
 /* Error when a profile breaks a rule: a stick region has a radius, sector or hysteresis out of range. */
-"profile.validation.invalidStickRegion" = "スティックのリージョンは 0 <= inner < outer <= 1 にし、角度は両方指定するか両方省略し、解除の余裕は 0 ～ 0.25 にしてください。";
+"ui.profileValidation.invalidStickRegion" = "スティックのリージョンは 0 <= inner < outer <= 1 にし、角度は両方指定するか両方省略し、解除の余裕は 0 ～ 0.25 にしてください。";
 /* Error when a profile breaks a rule: a trigger band has a pressure or hysteresis out of range. */
-"profile.validation.invalidTriggerBand" = "トリガーの範囲は 0 <= from < to <= 1 にし、解除の余裕は 0 ～ 0.25 にしてください。";
+"ui.profileValidation.invalidTriggerBand" = "トリガーの範囲は 0 <= from < to <= 1 にし、解除の余裕は 0 ～ 0.25 にしてください。";
 /* Error when a profile breaks a rule: a touch area is empty or outside the surface. */
-"profile.validation.invalidTouchArea" = "タッチ領域は空にせず、タッチ面の内側に収める必要があります。収まるようにサイズを変更してください。";
+"ui.profileValidation.invalidTouchArea" = "タッチ領域は空にせず、タッチ面の内側に収める必要があります。収まるようにサイズを変更してください。";
 /* Error when a profile breaks a rule: a trigger has bands and a dual-stage mapping. %@ is the trigger as the profile file spells it, kept as written. */
-"profile.validation.triggerBandWithDualStage" = "トリガー %@ に範囲と 2 段階トリガーのマッピングの両方があります。どちらか一方を削除してください。";
+"ui.profileValidation.triggerBandWithDualStage" = "トリガー %@ に範囲と 2 段階トリガーのマッピングの両方があります。どちらか一方を削除してください。";
 /* Error when a profile breaks a rule: two regions of one stick, or two bands of one trigger, share a position. */
-"profile.validation.overlappingRegions" = "1 つのスティックのリージョン同士、または 1 つのトリガーの範囲同士は重ならないようにしてください。狭めるか、どちらか一方を削除してください。";
+"ui.profileValidation.overlappingRegions" = "1 つのスティックのリージョン同士、または 1 つのトリガーの範囲同士は重ならないようにしてください。狭めるか、どちらか一方を削除してください。";
 /* Error when a profile breaks a rule: the pointer speed has a minimum or maximum scale that is not finite or not 0 to 10. */
-"profile.validation.invalidPointerSpeed" = "ポインタ速度のスケールは、0 ～ 10 の有限の数値にしてください。";
+"ui.profileValidation.invalidPointerSpeed" = "ポインタ速度のスケールは、0 ～ 10 の有限の数値にしてください。";
 /* Error when a profile breaks a rule: the pointer speed reads a trigger or stick that the controller does not report. */
-"profile.validation.unsupportedPointerSpeedDriver" = "ポインタ速度が、コントローラが報告しないトリガーまたはスティックを参照しています。コントローラが報告するドライバを選んでください。";
+"ui.profileValidation.unsupportedPointerSpeedDriver" = "ポインタ速度が、コントローラが報告しないトリガーまたはスティックを参照しています。コントローラが報告するドライバを選んでください。";
 /* Error when a profile breaks a rule: a Joy-Con pair profile does not target a left Joy-Con model. */
-"profile.validation.invalidJoyConPairDevice" = "Joy-Con ペアのプロファイルは、Nintendo の左 Joy-Con モデル (057e:2006 または 057e:2067) を対象にする必要があります。";
-/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingBehaviorConflict" = "割り当て %d は、割り当て先または有効化の設定と両立しない動作を使用しています。";
+"ui.profileValidation.invalidJoyConPairDevice" = "Joy-Con ペアのプロファイルは、Nintendo の左 Joy-Con モデル (057e:2006 または 057e:2067) を対象にする必要があります。";
+/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingBehaviorConflict" = "割り当て %@ は、割り当て先または有効化の設定と両立しない動作を使用しています。";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this button. %@ is the button as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadButton" = "仮想ゲームパッドは %@ を出力できません。別のボタンを選んでください。";
+"ui.profileValidation.unsupportedGamepadButton" = "仮想ゲームパッドは %@ を出力できません。別のボタンを選んでください。";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this axis. %@ is the axis as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadAxis" = "仮想ゲームパッドは %@ を出力できません。別の軸を選んでください。";
+"ui.profileValidation.unsupportedGamepadAxis" = "仮想ゲームパッドは %@ を出力できません。別の軸を選んでください。";
 /* Error when a profile breaks a rule: a virtual gamepad destination or stick output is used while the output policy has no virtual. */
-"profile.validation.virtualOutputRequired" = "ゲームパッドを割り当て先にするには、仮想ゲームパッドの出力が必要です。出力をオンにするか、割り当て先を変更してください。";
+"ui.profileValidation.virtualOutputRequired" = "ゲームパッドを割り当て先にするには、仮想ゲームパッドの出力が必要です。出力をオンにするか、割り当て先を変更してください。";
 /* Error when a profile breaks a rule: a physical-controller output value is out of range. */
-"profile.validation.invalidPhysicalOutput" = "物理コントローラの出力値が正しくありません。コントローラが対応している出力を選んでください。";
+"ui.profileValidation.invalidPhysicalOutput" = "物理コントローラの出力値が正しくありません。コントローラが対応している出力を選んでください。";
 /* Error when a profile breaks a rule: the profile name is empty, too long, padded with whitespace or holds control characters. */
-"profile.validation.invalidProfileName" = "プロファイル名は、表示可能な文字で 1 ～ 80 文字にしてください。";
-/* Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyBindings" = "プロファイルに割り当てを %d 個含めることはできません。いくつか削除してください。上限は 512 個です。";
+"ui.profileValidation.invalidProfileName" = "プロファイル名は、表示可能な文字で 1 ～ 80 文字にしてください。";
 /* Error when a profile breaks a rule: two bindings, chords, sequences, actions or touch mappings share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateBindingID" = "割り当て ID %@ が重複しています。";
+"ui.profileValidation.duplicateBindingID" = "割り当て ID %@ が重複しています。";
 /* Error when a profile breaks a rule: two layers share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateLayerID" = "レイヤー ID %@ が重複しています。";
+"ui.profileValidation.duplicateLayerID" = "レイヤー ID %@ が重複しています。";
 /* Error when a profile breaks a rule: two bindings of one scope read this source. */
-"profile.validation.duplicateSource" = "各コントローラソースは 1 つの割り当てにのみ使えます。余分な割り当てを削除してください。";
+"ui.profileValidation.duplicateSource" = "各コントローラソースは 1 つの割り当てにのみ使えます。余分な割り当てを削除してください。";
 /* Error when a profile breaks a rule: the application bundle identifier is not valid; the value is the identifier. %@ is an application bundle identifier. */
-"profile.validation.invalidAppID" = "対象アプリケーションのバンドル識別子が正しくありません: %@。ドットで区切った各部分に、ASCII の英字、数字、ハイフンを使い、3 ～ 255 文字にしてください。例: com.example.app";
+"ui.profileValidation.invalidAppID" = "対象アプリケーションのバンドル識別子が正しくありません: %@。ドットで区切った各部分に、ASCII の英字、数字、ハイフンを使い、3 ～ 255 文字にしてください。例: com.example.app";
 /* Error when a profile breaks a rule: an application scope lists no bundle identifier. */
-"profile.validation.noAppIDs" = "アプリケーションを対象にするには、バンドル識別子が 1 つ以上必要です。";
+"ui.profileValidation.noAppIDs" = "アプリケーションを対象にするには、バンドル識別子が 1 つ以上必要です。";
 /* Error when a profile breaks a rule: an application scope lists this bundle identifier more than once. %@ is an application bundle identifier. */
-"profile.validation.duplicateAppID" = "対象アプリケーションのバンドル識別子が重複しています: %@。どちらか一方を削除してください。";
-/* Error when a profile breaks a rule: an axis source has no axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningRequired" = "割り当て %d には軸の調整が必要です。追加してください。";
-/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningNotApplicable" = "割り当て %d には軸の調整を設定できません。削除してください。";
-/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.incompatibleSourceAndDestination" = "割り当て %d は、互換性のないソースと割り当て先の種類を組み合わせています。どちらか一方を変更してください。";
-/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTuning" = "割り当て %1$d の %2$@ が有限の数値ではありません。有限の数値を入力してください。";
-/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.tuningOutOfRange" = "割り当て %1$d の %2$@ が範囲外です。デッドゾーンは 0 ～ 0.95、ゲインは 0.1 ～ 10、デジタル有効化のしきい値は 0.01 ～ 1 にしてください。";
-/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboNotSupported" = "割り当て %d は、連続的な割り当て先でターボを使用しています。ターボを削除するか、割り当て先を変更してください。";
-/* Error when a profile breaks a rule: a turbo field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTurbo" = "割り当て %1$d のターボの %2$@ が有限の数値ではありません。有限の数値を入力してください。";
-/* Error when a profile breaks a rule: a turbo field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.turboOutOfRange" = "割り当て %1$d のターボの %2$@ が範囲外です。繰り返し速度は 1 ～ 60 Hz、デューティ比は 0.05 ～ 0.95、最初の遅延は 0 ～ 2500 ms、最大繰り返し回数は 1 ～ 500 にしてください。";
-/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.longHoldNotSupported" = "割り当て %d は、連続的なソースまたは割り当て先で長押しを使用しています。長押しを削除するか、ボタンのソースと割り当て先を使用してください。";
-/* Error when a profile breaks a rule: a long-hold field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteLongHold" = "割り当て %1$d の長押しの %2$@ が有限の数値ではありません。有限の数値を入力してください。";
-/* Error when a profile breaks a rule: a long-hold field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.longHoldOutOfRange" = "割り当て %1$d の長押しの %2$@ が範囲外です。100 ～ 5000 ms にしてください。";
-/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteMultiTap" = "割り当て %1$d の複数回タップの %2$@ が有限の数値ではありません。有限の数値を入力してください。";
-/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.multiTapOutOfRange" = "割り当て %1$d の複数回タップの %2$@ が範囲外です。回数は 2 ～ 5、受付時間は 50 ～ 1000 ms にしてください。";
-/* Error when a profile breaks a rule: two multi-tap entries have the same count. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.duplicateMultiTapCount" = "割り当て %d に、同じ回数の複数回タップが 2 つあります。それぞれに異なる回数を指定してください。";
-/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboAndActivationConflict" = "割り当て %d では、ターボを長押しまたは複数回タップと組み合わせることはできません。どちらか一方を削除してください。";
-/* Error when a profile breaks a rule: a chord window is out of range. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordWindowOutOfRange" = "同時押し %d の時間枠が範囲外です。1 ～ 1000 ms にしてください。";
-/* Error when a profile breaks a rule: a chord has fewer than two sources. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordTooFewSources" = "同時押し %d には、ソースが 2 つ以上必要です。追加してください。";
-/* Error when a profile breaks a rule: a chord has an axis source. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousSource" = "同時押し %d が連続的な (軸の) ソースを使用しています。ボタンのソースを使用してください。";
-/* Error when a profile breaks a rule: a chord has a continuous destination. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousDestination" = "同時押し %d が連続的な割り当て先を使用しています。ボタンの割り当て先を選んでください。";
-/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.duplicateChordSources" = "同時押し %d が、別の同時押しとソースの組み合わせが同じです。どちらか一方を削除してください。";
-/* Error when a profile breaks a rule: a sequence has fewer than two sources. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceTooFewSources" = "シーケンス %d には、ソースが 2 つ以上必要です。追加してください。";
-/* Error when a profile breaks a rule: a sequence has an axis source. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousSource" = "シーケンス %d が連続的な (軸の) ソースを使用しています。ボタンのソースを使用してください。";
-/* Error when a profile breaks a rule: a sequence has a continuous destination. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousDestination" = "シーケンス %d が連続的な割り当て先を使用しています。ボタンの割り当て先を選んでください。";
-/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceWindowOutOfRange" = "シーケンス %d の制限時間が範囲外です。200 ～ 10000 ms にしてください。";
-/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.duplicateSequenceSources" = "シーケンス %d が、別のシーケンスとソースの順序が同じです。どちらか一方を削除してください。";
-/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingRemarkInvalid" = "割り当て %d のメモが正しくありません。1 ～ 200 文字にしてください。";
-/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerNameInvalid" = "レイヤー %d の名前が正しくありません。1 ～ 40 文字にしてください。";
-/* Error when a profile breaks a rule: a layer activator is an axis. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorNotDiscrete" = "レイヤー %d の有効化に使う操作が離散的ではありません (軸です)。ボタンのソースを使用してください。";
-/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.duplicateLayerActivator" = "レイヤー %d の有効化に使う操作が、別のレイヤーと同じです。別のソースを選んでください。";
-/* Error when a profile breaks a rule: a layer activator also has a binding. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorAlsoBound" = "レイヤー %d の有効化に使う操作が、通常のソースとしても割り当てられています。その割り当てを削除するか、別の操作を選んでください。";
-/* Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyMacros" = "プロファイルにマクロを %d 個含めることはできません。いくつか削除してください。上限は 16 個です。";
+"ui.profileValidation.duplicateAppID" = "対象アプリケーションのバンドル識別子が重複しています: %@。どちらか一方を削除してください。";
+/* Error when a profile breaks a rule: an axis source has no axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningRequired" = "割り当て %@ には軸の調整が必要です。追加してください。";
+/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningNotApplicable" = "割り当て %@ には軸の調整を設定できません。削除してください。";
+/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.incompatibleSourceAndDestination" = "割り当て %@ は、互換性のないソースと割り当て先の種類を組み合わせています。どちらか一方を変更してください。";
+/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTuning" = "割り当て %1$@ の %2$@ が有限の数値ではありません。有限の数値を入力してください。";
+/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.tuningOutOfRange" = "割り当て %1$@ の %2$@ が範囲外です。デッドゾーンは 0 ～ 0.95、ゲインは 0.1 ～ 10、デジタル有効化のしきい値は 0.01 ～ 1 にしてください。";
+/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboNotSupported" = "割り当て %@ は、連続的な割り当て先でターボを使用しています。ターボを削除するか、割り当て先を変更してください。";
+/* Error when a profile breaks a rule: a turbo field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTurbo" = "割り当て %1$@ のターボの %2$@ が有限の数値ではありません。有限の数値を入力してください。";
+/* Error when a profile breaks a rule: a turbo field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.turboOutOfRange" = "割り当て %1$@ のターボの %2$@ が範囲外です。繰り返し速度は 1 ～ 60 Hz、デューティ比は 0.05 ～ 0.95、最初の遅延は 0 ～ 2500 ms、最大繰り返し回数は 1 ～ 500 にしてください。";
+/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.longHoldNotSupported" = "割り当て %@ は、連続的なソースまたは割り当て先で長押しを使用しています。長押しを削除するか、ボタンのソースと割り当て先を使用してください。";
+/* Error when a profile breaks a rule: a long-hold field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteLongHold" = "割り当て %1$@ の長押しの %2$@ が有限の数値ではありません。有限の数値を入力してください。";
+/* Error when a profile breaks a rule: a long-hold field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.longHoldOutOfRange" = "割り当て %1$@ の長押しの %2$@ が範囲外です。100 ～ 5000 ms にしてください。";
+/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteMultiTap" = "割り当て %1$@ の複数回タップの %2$@ が有限の数値ではありません。有限の数値を入力してください。";
+/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.multiTapOutOfRange" = "割り当て %1$@ の複数回タップの %2$@ が範囲外です。回数は 2 ～ 5、受付時間は 50 ～ 1000 ms にしてください。";
+/* Error when a profile breaks a rule: two multi-tap entries have the same count. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.duplicateMultiTapCount" = "割り当て %@ に、同じ回数の複数回タップが 2 つあります。それぞれに異なる回数を指定してください。";
+/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboAndActivationConflict" = "割り当て %@ では、ターボを長押しまたは複数回タップと組み合わせることはできません。どちらか一方を削除してください。";
+/* Error when a profile breaks a rule: a chord window is out of range. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordWindowOutOfRange" = "同時押し %@ の時間枠が範囲外です。1 ～ 1000 ms にしてください。";
+/* Error when a profile breaks a rule: a chord has fewer than two sources. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordTooFewSources" = "同時押し %@ には、ソースが 2 つ以上必要です。追加してください。";
+/* Error when a profile breaks a rule: a chord has an axis source. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousSource" = "同時押し %@ が連続的な (軸の) ソースを使用しています。ボタンのソースを使用してください。";
+/* Error when a profile breaks a rule: a chord has a continuous destination. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousDestination" = "同時押し %@ が連続的な割り当て先を使用しています。ボタンの割り当て先を選んでください。";
+/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.duplicateChordSources" = "同時押し %@ が、別の同時押しとソースの組み合わせが同じです。どちらか一方を削除してください。";
+/* Error when a profile breaks a rule: a sequence has fewer than two sources. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceTooFewSources" = "シーケンス %@ には、ソースが 2 つ以上必要です。追加してください。";
+/* Error when a profile breaks a rule: a sequence has an axis source. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousSource" = "シーケンス %@ が連続的な (軸の) ソースを使用しています。ボタンのソースを使用してください。";
+/* Error when a profile breaks a rule: a sequence has a continuous destination. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousDestination" = "シーケンス %@ が連続的な割り当て先を使用しています。ボタンの割り当て先を選んでください。";
+/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceWindowOutOfRange" = "シーケンス %@ の制限時間が範囲外です。200 ～ 10000 ms にしてください。";
+/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.duplicateSequenceSources" = "シーケンス %@ が、別のシーケンスとソースの順序が同じです。どちらか一方を削除してください。";
+/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingRemarkInvalid" = "割り当て %@ のメモが正しくありません。1 ～ 200 文字にしてください。";
+/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerNameInvalid" = "レイヤー %@ の名前が正しくありません。1 ～ 40 文字にしてください。";
+/* Error when a profile breaks a rule: a layer activator is an axis. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorNotDiscrete" = "レイヤー %@ の有効化に使う操作が離散的ではありません (軸です)。ボタンのソースを使用してください。";
+/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.duplicateLayerActivator" = "レイヤー %@ の有効化に使う操作が、別のレイヤーと同じです。別のソースを選んでください。";
+/* Error when a profile breaks a rule: a layer activator also has a binding. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorAlsoBound" = "レイヤー %@ の有効化に使う操作が、通常のソースとしても割り当てられています。その割り当てを削除するか、別の操作を選んでください。";
 /* Error when a profile breaks a rule: two macros share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateMacroID" = "マクロ ID %@ が重複しています。";
-/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %d is the position of the macro in its list, counted from 0. */
-"profile.validation.duplicateMacroName" = "マクロ %d の名前が、前のマクロと同じです。名前を変更してください。";
-/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidMacro" = "マクロ %1$d の %2$@ が正しくありません。名前は 1 ～ 40 文字、ステップは 1 ～ 32、繰り返しは 1 ～ 500、各遅延は 0 ～ 5000 ms にしてください。";
-/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.invalidMacroStepDestination" = "マクロ %2$d のステップ %1$d には、マクロのステップで使用できない割り当て先があります。キー、ポインタボタン、ゲームパッドのボタン、または十字キーの方向を使用してください。";
-/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.macroNestingNotAllowed" = "マクロ %2$d のステップ %1$d はマクロを実行していますが、マクロのステップでは実行できません。このステップを削除してください。";
-/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
-"profile.validation.macroRunTimeExceeded" = "マクロ %1$d の実行時間が %2$@ の上限を超えています。1 回の実行は最大 30 秒、すべての繰り返しは最大 300 秒です。遅延を短くするか、繰り返しを減らしてください。";
+"ui.profileValidation.duplicateMacroID" = "マクロ ID %@ が重複しています。";
+/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.duplicateMacroName" = "マクロ %@ の名前が、前のマクロと同じです。名前を変更してください。";
+/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.invalidMacro" = "マクロ %1$@ の %2$@ が正しくありません。名前は 1 ～ 40 文字、ステップは 1 ～ 32、繰り返しは 1 ～ 500、各遅延は 0 ～ 5000 ms にしてください。";
+/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.invalidMacroStepDestination" = "マクロ %2$@ のステップ %1$@ には、マクロのステップで使用できない割り当て先があります。キー、ポインタボタン、ゲームパッドのボタン、または十字キーの方向を使用してください。";
+/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.macroNestingNotAllowed" = "マクロ %2$@ のステップ %1$@ はマクロを実行していますが、マクロのステップでは実行できません。このステップを削除してください。";
+/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
+"ui.profileValidation.macroRunTimeExceeded" = "マクロ %1$@ の実行時間が %2$@ の上限を超えています。1 回の実行は最大 30 秒、すべての繰り返しは最大 300 秒です。遅延を短くするか、繰り返しを減らしてください。";
 /* Error when a profile breaks a rule: a destination runs a macro that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownMacro" = "割り当て先が、存在しないマクロ %@ を実行しようとしています。存在するマクロを選んでください。";
+"ui.profileValidation.unknownMacro" = "割り当て先が、存在しないマクロ %@ を実行しようとしています。存在するマクロを選んでください。";
 /* Error when a profile breaks a rule: a system action destination has a value outside its limits; the value is the action name. %@ is the destination type as the profile file spells it, kept as written. */
-"profile.validation.invalidSystemAction" = "割り当て先 %@ の値が正しくありません。値を確認してください。";
+"ui.profileValidation.invalidSystemAction" = "割り当て先 %@ の値が正しくありません。値を確認してください。";
 /* Error when a profile breaks a rule: a destination sets a layer that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownLayer" = "割り当て先が、存在しないレイヤー %@ を設定しようとしています。存在するレイヤーを選んでください。";
+"ui.profileValidation.unknownLayer" = "割り当て先が、存在しないレイヤー %@ を設定しようとしています。存在するレイヤーを選んでください。";
 /* Error when a profile breaks a rule: a destination switches to a profile that does not exist. %@ is an identifier (UUID). */
-"profile.validation.unknownSwitchProfile" = "割り当て先が、存在しないプロファイル %@ に切り替えようとしています。存在するプロファイルを選んでください。";
+"ui.profileValidation.unknownSwitchProfile" = "割り当て先が、存在しないプロファイル %@ に切り替えようとしています。存在するプロファイルを選んでください。";
 /* Error when a profile breaks a rule: a destination switches to a profile for another controller model. %@ is an identifier (UUID). */
-"profile.validation.switchProfileForOtherModel" = "割り当て先が、別のモデル用のプロファイル %@ に切り替えようとしています。このモデル用のプロファイルを選んでください。";
+"ui.profileValidation.switchProfileForOtherModel" = "割り当て先が、別のモデル用のプロファイル %@ に切り替えようとしています。このモデル用のプロファイルを選んでください。";
 /* Error when a profile breaks a rule: a `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or. %@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidSpeech" = "読み上げの割り当て先の %@ が正しくありません。テキストは 1 ～ 128 文字にしてください。";
+"ui.profileValidation.invalidSpeech" = "読み上げの割り当て先の %@ が正しくありません。テキストは 1 ～ 128 文字にしてください。";
 /* Error when a profile breaks a rule: a `Speak` destination names a voice that this Mac does not have. %@ is the name of a voice. */
-"profile.validation.unknownSpeechVoice" = "読み上げの割り当て先が、この Mac にない音声 %@ を指定しています。インストール済みの音声かシステム音声を選んでください。";
+"platform.macos.profileValidation.unknownSpeechVoice" = "読み上げの割り当て先が、この Mac にない音声 %@ を指定しています。インストール済みの音声かシステム音声を選んでください。";
 /* Error when a profile breaks a rule: a MIDI destination has a channel, note, controller or velocity out of range. */
-"profile.validation.invalidMIDIDestination" = "MIDI の割り当て先には、1 ～ 16 のチャンネル、0 ～ 127 のノートまたはコントローラ、1 ～ 127 のベロシティが必要です。";
+"ui.profileValidation.invalidMIDIDestination" = "MIDI の割り当て先には、1 ～ 16 のチャンネル、0 ～ 127 のノートまたはコントローラ、1 ～ 127 のベロシティが必要です。";
 /* Error when a profile breaks a rule: the profile could not be encoded. */
-"profile.validation.encodingFailed" = "プロファイルをエンコードできませんでした。値を確認してください。";
-/* Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. */
-"profile.validation.encodedSizeExceeded" = "エンコードしたプロファイルが大きすぎます (%d バイト)。4 MiB 未満にしてください。";
+"ui.profileValidation.encodingFailed" = "プロファイルをエンコードできませんでした。値を確認してください。";
+
+/* Error when the service's profile library refuses a request: the profile file or the active profile list is damaged. */
+"ui.profileLibrary.corruptLibrary" = "有効なプロファイルの一覧が破損しています。";
+/* Error when the service's profile library refuses a request: a profile with the name already exists. %@ is the name of a profile. */
+"ui.profileLibrary.duplicateName" = "「%@」という名前のプロファイルはすでに存在します。";
+/* Error when the service's profile library refuses a request: a profile with the ID already exists. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileAlreadyExists" = "プロファイル %@ はすでに存在します。";
+/* Error when the service's profile library refuses a request: no profile has the ID. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileNotFound" = "プロファイル %@ は存在しません。";
+/* Error when the service's profile library refuses a request: a Joy-Con pair profile starts only with an explicit pair session. */
+"ui.profileLibrary.pairProfileRequiresExplicitSession" = "ペアリングした Joy-Con のプロファイルは、明示的なペアセッションで開始します。";
+/* Error when the service's profile library refuses a request: the profile produces no output; activating it needs `allowEmpty`. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileProducesNoOutput" = "プロファイル %@ は出力を生成しません。有効にするには allowEmpty が必要です。";
+/* Error when the service's profile library refuses a request: the profile changed since the caller read it. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileUpdateConflict" = "プロファイル %@ は、読み取った後に変更されました。";
+/* Error when the service's profile library refuses a request: a profile file could not be read. */
+"ui.profileLibrary.unreadableLibrary" = "プロファイルのファイルを読み取れませんでした。";
+/* Error when the service's profile library refuses a request: a profile file could not be written. */
+"ui.profileLibrary.unwritableLibrary" = "プロファイルのファイルを書き込めませんでした。";
+/* Error when the service's profile library refuses a request: the damaged profile files need repair before a change. */
+"ui.profileLibrary.profileRecoveryRequired" = "プロファイルを変更する前に、破損したプロファイルのファイルを修復または削除してください。";
+/* Error when the service's profile library refuses a request: no damaged-file issue has the ID. */
+"ui.profileLibrary.profileIssueNotFound" = "選択した破損プロファイルは、すでに最新ではありません。";
+/* Error when the service's profile library refuses a request: the profile comes from a package and cannot be changed. */
+"ui.profileLibrary.packageProfileReadOnly" = "インストール済みパッケージのプロファイルは変更できません。プロファイルを複製して、コピーを変更してください。";
+/* Error when remapping output cannot apply a profile change: both the profile library and the event engine failed. %1$@ is the message of the profile library error and %2$@ the message of the event engine error, each a full sentence; keep the order the language reads naturally. */
+"ui.remappingRoute.libraryAndEngine" = "%1$@ %2$@";
+/* Error when remapping output cannot apply a profile change: a profile transaction is already active. */
+"ui.remappingRoute.profileTransactionAlreadyActive" = "プロファイルのトランザクションはすでに実行中です。";
+/* Error when remapping output cannot apply a profile change: a profile transaction could not be reconciled, with the detail; output stays suspended. %@ is the reason the system gives, in English. */
+"ui.remappingRoute.profileTransactionUnreconciled" = "プロファイルのトランザクションを整合できなかったため、リマッピング出力は停止したままです。%@";
+/* Error when remapping output cannot apply a profile change: the transaction token is not the active one. */
+"ui.remappingRoute.profileTransactionViolation" = "プロファイルのトランザクショントークンが無効です。";
+/* Error when remapping output cannot apply a profile change: the router has shut down. */
+"ui.remappingRoute.shutDown" = "リマッピング出力ルーターが停止しています。";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con is not connected. */
+"ui.joyConPair.controllerUnavailable" = "選択した 2 つの Joy-Con の両方を接続する必要があります。";
+/* Error when two Joy-Cons cannot start a paired session: the selection is not one left and one right Joy-Con. */
+"ui.joyConPair.invalidControllerSide" = "左の Joy-Con と右の Joy-Con を 1 つずつ選択してください。";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con already belongs to a pair. */
+"ui.joyConPair.memberAlreadyPaired" = "選択した Joy-Con はすでにペアリングしたセッションに属しています。";
+/* Error when two Joy-Cons cannot start a paired session: the profile is not configured for paired Joy-Cons. */
+"ui.joyConPair.profileNotPairable" = "選択したプロファイルは、ペアリングした Joy-Con 用に設定されていません。";
+/* Error when two Joy-Cons cannot start a paired session: the pair session does not exist. */
+"ui.joyConPair.sessionUnavailable" = "ペアリングした Joy-Con のセッションは利用できなくなりました。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.timeout" = "USB 転送がタイムアウトしました。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.disconnected" = "USB デバイスが切断されました。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.inputOutput" = "USB 転送が入出力エラーで失敗しました。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.accessDenied" = "システムが USB デバイスへのアクセスを拒否しました。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notFound" = "USB デバイス、インターフェイス、またはエンドポイントが見つかりませんでした。";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notSupported" = "この USB 接続では、この操作はサポートされていません。";
+/* Error when a USB transfer to a controller fails. %1$@ is the error code of the platform, a signed decimal number kept as written; %2$@ is the message of the platform, in English. */
+"ui.usbTransport.platform" = "USB プラットフォームエラー %1$@: %2$@";
+/* Error when the service cannot open a virtual feed: the name is not a virtual gamepad kind. %@ is the name of a virtual gamepad kind, kept as written. */
+"ui.virtualFeed.unknownProfile" = "不明な仮想ゲームパッドの種類です: %@。";
+/* Error when the service cannot open a virtual feed: the service is stopping. */
+"ui.virtualFeed.serviceStopped" = "サービスは停止中です。";
+/* Error when the service cannot open a virtual feed: the virtual controller did not start, with the reason. %@ is the reason the system gives, in English. */
+"ui.virtualFeed.activationFailed" = "仮想ゲームパッドを開始できませんでした: %@。";
+/* Error when a remapping cannot post keyboard or pointer input: post-event access is not granted. */
+"platform.macos.systemInput.postEventAccessNotGranted" = "キーボードとポインタの送信アクセスが許可されていません。";
+/* Error when a remapping cannot post keyboard or pointer input: the profile key has no macOS virtual key. %@ is the key as the profile file spells it, kept as written. */
+"platform.macos.systemInput.unsupportedKeyboardKey" = "キーボードのキー「%@」は macOS でサポートされていません。";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not create the event. */
+"platform.macos.systemInput.eventPreparationFailed" = "CoreGraphics がシステム入力イベントを準備できませんでした。";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not post the event. */
+"platform.macos.systemInput.eventPostingFailed" = "CoreGraphics がシステム入力イベントを送信できませんでした。";
+/* Error when a remapping action does not reach keyboard or pointer input: the engine is suspended until sink recovery succeeds. */
+"ui.remappingSink.faulted" = "システム入力のリマッピングは、シンクが復旧するまで停止しています。";
+/* Error when a remapping action does not reach keyboard or pointer input: routing admission refuses output. */
+"ui.remappingSink.outputSuspended" = "システム入力のリマッピングは、ルーティングの受け付けにより停止しています。";
+/* Error when a remapping action does not reach keyboard or pointer input: a sink rejected an action or is missing. */
+"ui.remappingSink.sinkUnavailable" = "システム入力のシンクがリマッピングのアクションを拒否しました。";
+/* Error when a virtual gamepad frame is not published: the queue holds only host replies, and one more arrived. */
+"ui.outputPublication.queueOverflow" = "仮想ゲームパッドの送信キューがあふれました。";
+/* Error when a virtual gamepad frame is not published: the native send exceeded its deadline. */
+"ui.outputPublication.sendTimedOut" = "仮想ゲームパッドの送信がタイムアウトしました。";
+/* Error when a virtual gamepad frame is not published: a newer frame took the place of this one in a full queue. */
+"ui.outputPublication.superseded" = "仮想ゲームパッドのフレームは、より新しいフレームに置き換えられました。";
+/* Error when a command-line source or target cannot be read: the source operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidSource" = "ソース「%@」が正しくありません。";
+/* Error when a command-line source or target cannot be read: the target operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidDestination" = "ターゲット「%@」が正しくありません。";
+/* Error when the record probe refuses a controller: the record names an 8BitDo bootloader identity, which OJD sends nothing. */
+"ui.recordProbe.bootloaderIdentity" = "レコードプローブは、ブートローダモードのコントローラには何も送信しません。";
+/* Error when the record probe refuses a controller: the record's protocol is one the probe cannot drive; the value names it. %@ is the name of a controller protocol, kept as written. */
+"ui.recordProbe.unsupportedProtocol" = "署名不要のレコードプローブは、プロトコル %@ をサポートしていません。";
+/* Error when a profile breaks a rule: a field is outside its valid range. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.motionTuningField" = "モーション調整のフィールド「%@」が有効な範囲外です。";
+/* Error when a profile breaks a rule: a field is outside its valid range or inconsistent with the others. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.gyroOutputField" = "ジャイロ出力のフィールド「%@」が有効な範囲外です。";
+/* Error when a USB transfer to a controller fails: another client, which the system does not name, holds the USB interface. */
+"ui.usbTransport.ownedByAnotherClient" = "別のクライアントが USB インターフェイスを使用しています。";
+/* Error when a USB transfer to a controller fails: another client holds the USB interface. %@ is the name of that client as the system reports it. */
+"ui.usbTransport.ownedByNamedClient" = "別のクライアント (%@) が USB インターフェイスを使用しています。";

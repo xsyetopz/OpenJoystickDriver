@@ -6682,158 +6682,253 @@
 "ui.help.exportFormat" = "Escolher o formato de arquivo do mapeamento exportado";
 
 /* Error when a profile breaks a rule: the mapping of this stick has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidStickMapping" = "Revise os ajustes do analógico %@.";
+"ui.profileValidation.invalidStickMapping" = "Revise os ajustes do analógico %@.";
 /* Error when a profile breaks a rule: two mappings read this stick. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateStickMapping" = "O analógico %@ tem vários mapeamentos de modo. Mantenha apenas um.";
+"ui.profileValidation.duplicateStickMapping" = "O analógico %@ tem vários mapeamentos de modo. Mantenha apenas um.";
 /* Error when a profile breaks a rule: the mapping of this trigger has an invalid field. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.invalidTriggerMapping" = "Revise os ajustes do gatilho de dois estágios %@.";
+"ui.profileValidation.invalidTriggerMapping" = "Revise os ajustes do gatilho de dois estágios %@.";
 /* Error when a profile breaks a rule: two mappings read this trigger. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.duplicateTriggerMapping" = "O gatilho %@ tem vários mapeamentos de estágio. Mantenha apenas um.";
+"ui.profileValidation.duplicateTriggerMapping" = "O gatilho %@ tem vários mapeamentos de estágio. Mantenha apenas um.";
 /* Error when a profile breaks a rule: a binding reads a stage of this trigger, which has no dual-stage mapping. %@ is the source as the profile file spells it, kept as written. */
-"profile.validation.triggerStageWithoutMapping" = "O estágio do gatilho %@ exige um mapeamento de gatilho de dois estágios. Adicione um.";
+"ui.profileValidation.triggerStageWithoutMapping" = "O estágio do gatilho %@ exige um mapeamento de gatilho de dois estágios. Adicione um.";
 /* Error when a profile breaks a rule: a binding reads a motion lean, but no motion tuning defines one. */
-"profile.validation.motionLeanWithoutMapping" = "As fontes de inclinação do movimento exigem ajustes de inclinação do movimento. Adicione-os ou remova as fontes.";
+"ui.profileValidation.motionLeanWithoutMapping" = "As fontes de inclinação do movimento exigem ajustes de inclinação do movimento. Adicione-os ou remova as fontes.";
 /* Error when a profile breaks a rule: the touch mapping of this surface has an invalid field. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.invalidTouchMapping" = "Revise o mapeamento contínuo da superfície de toque %@.";
+"ui.profileValidation.invalidTouchMapping" = "Revise o mapeamento contínuo da superfície de toque %@.";
 /* Error when a profile breaks a rule: two touch mappings read this surface. %@ is the surface as the profile file spells it, kept as written. */
-"profile.validation.duplicateTouchMapping" = "A superfície de toque %@ tem vários mapeamentos contínuos. Mantenha apenas um.";
+"ui.profileValidation.duplicateTouchMapping" = "A superfície de toque %@ tem vários mapeamentos contínuos. Mantenha apenas um.";
 /* Error when a profile breaks a rule: a touch grid source has invalid dimensions or cell coordinates. */
-"profile.validation.invalidTouchGrid" = "Uma fonte de grade de toque tem dimensões ou coordenadas de célula inválidas. Use de 1 a 16 linhas e colunas, e células dentro da grade.";
+"ui.profileValidation.invalidTouchGrid" = "Uma fonte de grade de toque tem dimensões ou coordenadas de célula inválidas. Use de 1 a 16 linhas e colunas, e células dentro da grade.";
 /* Error when a profile breaks a rule: a touch swipe source has an invalid minimum distance. */
-"profile.validation.invalidTouchSwipe" = "Uma fonte de deslize de toque tem uma distância mínima inválida. Use de 0.01 a 1.";
+"ui.profileValidation.invalidTouchSwipe" = "Uma fonte de deslize de toque tem uma distância mínima inválida. Use de 0.01 a 1.";
 /* Error when a profile breaks a rule: a stick region has a radius, sector or hysteresis out of range. */
-"profile.validation.invalidStickRegion" = "Uma região do analógico precisa de 0 <= inner < outer <= 1, os dois ângulos ou nenhum, e histerese de 0 a 0.25.";
+"ui.profileValidation.invalidStickRegion" = "Uma região do analógico precisa de 0 <= inner < outer <= 1, os dois ângulos ou nenhum, e histerese de 0 a 0.25.";
 /* Error when a profile breaks a rule: a trigger band has a pressure or hysteresis out of range. */
-"profile.validation.invalidTriggerBand" = "Uma faixa do gatilho precisa de 0 <= from < to <= 1 e histerese de 0 a 0.25.";
+"ui.profileValidation.invalidTriggerBand" = "Uma faixa do gatilho precisa de 0 <= from < to <= 1 e histerese de 0 a 0.25.";
 /* Error when a profile breaks a rule: a touch area is empty or outside the surface. */
-"profile.validation.invalidTouchArea" = "Uma área de toque não pode ser vazia e deve ficar dentro da superfície. Redimensione-a para caber.";
+"ui.profileValidation.invalidTouchArea" = "Uma área de toque não pode ser vazia e deve ficar dentro da superfície. Redimensione-a para caber.";
 /* Error when a profile breaks a rule: a trigger has bands and a dual-stage mapping. %@ is the trigger as the profile file spells it, kept as written. */
-"profile.validation.triggerBandWithDualStage" = "O gatilho %@ tem faixas e um mapeamento de dois estágios. Remova um dos dois.";
+"ui.profileValidation.triggerBandWithDualStage" = "O gatilho %@ tem faixas e um mapeamento de dois estágios. Remova um dos dois.";
 /* Error when a profile breaks a rule: two regions of one stick, or two bands of one trigger, share a position. */
-"profile.validation.overlappingRegions" = "As regiões de um analógico, ou as faixas de um gatilho, não podem se sobrepor. Reduza ou remova uma.";
+"ui.profileValidation.overlappingRegions" = "As regiões de um analógico, ou as faixas de um gatilho, não podem se sobrepor. Reduza ou remova uma.";
 /* Error when a profile breaks a rule: the pointer speed has a minimum or maximum scale that is not finite or not 0 to 10. */
-"profile.validation.invalidPointerSpeed" = "As escalas de velocidade do ponteiro devem ser números finitos de 0 a 10.";
+"ui.profileValidation.invalidPointerSpeed" = "As escalas de velocidade do ponteiro devem ser números finitos de 0 a 10.";
 /* Error when a profile breaks a rule: the pointer speed reads a trigger or stick that the controller does not report. */
-"profile.validation.unsupportedPointerSpeedDriver" = "A velocidade do ponteiro lê um gatilho ou analógico que o controle não informa. Escolha uma fonte que o controle informe.";
+"ui.profileValidation.unsupportedPointerSpeedDriver" = "A velocidade do ponteiro lê um gatilho ou analógico que o controle não informa. Escolha uma fonte que o controle informe.";
 /* Error when a profile breaks a rule: a Joy-Con pair profile does not target a left Joy-Con model. */
-"profile.validation.invalidJoyConPairDevice" = "Os perfis de par de Joy-Con devem ter como alvo um modelo de Joy-Con esquerdo da Nintendo (057e:2006 ou 057e:2067).";
-/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingBehaviorConflict" = "A atribuição %d usa um comportamento incompatível com o destino ou com os ajustes de ativação.";
+"ui.profileValidation.invalidJoyConPairDevice" = "Os perfis de par de Joy-Con devem ter como alvo um modelo de Joy-Con esquerdo da Nintendo (057e:2006 ou 057e:2067).";
+/* Error when a profile breaks a rule: a binding's behavior does not fit its destination, pulse duration or timed actions. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingBehaviorConflict" = "A atribuição %@ usa um comportamento incompatível com o destino ou com os ajustes de ativação.";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this button. %@ is the button as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadButton" = "O gamepad virtual não consegue gerar %@. Escolha outro botão.";
+"ui.profileValidation.unsupportedGamepadButton" = "O gamepad virtual não consegue gerar %@. Escolha outro botão.";
 /* Error when a profile breaks a rule: the virtual gamepad cannot output this axis. %@ is the axis as the profile file spells it, kept as written. */
-"profile.validation.unsupportedGamepadAxis" = "O gamepad virtual não consegue gerar %@. Escolha outro eixo.";
+"ui.profileValidation.unsupportedGamepadAxis" = "O gamepad virtual não consegue gerar %@. Escolha outro eixo.";
 /* Error when a profile breaks a rule: a virtual gamepad destination or stick output is used while the output policy has no virtual. */
-"profile.validation.virtualOutputRequired" = "Os destinos de gamepad exigem a saída de gamepad virtual. Ative-a ou altere o destino.";
+"ui.profileValidation.virtualOutputRequired" = "Os destinos de gamepad exigem a saída de gamepad virtual. Ative-a ou altere o destino.";
 /* Error when a profile breaks a rule: a physical-controller output value is out of range. */
-"profile.validation.invalidPhysicalOutput" = "Um valor de saída do controle físico é inválido. Escolha uma saída compatível com o controle.";
+"ui.profileValidation.invalidPhysicalOutput" = "Um valor de saída do controle físico é inválido. Escolha uma saída compatível com o controle.";
 /* Error when a profile breaks a rule: the profile name is empty, too long, padded with whitespace or holds control characters. */
-"profile.validation.invalidProfileName" = "Os nomes de perfil devem ter de 1 a 80 caracteres imprimíveis.";
-/* Error when a profile breaks a rule: the profile holds more mappings than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyBindings" = "Um perfil de remapeamento não pode conter %d atribuições. Remova algumas; o limite é 512.";
+"ui.profileValidation.invalidProfileName" = "Os nomes de perfil devem ter de 1 a 80 caracteres imprimíveis.";
 /* Error when a profile breaks a rule: two bindings, chords, sequences, actions or touch mappings share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateBindingID" = "O identificador de atribuição %@ está duplicado.";
+"ui.profileValidation.duplicateBindingID" = "O identificador de atribuição %@ está duplicado.";
 /* Error when a profile breaks a rule: two layers share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateLayerID" = "O identificador de camada %@ está duplicado.";
+"ui.profileValidation.duplicateLayerID" = "O identificador de camada %@ está duplicado.";
 /* Error when a profile breaks a rule: two bindings of one scope read this source. */
-"profile.validation.duplicateSource" = "Cada fonte do controle pode aparecer em apenas uma atribuição. Remova a atribuição extra.";
+"ui.profileValidation.duplicateSource" = "Cada fonte do controle pode aparecer em apenas uma atribuição. Remova a atribuição extra.";
 /* Error when a profile breaks a rule: the application bundle identifier is not valid; the value is the identifier. %@ is an application bundle identifier. */
-"profile.validation.invalidAppID" = "O identificador do pacote do app de destino é inválido: %@. Use de 3 a 255 letras ASCII, dígitos e hifens, em partes separadas por pontos, como com.example.app.";
+"ui.profileValidation.invalidAppID" = "O identificador do pacote do app de destino é inválido: %@. Use de 3 a 255 letras ASCII, dígitos e hifens, em partes separadas por pontos, como com.example.app.";
 /* Error when a profile breaks a rule: an application scope lists no bundle identifier. */
-"profile.validation.noAppIDs" = "Um alvo de app precisa de pelo menos um identificador de pacote.";
+"ui.profileValidation.noAppIDs" = "Um alvo de app precisa de pelo menos um identificador de pacote.";
 /* Error when a profile breaks a rule: an application scope lists this bundle identifier more than once. %@ is an application bundle identifier. */
-"profile.validation.duplicateAppID" = "O identificador do pacote do app de destino aparece duas vezes: %@. Remova um.";
-/* Error when a profile breaks a rule: an axis source has no axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningRequired" = "A atribuição %d exige ajuste de eixo. Adicione-o.";
-/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.axisTuningNotApplicable" = "A atribuição %d não pode ter ajuste de eixo. Remova-o.";
-/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.incompatibleSourceAndDestination" = "A atribuição %d combina tipos de fonte e destino incompatíveis. Altere um deles.";
-/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTuning" = "A atribuição %1$d tem um valor não finito em %2$@. Digite um número finito.";
-/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.tuningOutOfRange" = "A atribuição %1$d tem um valor fora do intervalo em %2$@. A zona morta vai de 0 a 0.95, o ganho de 0.1 a 10 e o limite de ativação digital de 0.01 a 1.";
-/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboNotSupported" = "A atribuição %d usa turbo com um destino contínuo. Remova o turbo ou altere o destino.";
-/* Error when a profile breaks a rule: a turbo field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteTurbo" = "A atribuição %1$d tem um valor não finito em turbo %2$@. Digite um número finito.";
-/* Error when a profile breaks a rule: a turbo field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.turboOutOfRange" = "A atribuição %1$d tem um valor fora do intervalo em turbo %2$@. A taxa de repetição vai de 1 a 60 Hz, o ciclo de trabalho de 0.05 a 0.95, o atraso inicial de 0 a 2500 ms e o máximo de repetições de 1 a 500.";
-/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.longHoldNotSupported" = "A atribuição %d usa segurar por muito tempo com uma fonte ou um destino contínuo. Remova o segurar por muito tempo ou use fontes e destinos de botão.";
-/* Error when a profile breaks a rule: a long-hold field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteLongHold" = "A atribuição %1$d tem um valor não finito em segurar por muito tempo %2$@. Digite um número finito.";
-/* Error when a profile breaks a rule: a long-hold field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.longHoldOutOfRange" = "A atribuição %1$d tem um valor fora do intervalo em segurar por muito tempo %2$@. Use de 100 a 5000 ms.";
-/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.nonFiniteMultiTap" = "A atribuição %1$d tem um valor não finito em toques múltiplos %2$@. Digite um número finito.";
-/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$d is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.multiTapOutOfRange" = "A atribuição %1$d tem um valor fora do intervalo em toques múltiplos %2$@. Use uma contagem de 2 a 5 e uma janela de 50 a 1000 ms.";
-/* Error when a profile breaks a rule: two multi-tap entries have the same count. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.duplicateMultiTapCount" = "A atribuição %d tem duas entradas de toques múltiplos com a mesma contagem. Dê a cada uma a sua própria contagem.";
-/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.turboAndActivationConflict" = "A atribuição %d não pode combinar turbo com segurar por muito tempo ou toques múltiplos. Remova um.";
-/* Error when a profile breaks a rule: a chord window is out of range. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordWindowOutOfRange" = "A combinação %d tem uma janela fora do intervalo. Use de 1 a 1000 ms.";
-/* Error when a profile breaks a rule: a chord has fewer than two sources. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordTooFewSources" = "A combinação %d deve ter pelo menos duas fontes. Adicione uma.";
-/* Error when a profile breaks a rule: a chord has an axis source. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousSource" = "A combinação %d usa uma fonte contínua (eixo). Use fontes de botão.";
-/* Error when a profile breaks a rule: a chord has a continuous destination. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.chordContinuousDestination" = "A combinação %d usa um destino contínuo. Escolha um destino de botão.";
-/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %d is the position of the chord in its list, counted from 0. */
-"profile.validation.duplicateChordSources" = "A combinação %d duplica o conjunto de fontes de outra combinação. Remova uma.";
-/* Error when a profile breaks a rule: a sequence has fewer than two sources. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceTooFewSources" = "A sequência %d deve ter pelo menos duas fontes. Adicione uma.";
-/* Error when a profile breaks a rule: a sequence has an axis source. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousSource" = "A sequência %d usa uma fonte contínua (eixo). Use fontes de botão.";
-/* Error when a profile breaks a rule: a sequence has a continuous destination. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceContinuousDestination" = "A sequência %d usa um destino contínuo. Escolha um destino de botão.";
-/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.sequenceWindowOutOfRange" = "A sequência %d tem uma janela fora do intervalo. Use de 200 a 10000 ms.";
-/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %d is the position of the sequence in its list, counted from 0. */
-"profile.validation.duplicateSequenceSources" = "A sequência %d duplica a ordem das fontes de outra sequência. Remova uma.";
-/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %d is the position of the binding in its list, counted from 0. */
-"profile.validation.bindingRemarkInvalid" = "A atribuição %d tem uma observação inválida. Use de 1 a 200 caracteres.";
-/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerNameInvalid" = "A camada %d tem um nome inválido. Use de 1 a 40 caracteres.";
-/* Error when a profile breaks a rule: a layer activator is an axis. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorNotDiscrete" = "A camada %d tem um ativador não discreto (eixo). Use uma fonte de botão.";
-/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.duplicateLayerActivator" = "A camada %d duplica o ativador de outra camada. Escolha uma fonte diferente.";
-/* Error when a profile breaks a rule: a layer activator also has a binding. %d is the position of the layer in its list, counted from 0. */
-"profile.validation.layerActivatorAlsoBound" = "O ativador da camada %d também está atribuído como fonte comum. Remova essa atribuição ou escolha outro ativador.";
-/* Error when a profile breaks a rule: the profile holds more macros than the limit; the value is the count. %d is the number in the profile. */
-"profile.validation.tooManyMacros" = "Um perfil de remapeamento não pode conter %d macros. Remova algumas; o limite é 16.";
+"ui.profileValidation.duplicateAppID" = "O identificador do pacote do app de destino aparece duas vezes: %@. Remova um.";
+/* Error when a profile breaks a rule: an axis source has no axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningRequired" = "A atribuição %@ exige ajuste de eixo. Adicione-o.";
+/* Error when a profile breaks a rule: a source that is not an axis has axis tuning. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.axisTuningNotApplicable" = "A atribuição %@ não pode ter ajuste de eixo. Remova-o.";
+/* Error when a profile breaks a rule: the source and destination do not fit: an axis source needs a continuous destination and any. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.incompatibleSourceAndDestination" = "A atribuição %@ combina tipos de fonte e destino incompatíveis. Altere um deles.";
+/* Error when a profile breaks a rule: an axis tuning field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTuning" = "A atribuição %1$@ tem um valor não finito em %2$@. Digite um número finito.";
+/* Error when a profile breaks a rule: an axis tuning field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.tuningOutOfRange" = "A atribuição %1$@ tem um valor fora do intervalo em %2$@. A zona morta vai de 0 a 0.95, o ganho de 0.1 a 10 e o limite de ativação digital de 0.01 a 1.";
+/* Error when a profile breaks a rule: turbo is set on a continuous or physical destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboNotSupported" = "A atribuição %@ usa turbo com um destino contínuo. Remova o turbo ou altere o destino.";
+/* Error when a profile breaks a rule: a turbo field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteTurbo" = "A atribuição %1$@ tem um valor não finito em turbo %2$@. Digite um número finito.";
+/* Error when a profile breaks a rule: a turbo field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.turboOutOfRange" = "A atribuição %1$@ tem um valor fora do intervalo em turbo %2$@. A taxa de repetição vai de 1 a 60 Hz, o ciclo de trabalho de 0.05 a 0.95, o atraso inicial de 0 a 2500 ms e o máximo de repetições de 1 a 500.";
+/* Error when a profile breaks a rule: a long hold is set on an axis source or a continuous destination. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.longHoldNotSupported" = "A atribuição %@ usa segurar por muito tempo com uma fonte ou um destino contínuo. Remova o segurar por muito tempo ou use fontes e destinos de botão.";
+/* Error when a profile breaks a rule: a long-hold field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteLongHold" = "A atribuição %1$@ tem um valor não finito em segurar por muito tempo %2$@. Digite um número finito.";
+/* Error when a profile breaks a rule: a long-hold field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.longHoldOutOfRange" = "A atribuição %1$@ tem um valor fora do intervalo em segurar por muito tempo %2$@. Use de 100 a 5000 ms.";
+/* Error when a profile breaks a rule: a multi-tap field is not finite. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.nonFiniteMultiTap" = "A atribuição %1$@ tem um valor não finito em toques múltiplos %2$@. Digite um número finito.";
+/* Error when a profile breaks a rule: a multi-tap field is out of range. %1$@ is the position of the binding in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.multiTapOutOfRange" = "A atribuição %1$@ tem um valor fora do intervalo em toques múltiplos %2$@. Use uma contagem de 2 a 5 e uma janela de 50 a 1000 ms.";
+/* Error when a profile breaks a rule: two multi-tap entries have the same count. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.duplicateMultiTapCount" = "A atribuição %@ tem duas entradas de toques múltiplos com a mesma contagem. Dê a cada uma a sua própria contagem.";
+/* Error when a profile breaks a rule: turbo is combined with a long hold or a multi-tap. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.turboAndActivationConflict" = "A atribuição %@ não pode combinar turbo com segurar por muito tempo ou toques múltiplos. Remova um.";
+/* Error when a profile breaks a rule: a chord window is out of range. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordWindowOutOfRange" = "A combinação %@ tem uma janela fora do intervalo. Use de 1 a 1000 ms.";
+/* Error when a profile breaks a rule: a chord has fewer than two sources. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordTooFewSources" = "A combinação %@ deve ter pelo menos duas fontes. Adicione uma.";
+/* Error when a profile breaks a rule: a chord has an axis source. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousSource" = "A combinação %@ usa uma fonte contínua (eixo). Use fontes de botão.";
+/* Error when a profile breaks a rule: a chord has a continuous destination. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.chordContinuousDestination" = "A combinação %@ usa um destino contínuo. Escolha um destino de botão.";
+/* Error when a profile breaks a rule: a chord has the same source set as an earlier chord. %@ is the position of the chord in its list, counted from 0. */
+"ui.profileValidation.duplicateChordSources" = "A combinação %@ duplica o conjunto de fontes de outra combinação. Remova uma.";
+/* Error when a profile breaks a rule: a sequence has fewer than two sources. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceTooFewSources" = "A sequência %@ deve ter pelo menos duas fontes. Adicione uma.";
+/* Error when a profile breaks a rule: a sequence has an axis source. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousSource" = "A sequência %@ usa uma fonte contínua (eixo). Use fontes de botão.";
+/* Error when a profile breaks a rule: a sequence has a continuous destination. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceContinuousDestination" = "A sequência %@ usa um destino contínuo. Escolha um destino de botão.";
+/* Error when a profile breaks a rule: a sequence window is not finite or is out of range. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.sequenceWindowOutOfRange" = "A sequência %@ tem uma janela fora do intervalo. Use de 200 a 10000 ms.";
+/* Error when a profile breaks a rule: a sequence has the same source order as an earlier sequence. %@ is the position of the sequence in its list, counted from 0. */
+"ui.profileValidation.duplicateSequenceSources" = "A sequência %@ duplica a ordem das fontes de outra sequência. Remova uma.";
+/* Error when a profile breaks a rule: a binding remark is empty, too long, padded with whitespace or holds control characters. %@ is the position of the binding in its list, counted from 0. */
+"ui.profileValidation.bindingRemarkInvalid" = "A atribuição %@ tem uma observação inválida. Use de 1 a 200 caracteres.";
+/* Error when a profile breaks a rule: a layer name is empty, too long, padded with whitespace or holds control characters. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerNameInvalid" = "A camada %@ tem um nome inválido. Use de 1 a 40 caracteres.";
+/* Error when a profile breaks a rule: a layer activator is an axis. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorNotDiscrete" = "A camada %@ tem um ativador não discreto (eixo). Use uma fonte de botão.";
+/* Error when a profile breaks a rule: a layer has the same activator as an earlier layer. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.duplicateLayerActivator" = "A camada %@ duplica o ativador de outra camada. Escolha uma fonte diferente.";
+/* Error when a profile breaks a rule: a layer activator also has a binding. %@ is the position of the layer in its list, counted from 0. */
+"ui.profileValidation.layerActivatorAlsoBound" = "O ativador da camada %@ também está atribuído como fonte comum. Remova essa atribuição ou escolha outro ativador.";
 /* Error when a profile breaks a rule: two macros share this identifier. %@ is an identifier (UUID). */
-"profile.validation.duplicateMacroID" = "O identificador de macro %@ está duplicado.";
-/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %d is the position of the macro in its list, counted from 0. */
-"profile.validation.duplicateMacroName" = "A macro %d repete o nome de uma macro anterior. Renomeie-a.";
-/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidMacro" = "A macro %1$d tem um valor inválido em %2$@. Os nomes têm de 1 a 40 caracteres, as etapas de 1 a 32, a repetição de 1 a 500 e cada atraso de 0 a 5000 ms.";
-/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.invalidMacroStepDestination" = "A etapa %1$d da macro %2$d tem um destino que uma etapa de macro não pode usar. Use uma tecla, um botão do ponteiro, um botão de gamepad ou uma direção do direcional.";
-/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$d is the position of the step in the macro, counted from 0; %2$d is the position of the macro in its list, counted from 0. */
-"profile.validation.macroNestingNotAllowed" = "A etapa %1$d da macro %2$d executa uma macro, o que uma etapa de macro não pode fazer. Remova a etapa.";
-/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$d is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
-"profile.validation.macroRunTimeExceeded" = "A macro %1$d dura mais que o limite %2$@. Uma passagem leva no máximo 30 segundos e todas as repetições no máximo 300 segundos; reduza os atrasos ou diminua a repetição.";
+"ui.profileValidation.duplicateMacroID" = "O identificador de macro %@ está duplicado.";
+/* Error when a profile breaks a rule: the macro at this index has the same name as an earlier macro. %@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.duplicateMacroName" = "A macro %@ repete o nome de uma macro anterior. Renomeie-a.";
+/* Error when a profile breaks a rule: a field of the macro at this index is invalid or out of range; `field` is its path inside. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the value as the profile file spells it, kept as written. */
+"ui.profileValidation.invalidMacro" = "A macro %1$@ tem um valor inválido em %2$@. Os nomes têm de 1 a 40 caracteres, as etapas de 1 a 32, a repetição de 1 a 500 e cada atraso de 0 a 5000 ms.";
+/* Error when a profile breaks a rule: a step of a macro has a destination that a step cannot use. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.invalidMacroStepDestination" = "A etapa %1$@ da macro %2$@ tem um destino que uma etapa de macro não pode usar. Use uma tecla, um botão do ponteiro, um botão de gamepad ou uma direção do direcional.";
+/* Error when a profile breaks a rule: a step of a macro runs a macro. %1$@ is the position of the step in the macro, counted from 0; %2$@ is the position of the macro in its list, counted from 0. */
+"ui.profileValidation.macroNestingNotAllowed" = "A etapa %1$@ da macro %2$@ executa uma macro, o que uma etapa de macro não pode fazer. Remova a etapa.";
+/* Error when a profile breaks a rule: a macro runs longer than its limit; `limit` names the limit that it exceeds. %1$@ is the position of the macro in its list, counted from 0; %2$@ is the name of the limit as the profile file spells it, kept as written. */
+"ui.profileValidation.macroRunTimeExceeded" = "A macro %1$@ dura mais que o limite %2$@. Uma passagem leva no máximo 30 segundos e todas as repetições no máximo 300 segundos; reduza os atrasos ou diminua a repetição.";
 /* Error when a profile breaks a rule: a destination runs a macro that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownMacro" = "Um destino executa a macro %@, que não existe. Escolha uma macro existente.";
+"ui.profileValidation.unknownMacro" = "Um destino executa a macro %@, que não existe. Escolha uma macro existente.";
 /* Error when a profile breaks a rule: a system action destination has a value outside its limits; the value is the action name. %@ is the destination type as the profile file spells it, kept as written. */
-"profile.validation.invalidSystemAction" = "O destino %@ tem um valor inválido. Revise o valor.";
+"ui.profileValidation.invalidSystemAction" = "O destino %@ tem um valor inválido. Revise o valor.";
 /* Error when a profile breaks a rule: a destination sets a layer that the profile does not hold. %@ is an identifier (UUID). */
-"profile.validation.unknownLayer" = "Um destino define a camada %@, que não existe. Escolha uma camada existente.";
+"ui.profileValidation.unknownLayer" = "Um destino define a camada %@, que não existe. Escolha uma camada existente.";
 /* Error when a profile breaks a rule: a destination switches to a profile that does not exist. %@ is an identifier (UUID). */
-"profile.validation.unknownSwitchProfile" = "Um destino troca para o perfil %@, que não existe. Escolha um perfil existente.";
+"ui.profileValidation.unknownSwitchProfile" = "Um destino troca para o perfil %@, que não existe. Escolha um perfil existente.";
 /* Error when a profile breaks a rule: a destination switches to a profile for another controller model. %@ is an identifier (UUID). */
-"profile.validation.switchProfileForOtherModel" = "Um destino troca para o perfil %@, que é de outro modelo. Escolha um perfil para este modelo.";
+"ui.profileValidation.switchProfileForOtherModel" = "Um destino troca para o perfil %@, que é de outro modelo. Escolha um perfil para este modelo.";
 /* Error when a profile breaks a rule: a `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or. %@ is the name of the value as the profile file spells it, kept as written. */
-"profile.validation.invalidSpeech" = "Um destino Falar tem um valor inválido em %@. O texto tem de 1 a 128 caracteres.";
+"ui.profileValidation.invalidSpeech" = "Um destino Falar tem um valor inválido em %@. O texto tem de 1 a 128 caracteres.";
 /* Error when a profile breaks a rule: a `Speak` destination names a voice that this Mac does not have. %@ is the name of a voice. */
-"profile.validation.unknownSpeechVoice" = "Um destino Falar indica a voz %@, que este Mac não tem. Escolha uma voz instalada ou a voz do sistema.";
+"platform.macos.profileValidation.unknownSpeechVoice" = "Um destino Falar indica a voz %@, que este Mac não tem. Escolha uma voz instalada ou a voz do sistema.";
 /* Error when a profile breaks a rule: a MIDI destination has a channel, note, controller or velocity out of range. */
-"profile.validation.invalidMIDIDestination" = "Um destino MIDI precisa de um canal de 1 a 16, uma nota ou um controlador de 0 a 127 e uma velocidade de 1 a 127.";
+"ui.profileValidation.invalidMIDIDestination" = "Um destino MIDI precisa de um canal de 1 a 16, uma nota ou um controlador de 0 a 127 e uma velocidade de 1 a 127.";
 /* Error when a profile breaks a rule: the profile could not be encoded. */
-"profile.validation.encodingFailed" = "Não foi possível codificar o perfil de remapeamento. Revise os valores dele.";
-/* Error when a profile breaks a rule: the encoded profile is over the size limit; the value is its size in bytes. %d is the size in bytes. */
-"profile.validation.encodedSizeExceeded" = "O perfil de remapeamento codificado é grande demais (%d bytes). Mantenha-o abaixo de 4 MiB.";
+"ui.profileValidation.encodingFailed" = "Não foi possível codificar o perfil de remapeamento. Revise os valores dele.";
+
+/* Error when the service's profile library refuses a request: the profile file or the active profile list is damaged. */
+"ui.profileLibrary.corruptLibrary" = "A lista de perfis ativos está danificada.";
+/* Error when the service's profile library refuses a request: a profile with the name already exists. %@ is the name of a profile. */
+"ui.profileLibrary.duplicateName" = "Já existe um perfil chamado %@.";
+/* Error when the service's profile library refuses a request: a profile with the ID already exists. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileAlreadyExists" = "O perfil %@ já existe.";
+/* Error when the service's profile library refuses a request: no profile has the ID. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileNotFound" = "O perfil %@ não existe.";
+/* Error when the service's profile library refuses a request: a Joy-Con pair profile starts only with an explicit pair session. */
+"ui.profileLibrary.pairProfileRequiresExplicitSession" = "Perfis de Joy-Con pareados são iniciados com uma sessão de pareamento explícita.";
+/* Error when the service's profile library refuses a request: the profile produces no output; activating it needs `allowEmpty`. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileProducesNoOutput" = "O perfil %@ não produz saída; ativá-lo exige allowEmpty.";
+/* Error when the service's profile library refuses a request: the profile changed since the caller read it. %@ is an identifier (UUID). */
+"ui.profileLibrary.profileUpdateConflict" = "O perfil %@ mudou desde que foi lido.";
+/* Error when the service's profile library refuses a request: a profile file could not be read. */
+"ui.profileLibrary.unreadableLibrary" = "Não foi possível ler um arquivo de perfil.";
+/* Error when the service's profile library refuses a request: a profile file could not be written. */
+"ui.profileLibrary.unwritableLibrary" = "Não foi possível gravar um arquivo de perfil.";
+/* Error when the service's profile library refuses a request: the damaged profile files need repair before a change. */
+"ui.profileLibrary.profileRecoveryRequired" = "Repare ou remova os arquivos de perfil danificados antes de alterar perfis.";
+/* Error when the service's profile library refuses a request: no damaged-file issue has the ID. */
+"ui.profileLibrary.profileIssueNotFound" = "O perfil danificado selecionado não está mais atual.";
+/* Error when the service's profile library refuses a request: the profile comes from a package and cannot be changed. */
+"ui.profileLibrary.packageProfileReadOnly" = "Um perfil de um pacote instalado não pode ser alterado. Duplique o perfil e altere a cópia.";
+/* Error when remapping output cannot apply a profile change: both the profile library and the event engine failed. %1$@ is the message of the profile library error and %2$@ the message of the event engine error, each a full sentence; keep the order the language reads naturally. */
+"ui.remappingRoute.libraryAndEngine" = "%1$@ %2$@";
+/* Error when remapping output cannot apply a profile change: a profile transaction is already active. */
+"ui.remappingRoute.profileTransactionAlreadyActive" = "Já há uma transação de perfil ativa.";
+/* Error when remapping output cannot apply a profile change: a profile transaction could not be reconciled, with the detail; output stays suspended. %@ is the reason the system gives, in English. */
+"ui.remappingRoute.profileTransactionUnreconciled" = "A saída de remapeamento continua suspensa porque uma transação de perfil não pôde ser reconciliada. %@";
+/* Error when remapping output cannot apply a profile change: the transaction token is not the active one. */
+"ui.remappingRoute.profileTransactionViolation" = "O token da transação de perfil é inválido.";
+/* Error when remapping output cannot apply a profile change: the router has shut down. */
+"ui.remappingRoute.shutDown" = "O roteador de saída de remapeamento foi encerrado.";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con is not connected. */
+"ui.joyConPair.controllerUnavailable" = "Os dois Joy-Con selecionados precisam estar conectados.";
+/* Error when two Joy-Cons cannot start a paired session: the selection is not one left and one right Joy-Con. */
+"ui.joyConPair.invalidControllerSide" = "Selecione um Joy-Con esquerdo e um Joy-Con direito.";
+/* Error when two Joy-Cons cannot start a paired session: a selected Joy-Con already belongs to a pair. */
+"ui.joyConPair.memberAlreadyPaired" = "Um dos Joy-Con selecionados já pertence a uma sessão de pareamento.";
+/* Error when two Joy-Cons cannot start a paired session: the profile is not configured for paired Joy-Cons. */
+"ui.joyConPair.profileNotPairable" = "O perfil selecionado não está configurado para Joy-Con pareados.";
+/* Error when two Joy-Cons cannot start a paired session: the pair session does not exist. */
+"ui.joyConPair.sessionUnavailable" = "A sessão de Joy-Con pareados não está mais disponível.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.timeout" = "A transferência USB excedeu o tempo limite.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.disconnected" = "O dispositivo USB foi desconectado.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.inputOutput" = "A transferência USB falhou com um erro de entrada/saída.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.accessDenied" = "O sistema negou o acesso ao dispositivo USB.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notFound" = "O dispositivo, a interface ou o endpoint USB não foi encontrado.";
+/* Error when a USB transfer to a controller fails. */
+"ui.usbTransport.notSupported" = "A conexão USB não oferece suporte a esta operação.";
+/* Error when a USB transfer to a controller fails. %1$@ is the error code of the platform, a signed decimal number kept as written; %2$@ is the message of the platform, in English. */
+"ui.usbTransport.platform" = "Erro de plataforma USB %1$@: %2$@";
+/* Error when the service cannot open a virtual feed: the name is not a virtual gamepad kind. %@ is the name of a virtual gamepad kind, kept as written. */
+"ui.virtualFeed.unknownProfile" = "Tipo de gamepad virtual desconhecido: %@.";
+/* Error when the service cannot open a virtual feed: the service is stopping. */
+"ui.virtualFeed.serviceStopped" = "O serviço está sendo encerrado.";
+/* Error when the service cannot open a virtual feed: the virtual controller did not start, with the reason. %@ is the reason the system gives, in English. */
+"ui.virtualFeed.activationFailed" = "O gamepad virtual não foi iniciado: %@.";
+/* Error when a remapping cannot post keyboard or pointer input: post-event access is not granted. */
+"platform.macos.systemInput.postEventAccessNotGranted" = "O acesso para enviar eventos de teclado e ponteiro não foi concedido.";
+/* Error when a remapping cannot post keyboard or pointer input: the profile key has no macOS virtual key. %@ is the key as the profile file spells it, kept as written. */
+"platform.macos.systemInput.unsupportedKeyboardKey" = "A tecla de teclado “%@” não é compatível com o macOS.";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not create the event. */
+"platform.macos.systemInput.eventPreparationFailed" = "O CoreGraphics não conseguiu preparar um evento de entrada do sistema.";
+/* Error when a remapping cannot post keyboard or pointer input: coreGraphics could not post the event. */
+"platform.macos.systemInput.eventPostingFailed" = "O CoreGraphics não conseguiu enviar um evento de entrada do sistema.";
+/* Error when a remapping action does not reach keyboard or pointer input: the engine is suspended until sink recovery succeeds. */
+"ui.remappingSink.faulted" = "O remapeamento de entrada do sistema está suspenso até que a recuperação do destino de saída seja bem-sucedida.";
+/* Error when a remapping action does not reach keyboard or pointer input: routing admission refuses output. */
+"ui.remappingSink.outputSuspended" = "O remapeamento de entrada do sistema está suspenso pela admissão de roteamento.";
+/* Error when a remapping action does not reach keyboard or pointer input: a sink rejected an action or is missing. */
+"ui.remappingSink.sinkUnavailable" = "O destino de saída da entrada do sistema rejeitou uma ação de remapeamento.";
+/* Error when a virtual gamepad frame is not published: the queue holds only host replies, and one more arrived. */
+"ui.outputPublication.queueOverflow" = "A fila de publicação do gamepad virtual transbordou.";
+/* Error when a virtual gamepad frame is not published: the native send exceeded its deadline. */
+"ui.outputPublication.sendTimedOut" = "A publicação do gamepad virtual excedeu o tempo limite.";
+/* Error when a virtual gamepad frame is not published: a newer frame took the place of this one in a full queue. */
+"ui.outputPublication.superseded" = "O quadro do gamepad virtual foi substituído por um quadro mais recente.";
+/* Error when a command-line source or target cannot be read: the source operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidSource" = "Origem “%@” inválida.";
+/* Error when a command-line source or target cannot be read: the target operand is invalid; the value is the operand. %@ is the text as typed on the command line. */
+"ui.remappingCommand.invalidDestination" = "Destino “%@” inválido.";
+/* Error when the record probe refuses a controller: the record names an 8BitDo bootloader identity, which OJD sends nothing. */
+"ui.recordProbe.bootloaderIdentity" = "O teste de gravação não envia nada a um controle em modo bootloader.";
+/* Error when the record probe refuses a controller: the record's protocol is one the probe cannot drive; the value names it. %@ is the name of a controller protocol, kept as written. */
+"ui.recordProbe.unsupportedProtocol" = "O teste de gravação sem assinatura não oferece suporte ao protocolo %@.";
+/* Error when a profile breaks a rule: a field is outside its valid range. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.motionTuningField" = "O campo de ajuste de movimento “%@” está fora do intervalo válido.";
+/* Error when a profile breaks a rule: a field is outside its valid range or inconsistent with the others. %@ is the name of the field as the profile file spells it, kept as written. */
+"ui.profileValidation.gyroOutputField" = "O campo de saída do giroscópio “%@” está fora do intervalo válido.";
+/* Error when a USB transfer to a controller fails: another client, which the system does not name, holds the USB interface. */
+"ui.usbTransport.ownedByAnotherClient" = "Outro cliente está usando a interface USB.";
+/* Error when a USB transfer to a controller fails: another client holds the USB interface. %@ is the name of that client as the system reports it. */
+"ui.usbTransport.ownedByNamedClient" = "Outro cliente (%@) está usando a interface USB.";

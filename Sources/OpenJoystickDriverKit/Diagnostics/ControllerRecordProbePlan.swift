@@ -154,11 +154,12 @@ public enum ControllerRecordProbeError: Error, Equatable, LocalizedError, Sendab
 
   /// The description of the error for the user.
   public var errorDescription: String? {
-    switch self {
+    let localized = Localization()
+    return switch self {
     case .invalidProfile(let message): message
-    case .bootloaderIdentity: "The record probe sends nothing to a controller in bootloader mode"
+    case .bootloaderIdentity: localized.string("ui.recordProbe.bootloaderIdentity")
     case .unsupportedProtocol(let binding):
-      "The signing-free record probe does not support protocol \(binding)"
+      localized.string("ui.recordProbe.unsupportedProtocol", binding)
     }
   }
 }

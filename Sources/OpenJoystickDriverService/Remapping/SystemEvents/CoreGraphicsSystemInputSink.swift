@@ -16,12 +16,15 @@ public enum CoreGraphicsSystemInputSinkError: Error, Equatable, LocalizedError, 
 
   /// The text that explains the failure to a user.
   public var errorDescription: String? {
-    switch self {
-    case .postEventAccessNotGranted: "Keyboard and pointer posting access is not granted."
+    let localized = Localization()
+    return switch self {
+    case .postEventAccessNotGranted:
+      localized.string("platform.macos.systemInput.postEventAccessNotGranted")
     case .unsupportedKeyboardKey(let key):
-      "The keyboard key '\(key.rawValue)' is not supported on macOS."
-    case .eventPreparationFailed: "CoreGraphics could not prepare a system-input event."
-    case .eventPostingFailed: "CoreGraphics could not post a system-input event."
+      localized.string("platform.macos.systemInput.unsupportedKeyboardKey", key.rawValue)
+    case .eventPreparationFailed:
+      localized.string("platform.macos.systemInput.eventPreparationFailed")
+    case .eventPostingFailed: localized.string("platform.macos.systemInput.eventPostingFailed")
     }
   }
 }
